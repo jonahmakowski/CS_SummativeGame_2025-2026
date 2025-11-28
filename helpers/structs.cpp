@@ -74,6 +74,8 @@ struct Tower {
     Object object;
     int level;
 
+    char name[100];
+
     float fire_rate;
     float range;
     int damage;

@@ -38,8 +38,7 @@ Vector2i camera_fixed_position(Vector2i position) {
 // Draws an image adjusted for the camera position and zoom
 void draw(ALLEGRO_BITMAP *image, Vector2i position, Vector2 scale) {
     Vector2i fixed_pos = camera_fixed_position(position);
-    scale = {scale.x * camera.zoom, scale.y * camera.zoom};
-    draw_scaled_image(image, fixed_pos, scale);
+    draw_scaled_image(image, fixed_pos, {scale.x * camera.zoom, scale.y * camera.zoom});
 }
 
 // Uses the draw function to draw an Object struct
@@ -229,6 +228,16 @@ void apply_upgrade(Tower &tower, int upgrade_index) {
 void draw_range_circle(Tower tower) {
     Vector2i tower_pos = camera_fixed_position(tower.object.position);
     draw_circle_outline(tower_pos, tower.range * camera.zoom, BLUE, 2.0f);
+}
+
+void current_shots() {
+    for (int i = 0; i < acitve_towers_count; i++) {
+        for (int j = 0; j < active_enemies_count; j++) {
+            if (distance_between(active_towers[i]->object.position, active_enemies[j]->object.position) <= active_towers[i]->range) {
+                printf("Tower %s can hit a target\n", active_towers[i]->name);
+            }
+        }
+    }
 }
 
 #endif

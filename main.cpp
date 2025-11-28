@@ -21,9 +21,17 @@
 #include "helpers/specific.cpp"
 #include "helpers/enemies_and_towers.cpp"
 
+Tower test_tower;
+Enemy test_enemy;
+
 // Run every frame
 void frame_logic() {
     fill_screen(WHITE);
+
+    draw(test_tower);
+    draw(test_enemy);
+
+    draw_range_circle(test_tower);
 }
 
 // Handling the keyboard input ev is the allegro event
@@ -55,7 +63,14 @@ int main(int argc, char *argv[]) {
     srand(time(0));
 
     setup_game();
-    initialize_enemies_and_towers();
+
+    new_snowman(test_tower);
+    test_tower.object.scale = {0.5f, 0.5f};
+    test_tower.object.position = {get_display_width() / 2, get_display_height() / 2};
+
+    new_penguin(test_enemy);
+    test_enemy.object.scale = {0.15f, 0.15f};
+    test_enemy.object.position = {(get_display_width() / 2) + 100, (get_display_height() / 2) + 100};
 
     al_start_timer(timer);
     al_get_mouse_cursor_position(&mouse_pos.x, &mouse_pos.y);

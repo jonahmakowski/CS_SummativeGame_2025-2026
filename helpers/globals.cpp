@@ -27,4 +27,10 @@ Font default_font;
 Vector2i mouse_pos = {0, 0};
 Camera camera = {{0, 0}, {0, 0}, 1.0f};
 
+Tower *active_towers[100];
+Enemy *active_enemies[100];
+
+int acitve_towers_count = 0;
+int active_enemies_count = 0;
+
 #endif
