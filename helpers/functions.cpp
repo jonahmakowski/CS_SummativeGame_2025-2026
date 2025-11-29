@@ -1,21 +1,10 @@
-#ifndef FUNCTIONS_CPP
-#define FUNCTIONS_CPP
-
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 
 #include <math.h>
 
-#include "structs.cpp"
-#include "rewritten_allegro_crap.cpp"
-
-// abs macro, checks if it's greater than 0, if not, makes it positive
-#define abs(num) (num < 0) ? -num : num
-// max macro, checks if a is greater than b, returns a if true, b if false
-#define max(a, b) (a > b) ? a : b
-// min macro, checks if a is less than b, returns a if true, b if false
-#define min(a, b) (a < b) ? a : b
+#include "helpers.hpp"
 
 // Using a keybind struct, checks if the key pressed in the event is one of the keycodes in the keybind
 bool pressing_keybind(Keybind keybind, ALLEGRO_EVENT ev) {
@@ -89,6 +78,11 @@ void draw(Enemy enemy) {
     draw(enemy.object);
 }
 
+// Draws a projectile using its object
+void draw(Projectile projectile) {
+    draw(projectile.object);
+}
+
 // Gets the mouse position adjusted for the camera
 Vector2i get_mouse_pos() {
     Vector2i cam_mouse_pos = {mouse_pos.x - camera.position.x, mouse_pos.y - camera.position.y};
@@ -99,6 +93,11 @@ Vector2i get_mouse_pos() {
 void update_position(Object &obj) {
     obj.position.x += obj.velocity.x;
     obj.position.y += obj.velocity.y;
+}
+
+// Updates a projectile's position based on its velocity
+void update_position(Projectile &projectile) {
+    update_position(projectile.object);
 }
 
 // Normalizes a Vector2 to have a maximum absolute value of 1
@@ -230,8 +229,9 @@ void draw_range_circle(Tower tower) {
     draw_circle_outline(tower_pos, tower.range * camera.zoom, BLUE, 2.0f);
 }
 
+// Gets the enemies that towers can shoot at
 void current_shots() {
-    for (int i = 0; i < acitve_towers_count; i++) {
+    for (int i = 0; i < active_towers_count; i++) {
         for (int j = 0; j < active_enemies_count; j++) {
             if (distance_between(active_towers[i]->object.position, active_enemies[j]->object.position) <= active_towers[i]->range) {
                 printf("Tower %s can hit a target\n", active_towers[i]->name);
@@ -240,4 +240,53 @@ void current_shots() {
     }
 }
 
-#endif
+// Multiplies a Vector2i by a float multiplier
+Vector2i multiply_vector(Vector2i vec, float multiplier) {
+    Vector2i result;
+    result.x = (int)(vec.x * multiplier);
+    result.y = (int)(vec.y * multiplier);
+    return result;
+}
+
+// Multiplies a Vector2 by a float multiplier
+Vector2 multiply_vector(Vector2 vec, float multiplier) {
+    Vector2 result;
+    result.x = vec.x * multiplier;
+    result.y = vec.y * multiplier;
+    return result;
+}
+
+
+void shoot_projectile(Tower tower, Enemy* target_enemy) {
+    Projectile* new_projectile = new Projectile();
+    new_projectile->object.image = load_image("images/sun.png");
+    new_projectile->object.scale = {0.2f, 0.2f};
+    new_projectile->object.position = tower.object.position;
+    new_projectile->object.exists = true;
+
+    new_projectile->speed = PROJECTILE_SPEED;
+    new_projectile->damage = tower.damage;
+
+    new_projectile->target = target_enemy;
+
+    Vector2 direction = get_direction_to(tower.object.position, target_enemy->object.position);
+    Vector2i velocity = vector2_to_vector2i(multiply_vector(direction, new_projectile->speed));
+    new_projectile->object.velocity = velocity;
+
+    add_projectile(new_projectile);
+}
+
+// Recalculates all projectiles' velocities towards their targets
+void recalculate_projectiles() {
+    for (int i = 0; i < active_projectiles_count; i++) {
+        Projectile* proj = active_projectiles[i];
+        if (proj == nullptr) {
+            printf("Projectile pointer is null, skipping\n");
+            continue;
+        }
+        Vector2 direction = get_direction_to(proj->object.position, proj->target->object.position);
+        Vector2i velocity = vector2_to_vector2i(multiply_vector(direction, proj->speed));
+        proj->object.velocity = velocity;
+        update_position(proj->object);
+    }
+}

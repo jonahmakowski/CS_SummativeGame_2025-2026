@@ -9,12 +9,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "helpers/structs.cpp"
-#include "helpers/globals.cpp"
-#include "helpers/rewritten_allegro_crap.cpp"
-#include "helpers/colors.cpp"
-#include "helpers/functions.cpp"
-#include "helpers/keybinds.cpp"
+#include "helpers/helpers.hpp"
 
 #define projectile_speed 30
 #define enemy_speed 5

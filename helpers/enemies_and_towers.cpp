@@ -1,21 +1,6 @@
-#ifndef ENEMIES_AND_TOWERS_CPP
-#define ENEMIES_AND_TOWERS_CPP
-
 #include <string.h>
 
-#include "structs.cpp"
-#include "rewritten_allegro_crap.cpp"
-#include "globals.cpp"
-
-#define add_enemy(enemy) { \
-    active_enemies[active_enemies_count] = &enemy; \
-    active_enemies_count++; \
-}
-
-#define add_tower(tower) { \
-    active_towers[acitve_towers_count] = &tower; \
-    acitve_towers_count++; \
-}
+#include "helpers.hpp"
 
 // Towers
 
@@ -82,5 +67,3 @@ void new_penguin(Enemy &enemy) {
     }
     add_enemy(enemy);
 }
-
-#endif

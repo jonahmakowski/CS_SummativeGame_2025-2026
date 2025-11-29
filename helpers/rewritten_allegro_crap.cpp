@@ -1,6 +1,3 @@
-#ifndef REWRITTEN_ALLEGRO_CRAP_CPP
-#define REWRITTEN_ALLEGRO_CRAP_CPP
-
 #include <stdio.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
@@ -8,38 +5,7 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 
-#include "globals.cpp"
-
-// Renaming allegro functions to make it more sense to me
-
-#define update() al_flip_display()
-#define sleep(seconds) al_rest(seconds)
-#define fill_screen(color) al_clear_to_color(color)
-#define load_image(path) al_load_bitmap(path)
-
-// Macro to load image with error checking, it checks that the image is actually there and loaded properly
-#define load_image_with_checks(path, ptr) { \
-    ALLEGRO_BITMAP *temp = load_image(path); \
-    if (!temp) { \
-        printf("Failed to load image: %s\n", path); \
-        return 1; \
-    } \
-    ptr = temp; \
-}
-
-// Macro to load font with error checking, it checks that the font is actually there and loaded properly
-#define load_font_with_checks(path, size, flags, obj) { \
-    ALLEGRO_FONT *temp_font = al_load_ttf_font(path, size, flags); \
-    if (!temp_font) { \
-        printf("Failed to load font: %s\n", path); \
-        return false; \
-    } \
-    Font result = {temp_font, size}; \
-    obj = result; \
-}
-
-#define get_display_height() al_get_display_height(display)
-#define get_display_width() al_get_display_width(display)
+#include "helpers.hpp"
 
 // Renaming drawing functions to use Vector2 and Vector2i and make more sense to me
 void draw_rectangle(Vector2i top_left, Vector2i bottom_right, ALLEGRO_COLOR color) {
@@ -154,5 +120,3 @@ bool init_allegro() {
 
     return true;
 }
-
-#endif

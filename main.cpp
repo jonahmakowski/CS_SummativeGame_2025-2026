@@ -1,5 +1,5 @@
 // to run:
-// clang++ main.cpp -o ./target/main $(pkg-config allegro-5 allegro_main-5 allegro_font-5 allegro_primitives-5 allegro_image-5 allegro_ttf-5 --libs --cflags); ./target/main
+// clang++ ./helpers/*.cpp main.cpp -o ./target/main $(pkg-config allegro-5 allegro_main-5 allegro_font-5 allegro_primitives-5 allegro_image-5 allegro_ttf-5 --libs --cflags); ./target/main
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
@@ -12,14 +12,7 @@
 #include <time.h>
 #include <string.h>
 
-#include "helpers/structs.cpp"
-#include "helpers/globals.cpp"
-#include "helpers/rewritten_allegro_crap.cpp"
-#include "helpers/colors.cpp"
-#include "helpers/functions.cpp"
-#include "helpers/keybinds.cpp"
-#include "helpers/specific.cpp"
-#include "helpers/enemies_and_towers.cpp"
+#include "helpers/helpers.hpp"
 
 Tower test_tower;
 Enemy test_enemy;
@@ -32,6 +25,10 @@ void frame_logic() {
     draw(test_enemy);
 
     draw_range_circle(test_tower);
+
+    recalculate_projectiles();
+
+    draw(*active_projectiles[0]);
 }
 
 // Handling the keyboard input ev is the allegro event
@@ -71,6 +68,8 @@ int main(int argc, char *argv[]) {
     new_penguin(test_enemy);
     test_enemy.object.scale = {0.15f, 0.15f};
     test_enemy.object.position = {(get_display_width() / 2) + 100, (get_display_height() / 2) + 100};
+
+    shoot_projectile(test_tower, &test_enemy);
 
     al_start_timer(timer);
     al_get_mouse_cursor_position(&mouse_pos.x, &mouse_pos.y);
