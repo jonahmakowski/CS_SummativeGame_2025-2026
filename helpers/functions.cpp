@@ -214,6 +214,18 @@ void remove_object_from_array(Upgrade arr[], int &count, int index) {
     count--;
 }
 
+// Removes a Projectile from an array of Projectiles by index and shifts the rest down
+void remove_object_from_array(Projectile arr[], int &count, int index) {
+    if (index < 0 || index >= count) {
+        printf("Error: Index out of bounds in remove_object_from_array\n");
+        return;
+    }
+    for (int i = index; i < count - 1; i++) {
+        arr[i] = arr[i + 1];
+    }
+    count--;
+}
+
 // Applies an upgrade to a tower and removes it from the possible upgrades
 void apply_upgrade(Tower &tower, int upgrade_index) {
     tower.damage = (int)(tower.damage * tower.possible_upgrades[upgrade_index].damage_multiplier);
@@ -232,9 +244,14 @@ void draw_range_circle(Tower tower) {
 // Gets the enemies that towers can shoot at
 void current_shots() {
     for (int i = 0; i < active_towers_count; i++) {
+        active_towers[i]->time_since_last_shot += 1.0f / FPS;
         for (int j = 0; j < active_enemies_count; j++) {
             if (distance_between(active_towers[i]->object.position, active_enemies[j]->object.position) <= active_towers[i]->range) {
-                printf("Tower %s can hit a target\n", active_towers[i]->name);
+                if (active_towers[i]->time_since_last_shot >= active_towers[i]->fire_rate) {
+                    shoot_projectile(*active_towers[i], active_enemies[j]);
+                    active_towers[i]->time_since_last_shot = 0.0f;
+                }
+                break;
             }
         }
     }
@@ -256,7 +273,7 @@ Vector2 multiply_vector(Vector2 vec, float multiplier) {
     return result;
 }
 
-
+// Shoots a projectile from a tower towards a target enemy
 void shoot_projectile(Tower tower, Enemy* target_enemy) {
     Projectile* new_projectile = new Projectile();
     new_projectile->object.image = load_image("images/sun.png");
@@ -288,5 +305,48 @@ void recalculate_projectiles() {
         Vector2i velocity = vector2_to_vector2i(multiply_vector(direction, proj->speed));
         proj->object.velocity = velocity;
         update_position(proj->object);
+    }
+}
+
+// Draws all active projectiles
+void draw_all_projectiles() {
+    for (int i = 0; i < active_projectiles_count; i++) {
+        if (active_projectiles[i] != nullptr) {
+            draw(*active_projectiles[i]);
+        }
+    }
+}
+
+// Draws all active towers
+void draw_all_towers() {
+    for (int i = 0; i < active_towers_count; i++) {
+        if (active_towers[i] != nullptr) {
+            draw(*active_towers[i]);
+        }
+    }
+}
+
+// Draws all active enemies
+void draw_all_enemies() {
+    for (int i = 0; i < active_enemies_count; i++) {
+        if (active_enemies[i] != nullptr) {
+            draw(*active_enemies[i]);
+        }
+    }
+}
+
+// Check if a projectile hit its target
+void check_projectiles() {
+    for (int i = 0; i < active_projectiles_count; i++) {
+        Projectile* proj = active_projectiles[i];
+        if (proj == nullptr) {
+            continue;
+        }
+        if (is_colliding(proj->object, proj->target->object)) {
+            proj->target->health -= proj->damage;
+            proj->object.exists = false;
+            remove_object_from_array(*active_projectiles, active_projectiles_count, i);
+            i--;
+        }
     }
 }

@@ -21,14 +21,17 @@ Enemy test_enemy;
 void frame_logic() {
     fill_screen(WHITE);
 
-    draw(test_tower);
-    draw(test_enemy);
-
     draw_range_circle(test_tower);
+
+    current_shots();
 
     recalculate_projectiles();
 
-    draw(*active_projectiles[0]);
+    draw_all_towers();
+    draw_all_enemies();
+    draw_all_projectiles();
+
+    check_projectiles();
 }
 
 // Handling the keyboard input ev is the allegro event
@@ -67,9 +70,7 @@ int main(int argc, char *argv[]) {
 
     new_penguin(test_enemy);
     test_enemy.object.scale = {0.15f, 0.15f};
-    test_enemy.object.position = {(get_display_width() / 2) + 100, (get_display_height() / 2) + 100};
-
-    shoot_projectile(test_tower, &test_enemy);
+    test_enemy.object.position = {(get_display_width() / 2) + 300, (get_display_height() / 2) + 300};
 
     al_start_timer(timer);
     al_get_mouse_cursor_position(&mouse_pos.x, &mouse_pos.y);

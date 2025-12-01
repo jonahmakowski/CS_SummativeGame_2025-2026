@@ -276,3 +276,7 @@ Vector2i multiply_vector(Vector2i vec, float multiplier);
 Vector2 multiply_vector(Vector2 vec, float multiplier);
 void shoot_projectile(Tower tower, Enemy* target_enemy);
 void recalculate_projectiles();
+void draw_all_projectiles();
+void draw_all_towers();
+void draw_all_enemies();
+void check_projectiles();

@@ -28,7 +28,7 @@ int define_tower_template(Tower &template_tower, const char* image_path, const c
 }
 
 void new_snowman(Tower &tower) {
-    if (define_tower_template(tower, "images/sun.png", "Snowman", 2, 200, 100, 0) != 0) {
+    if (define_tower_template(tower, "images/sun.png", "Snowman", 2, 500, 100, 0) != 0) {
         printf("Failed to create new tower");
     }
     add_tower(tower)
