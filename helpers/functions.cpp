@@ -350,3 +350,33 @@ void check_projectiles() {
         }
     }
 }
+
+Map load_map(const char* file_path) {
+    Map map;
+    map.tile_count = 0;
+    int width, height;
+
+    FILE* file = fopen(file_path, "r");
+    if (file == nullptr) {
+        printf("Error: Could not open map file %s\n", file_path);
+        return map;
+    }
+
+    fscanf(file, "%99s\n", map.name);
+    fscanf(file, "%d %d\n", &width, &height);
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            int tile_type;
+            fscanf(file, "%d", &tile_type);
+            MapTile tile;
+            tile.type = tile_type;
+            tile.position = {x, y}; // Assuming each tile is 64x64 pixels
+            map.tiles[map.tile_count] = tile;
+            map.tile_count++;
+        }
+    }
+
+    fclose(file);
+    return map;
+}

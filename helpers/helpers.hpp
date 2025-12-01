@@ -11,6 +11,15 @@ const ALLEGRO_COLOR BLUE = al_map_rgb(0, 0, 255);
 const ALLEGRO_COLOR WHITE = al_map_rgb(255, 255, 255);
 const ALLEGRO_COLOR BLACK = al_map_rgb(0, 0, 0);
 
+// Tile Constants
+
+#define TILE_GRASS 0
+#define TILE_PATH 1
+#define TILE_WATER 2
+#define TILE_TOWER_SPOT 3
+#define TILE_ENEMY_SPAWN 4
+#define TILE_ENEMY_GOAL 5
+
 // Structs
 
 // Vector with x,y positions as floats
@@ -111,6 +120,7 @@ struct Enemy {
     bool is_boss;
 };
 
+// Projectile struct representing a projectile in the game
 struct Projectile {
     Object object;
     
@@ -118,6 +128,17 @@ struct Projectile {
 
     float speed;
     int damage;
+};
+
+struct MapTile {
+    int type;
+    Vector2i position;
+};
+
+struct Map {
+    char name[100];
+    MapTile tiles[1000];
+    int tile_count;
 };
 
 // Globals
@@ -280,3 +301,4 @@ void draw_all_projectiles();
 void draw_all_towers();
 void draw_all_enemies();
 void check_projectiles();
+Map load_map(const char* file_path);
