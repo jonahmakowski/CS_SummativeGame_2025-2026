@@ -168,9 +168,13 @@ struct Map {
 
 #define PANEL_ROUNDING 10.0f
 
-#define PROJECTILE_SPEED 10.0f
+#define PROJECTILE_SPEED 20.0f
 
 #define TILE_SIZE 128
+
+extern int player_health;
+extern int player_coins;
+extern bool draw_range_circles;
 
 extern ALLEGRO_DISPLAY *display;
 extern ALLEGRO_EVENT_QUEUE *event_queue;
@@ -202,6 +206,7 @@ extern Keybind move_up;
 extern Keybind move_down;
 extern Keybind move_left;
 extern Keybind move_right;
+extern Keybind range_circle_toggle;
 extern Keybind kill_keybind;
 
 // Defines
@@ -285,7 +290,7 @@ Vector2i get_window_size();
 void draw_scaled_image(ALLEGRO_BITMAP *image, Vector2i position, Vector2 scale);
 bool init_allegro();
 
-// functions.cpp
+// general_functions.cpp
 bool pressing_keybind(Keybind keybind, ALLEGRO_EVENT ev);
 Vector2i camera_fixed_position(Vector2i position);
 void draw(ALLEGRO_BITMAP *image, Vector2i position, Vector2 scale);
@@ -317,6 +322,12 @@ bool currently_clicking(Enemy enemy);
 void remove_object_from_array(Upgrade arr[], int &count, int index);
 void remove_object_from_array(Projectile arr[], int &count, int index);
 void remove_object_from_array(Enemy arr[], int &count, int index);
+int index_of_in_array(MapTile tile, MapTile arr[], int count);
+int index_of_in_array(Vector2i point, MapTile arr[], int count);
+int index_of_in_array(Vector2i point, Vector2i arr[], int count);
+Vector2i subtract_vector(Vector2i a, Vector2i b);
+
+// functions.cpp
 void apply_upgrade(Tower &tower, int upgrade_index);
 void draw_range_circle(Tower tower);
 void current_shots();
@@ -332,10 +343,7 @@ int load_tile_images();
 void display_map(Map map);
 void print_map(Map map);
 bool is_in_array(Vector2i point, Vector2i arr[], int count);
-int index_of_in_array(MapTile tile, MapTile arr[], int count);
-int index_of_in_array(Vector2i point, MapTile arr[], int count);
-int index_of_in_array(Vector2i point, Vector2i arr[], int count);
 void add_path_points_to_map(Map &map);
 Map load_map(const char* file_path);
-Vector2i subtract_vector(Vector2i a, Vector2i b);
 void run_enemies();
+void draw_stats();

@@ -14,15 +14,17 @@
 
 #include "helpers/helpers.hpp"
 
+Tower test_tower;
+
 // Run every frame
 void frame_logic() {
     fill_screen(WHITE);
 
-    run_enemies();
-
     update_camera_position();
 
     display_map(active_map);
+
+    run_enemies();
 
     current_shots();
 
@@ -33,6 +35,8 @@ void frame_logic() {
     draw_all_projectiles();
 
     check_projectiles();
+
+    draw_stats();
 }
 
 // Handling the keyboard input ev is the allegro event
@@ -48,6 +52,9 @@ void handle_keyboard_input_down(ALLEGRO_EVENT ev) {
     }
     if (pressing_keybind(move_right, ev)) {
         camera.velocity.x = -10;
+    }
+    if (pressing_keybind(range_circle_toggle, ev)) {
+        draw_range_circles = !draw_range_circles;
     }
 }
 
@@ -76,6 +83,12 @@ bool setup_game() {
     if (load_tile_images() != 0) {
         return false;
     }
+
+    new_snowman(test_tower);
+    test_tower.object.position.x = TILE_SIZE * 2 + TILE_SIZE / 2;
+    test_tower.object.position.y = TILE_SIZE * 4 + TILE_SIZE / 2;
+    test_tower.object.scale = {0.5f, 0.5f};
+    add_tower(test_tower);
     
     return true;
 }

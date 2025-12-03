@@ -1,5 +1,9 @@
 #include "helpers.hpp"
 
+int player_health = 100;
+int player_coins = 0;
+bool draw_range_circles = false;
+
 ALLEGRO_DISPLAY *display = nullptr;
 ALLEGRO_EVENT_QUEUE *event_queue = nullptr;
 ALLEGRO_TIMER *timer = nullptr;
@@ -31,3 +35,4 @@ Keybind move_down = { { ALLEGRO_KEY_S, ALLEGRO_KEY_DOWN, -1 } };
 Keybind move_left = { { ALLEGRO_KEY_A, ALLEGRO_KEY_LEFT, -1 } };
 Keybind move_right = { { ALLEGRO_KEY_D, ALLEGRO_KEY_RIGHT, -1 } };
 Keybind kill_keybind = { { ALLEGRO_KEY_ESCAPE, -1 } };
+Keybind range_circle_toggle = { { ALLEGRO_KEY_R, -1 } };

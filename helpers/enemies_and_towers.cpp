@@ -9,7 +9,7 @@ int define_tower_template(Tower &template_tower, const char* image_path, const c
     template_tower.object.scale = {1.0f, 1.0f};
     template_tower.object.velocity = {0, 0};
     template_tower.object.position = {0, 0};
-    template_tower.object.exists = false;
+    template_tower.object.exists = true;
 
     strcpy(template_tower.name, name);
 
@@ -54,7 +54,7 @@ int define_enemy_template(Enemy &enemy_template, const char* image_path, int in_
     enemy_template.object.scale = {1.0f, 1.0f};
     enemy_template.object.velocity = {0, 0};
     enemy_template.object.position = {0, 0};
-    enemy_template.object.exists = false;
+    enemy_template.object.exists = true;
 
     enemy_template.path_index = 0;
 
