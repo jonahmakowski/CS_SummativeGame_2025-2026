@@ -226,6 +226,18 @@ void remove_object_from_array(Projectile arr[], int &count, int index) {
     count--;
 }
 
+// Removes an Enemy from an array of Enemies by index and shifts the rest down
+void remove_object_from_array(Enemy arr[], int &count, int index) {
+    if (index < 0 || index >= count) {
+        printf("Error: Index out of bounds in remove_object_from_array\n");
+        return;
+    }
+    for (int i = index; i < count - 1; i++) {
+        arr[i] = arr[i + 1];
+    }
+    count--;
+}
+
 // Applies an upgrade to a tower and removes it from the possible upgrades
 void apply_upgrade(Tower &tower, int upgrade_index) {
     tower.damage = (int)(tower.damage * tower.possible_upgrades[upgrade_index].damage_multiplier);
@@ -525,6 +537,13 @@ Map load_map(const char* file_path) {
     return map;
 }
 
+Vector2i subtract_vector(Vector2i a, Vector2i b) {
+    Vector2i result;
+    result.x = a.x - b.x;
+    result.y = a.y - b.y;
+    return result;
+}
+
 // Function that recaclulates enemies and spawns new ones based on the spawn rate
 void run_enemies() {
     // Enemy spawning
@@ -542,6 +561,8 @@ void run_enemies() {
         spawn_position.y += TILE_SIZE / 2;
         new_enemy->object.position = spawn_position;
 
+        new_enemy->path_index = 1;
+
         add_enemy(*new_enemy);
         printf("Spawned new enemy at (%d, %d)\n", new_enemy->object.position.x, new_enemy->object.position.y);
     }
@@ -552,5 +573,7 @@ void run_enemies() {
         if (enemy == nullptr) {
             continue;
         }
+
+        update_position(enemy->object);
     }
 }
