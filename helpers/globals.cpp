@@ -16,6 +16,14 @@ int active_towers_count = 0;
 int active_enemies_count = 0;
 int active_projectiles_count = 0;
 
+ALLEGRO_BITMAP* grass_tile;
+ALLEGRO_BITMAP* path_tile;
+ALLEGRO_BITMAP* tower_spot_tile;
+ALLEGRO_BITMAP* enemy_spawn_tile;
+ALLEGRO_BITMAP* enemy_goal_tile;
+
+Map active_map;
+
 // Keybinds
 
 Keybind move_up = { { ALLEGRO_KEY_W, ALLEGRO_KEY_UP, -1 } };

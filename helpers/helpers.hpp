@@ -11,14 +11,17 @@ const ALLEGRO_COLOR BLUE = al_map_rgb(0, 0, 255);
 const ALLEGRO_COLOR WHITE = al_map_rgb(255, 255, 255);
 const ALLEGRO_COLOR BLACK = al_map_rgb(0, 0, 0);
 
-// Tile Constants
+// Enums
 
-#define TILE_GRASS 0
-#define TILE_PATH 1
-#define TILE_WATER 2
-#define TILE_TOWER_SPOT 3
-#define TILE_ENEMY_SPAWN 4
-#define TILE_ENEMY_GOAL 5
+// Enum for different tile types
+typedef enum TileType {
+    GRASS,
+    PATH,
+    WATER,
+    TOWER_SPOT,
+    ENEMY_SPAWN,
+    ENEMY_GOAL
+} TileType;
 
 // Structs
 
@@ -75,6 +78,7 @@ struct Panel {
     int child_count = 0;
 };
 
+// A Upgrade for a tower
 struct Upgrade {
     char name[100];
     char description[250];
@@ -112,6 +116,8 @@ struct Enemy {
     int max_health;
     float speed;
 
+    int path_index;
+
     int reward;
 
     int in_levels[20];
@@ -131,13 +137,22 @@ struct Projectile {
 };
 
 struct MapTile {
-    int type;
+    TileType type;
     Vector2i position;
 };
 
 struct Map {
     char name[100];
     MapTile tiles[1000];
+
+    // In paths, the sequence of tiles that form the enemy path
+    // Where index 0 is the spawn point and the last index is the goal
+    Vector2i paths[1000];
+    int paths_count;
+
+    int spawn_rate;
+    float time_since_last_spawn;
+
     int tile_count;
 };
 
@@ -155,6 +170,8 @@ struct Map {
 
 #define PROJECTILE_SPEED 10.0f
 
+#define TILE_SIZE 128
+
 extern ALLEGRO_DISPLAY *display;
 extern ALLEGRO_EVENT_QUEUE *event_queue;
 extern ALLEGRO_TIMER *timer;
@@ -170,6 +187,14 @@ extern Projectile *active_projectiles[100];
 extern int active_towers_count;
 extern int active_enemies_count;
 extern int active_projectiles_count;
+
+extern ALLEGRO_BITMAP* grass_tile;
+extern ALLEGRO_BITMAP* path_tile;
+extern ALLEGRO_BITMAP* tower_spot_tile;
+extern ALLEGRO_BITMAP* enemy_spawn_tile;
+extern ALLEGRO_BITMAP* enemy_goal_tile;
+
+extern Map active_map;
 
 // Keybinds
 
@@ -301,4 +326,13 @@ void draw_all_projectiles();
 void draw_all_towers();
 void draw_all_enemies();
 void check_projectiles();
+int load_tile_images();
+void display_map(Map map);
+void print_map(Map map);
+bool is_in_array(Vector2i point, Vector2i arr[], int count);
+int index_of_in_array(MapTile tile, MapTile arr[], int count);
+int index_of_in_array(Vector2i point, MapTile arr[], int count);
+int index_of_in_array(Vector2i point, Vector2i arr[], int count);
+void add_path_points_to_map(Map &map);
 Map load_map(const char* file_path);
+void run_enemies();

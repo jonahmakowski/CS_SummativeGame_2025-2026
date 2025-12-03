@@ -31,7 +31,6 @@ void new_snowman(Tower &tower) {
     if (define_tower_template(tower, "images/sun.png", "Snowman", 2, 500, 100, 0) != 0) {
         printf("Failed to create new tower");
     }
-    add_tower(tower)
 }
 
 // Enemies
@@ -57,6 +56,8 @@ int define_enemy_template(Enemy &enemy_template, const char* image_path, int in_
     enemy_template.object.position = {0, 0};
     enemy_template.object.exists = false;
 
+    enemy_template.path_index = 0;
+
     return 0;
 }
 
@@ -65,5 +66,4 @@ void new_penguin(Enemy &enemy) {
     if (define_enemy_template(enemy, "images/earth.png", in_levels, 1, 10, 1, 10, false) != 0) {
         printf("Failed to create new tower");
     }
-    add_enemy(enemy);
 }

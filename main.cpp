@@ -14,14 +14,15 @@
 
 #include "helpers/helpers.hpp"
 
-Tower test_tower;
-Enemy test_enemy;
-
 // Run every frame
 void frame_logic() {
     fill_screen(WHITE);
 
-    draw_range_circle(test_tower);
+    run_enemies();
+
+    update_camera_position();
+
+    display_map(active_map);
 
     current_shots();
 
@@ -36,12 +37,28 @@ void frame_logic() {
 
 // Handling the keyboard input ev is the allegro event
 void handle_keyboard_input_down(ALLEGRO_EVENT ev) {
-    
+    if (pressing_keybind(move_up, ev)) {
+        camera.velocity.y = 10;
+    }
+    if (pressing_keybind(move_down, ev)) {
+        camera.velocity.y = -10;
+    }
+    if (pressing_keybind(move_left, ev)) {
+        camera.velocity.x = 10;
+    }
+    if (pressing_keybind(move_right, ev)) {
+        camera.velocity.x = -10;
+    }
 }
 
 // Run when a key is released
 void handle_keyboard_input_up(ALLEGRO_EVENT ev) {
-    
+    if (pressing_keybind(move_up, ev) || pressing_keybind(move_down, ev)) {
+        camera.velocity.y = 0;
+    }
+    if (pressing_keybind(move_left, ev) || pressing_keybind(move_right, ev)) {
+        camera.velocity.x = 0;
+    }
 }
 
 // Run when mouse input is detected
@@ -51,26 +68,28 @@ void handle_mouse_input(ALLEGRO_EVENT ev) {
 
 // Run to setup the game before the main loop
 // Does things like defining sprites for game objects
-void setup_game() {
+bool setup_game() {
+    if (!init_allegro()) {
+        return false;
+    }
 
+    if (load_tile_images() != 0) {
+        return false;
+    }
+    
+    return true;
 }
 
 int main(int argc, char *argv[]) {    
-    if (!init_allegro()) {
+    srand(time(0));
+
+    if (!setup_game()) {
+        printf("Failed to setup game\n");
         return -1;
     }
 
-    srand(time(0));
-
-    setup_game();
-
-    new_snowman(test_tower);
-    test_tower.object.scale = {0.5f, 0.5f};
-    test_tower.object.position = {get_display_width() / 2, get_display_height() / 2};
-
-    new_penguin(test_enemy);
-    test_enemy.object.scale = {0.15f, 0.15f};
-    test_enemy.object.position = {(get_display_width() / 2) + 300, (get_display_height() / 2) + 300};
+    active_map = load_map("maps/level1.map");
+    //print_map(active_map);
 
     al_start_timer(timer);
     al_get_mouse_cursor_position(&mouse_pos.x, &mouse_pos.y);

@@ -117,8 +117,8 @@ Vector2 get_direction_to(Vector2i from, Vector2i to) {
 
 // Updates the camera's position based on its velocity
 void update_camera_position() {
-    camera.position.x -= camera.velocity.x;
-    camera.position.y -= camera.velocity.y;
+    camera.position.x += camera.velocity.x;
+    camera.position.y += camera.velocity.y;
 }
 
 // Gets the distance between two Vector2i points using the Pythagorean theorem
@@ -351,32 +351,206 @@ void check_projectiles() {
     }
 }
 
+// Load the tile images
+int load_tile_images() {
+    load_image_with_checks("tiles/grass.png", grass_tile);
+    load_image_with_checks("tiles/path.png", path_tile);
+    load_image_with_checks("tiles/tower_spot.png", tower_spot_tile);
+    load_image_with_checks("tiles/enemy_spawn.png", enemy_spawn_tile);
+    load_image_with_checks("tiles/enemy_goal.png", enemy_goal_tile);
+    return 0;
+}
+
+void display_map(Map map) {
+    for (int i = 0; i < map.tile_count; i++) {
+        MapTile tile = map.tiles[i];
+        Vector2i tile_position = {tile.position.x * TILE_SIZE + TILE_SIZE / 2, tile.position.y * TILE_SIZE + TILE_SIZE / 2};
+        Vector2 scale = {1.0f, 1.0f};
+        switch (tile.type) {
+            case GRASS:
+                draw(grass_tile, tile_position, scale);
+                break;
+            case PATH:
+                draw(path_tile, tile_position, scale);
+                break;
+            case TOWER_SPOT:
+                draw(tower_spot_tile, tile_position, scale);
+                break;
+            case ENEMY_SPAWN:
+                draw(enemy_spawn_tile, tile_position, scale);
+                break;
+            case ENEMY_GOAL:
+                draw(enemy_goal_tile, tile_position, scale);
+                break;
+            default:
+                draw(grass_tile, tile_position, scale);
+                break;
+        }
+    }
+}
+
+// Function to print map details for debugging
+void print_map(Map map) {
+    printf("Map Name: %s\n", map.name);
+    for (int i = 0; i < map.tile_count; i++) {
+        printf("Tile %d: Type %d at Position (%d, %d)\n", i, map.tiles[i].type, map.tiles[i].position.x, map.tiles[i].position.y);
+    }
+
+    printf("\n\nPath Points:\n");
+    for (int i = 0; i < map.paths_count; i++) {
+        printf("Path Point %d: (%d, %d)\n", i, map.paths[i].x, map.paths[i].y);
+    }
+
+    printf("Spawn Rate: %d\n", map.spawn_rate);
+}
+
+bool is_in_array(Vector2i point, Vector2i arr[], int count) {
+    for (int i = 0; i < count; i++) {
+        if (arr[i].x == point.x && arr[i].y == point.y) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int index_of_in_array(MapTile tile, MapTile arr[], int count) {
+    for (int i = 0; i < count; i++) {
+        if (arr[i].position.x == tile.position.x && arr[i].position.y == tile.position.y) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int index_of_in_array(Vector2i point, MapTile arr[], int count) {
+    for (int i = 0; i < count; i++) {
+        if (arr[i].position.x == point.x && arr[i].position.y == point.y) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int index_of_in_array(Vector2i point, Vector2i arr[], int count) {
+    for (int i = 0; i < count; i++) {
+        if (arr[i].x == point.x && arr[i].y == point.y) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+// Adds path points to the map based on the tiles
+void add_path_points_to_map(Map &map) {
+    map.paths_count = 0;
+
+    MapTile *spawn_point = nullptr;
+    MapTile *goal_point = nullptr;
+
+    for (int i = 0; i < map.tile_count; i++) {
+        if (map.tiles[i].type == ENEMY_SPAWN) {
+            spawn_point = &map.tiles[i];
+        } else if (map.tiles[i].type == ENEMY_GOAL) {
+            goal_point = &map.tiles[i];
+        }
+    }
+
+    MapTile *current_tile = spawn_point;
+    while (current_tile->position.x != goal_point->position.x || current_tile->position.y != goal_point->position.y) {
+        map.paths[map.paths_count] = current_tile->position;
+        map.paths_count++;
+
+        bool found_next = false;
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                MapTile *neighbor_tile;
+                if (index_of_in_array({current_tile->position.x + i, current_tile->position.y + j}, map.tiles, map.tile_count) != -1) {
+                    if (index_of_in_array({current_tile->position.x + i, current_tile->position.y + j}, map.paths, map.paths_count) != -1) {
+                        continue;
+                    }
+                    neighbor_tile = &map.tiles[index_of_in_array({current_tile->position.x + i, current_tile->position.y + j}, map.tiles, map.tile_count)];
+                    if (neighbor_tile->type == PATH || neighbor_tile->type == ENEMY_GOAL) {
+                        found_next = true;
+                        current_tile = neighbor_tile;
+                        break;
+                    }
+                }
+            }
+
+            if (found_next) {
+                break;
+            }
+        }
+
+        if (!found_next) {
+            printf("Error: Could not find next path tile from (%d, %d)\n", current_tile->position.x, current_tile->position.y);
+            exit(1);
+        }
+    }
+}
+
+// Function to load a map from a file
 Map load_map(const char* file_path) {
     Map map;
     map.tile_count = 0;
     int width, height;
 
     FILE* file = fopen(file_path, "r");
-    if (file == nullptr) {
+    if (!file) {
         printf("Error: Could not open map file %s\n", file_path);
         return map;
     }
 
-    fscanf(file, "%99s\n", map.name);
-    fscanf(file, "%d %d\n", &width, &height);
+    fgets(map.name, sizeof(map.name)-1, file);
+    fscanf(file, "%d %d", &width, &height);
+    fscanf(file, "%d", &map.spawn_rate);
 
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
             int tile_type;
             fscanf(file, "%d", &tile_type);
             MapTile tile;
-            tile.type = tile_type;
-            tile.position = {x, y}; // Assuming each tile is 64x64 pixels
+            tile.type = (TileType)tile_type;
+            tile.position = {x, y};
             map.tiles[map.tile_count] = tile;
             map.tile_count++;
         }
     }
 
+    map.time_since_last_spawn = map.spawn_rate + 1.0f;
+
+    add_path_points_to_map(map);
+
     fclose(file);
     return map;
+}
+
+// Function that recaclulates enemies and spawns new ones based on the spawn rate
+void run_enemies() {
+    // Enemy spawning
+    active_map.time_since_last_spawn += 1.0f / FPS;
+    if (active_map.time_since_last_spawn >= active_map.spawn_rate) {
+        active_map.time_since_last_spawn = 0;
+
+        Enemy* new_enemy = new Enemy();
+        new_penguin(*new_enemy);
+
+        new_enemy->object.scale = {0.25f, 0.25f};
+
+        Vector2i spawn_position = multiply_vector(active_map.paths[0], TILE_SIZE);
+        spawn_position.x += TILE_SIZE / 2;
+        spawn_position.y += TILE_SIZE / 2;
+        new_enemy->object.position = spawn_position;
+
+        add_enemy(*new_enemy);
+        printf("Spawned new enemy at (%d, %d)\n", new_enemy->object.position.x, new_enemy->object.position.y);
+    }
+
+    // Update enemies
+    for (int i = 0; i < active_enemies_count; i++) {
+        Enemy* enemy = active_enemies[i];
+        if (enemy == nullptr) {
+            continue;
+        }
+    }
 }
