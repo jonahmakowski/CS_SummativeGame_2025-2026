@@ -35,6 +35,36 @@ void new_tower(Tower &tower, TowerType type) {
                 printf("Failed to create new tower");
             }
             break;
+        case SNOWBALL_THROWER:
+            if (define_tower_template(tower, "images/sun.png", "Snowball Thrower", 2, 500, 100, 1) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case WATER_BALLOON:
+        if (define_tower_template(tower, "images/sun.png", "Water Balloon Thrower", 2, 500, 100, 0) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case ICICLE_LAUNCHER:
+            if (define_tower_template(tower, "images/sun.png", "Icicle Launcher", 2, 500, 100, 0) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case SNOWBLOWER:
+            if (define_tower_template(tower, "images/sun.png", "Snowblower", 2, 500, 100, 0) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case MAMMOTH:
+            if (define_tower_template(tower, "images/sun.png", "Mammoth", 2, 500, 100, 0) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case ICE_WIZARD:
+            if (define_tower_template(tower, "images/sun.png", "Magic Joe", 2, 500, 100, 0) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
         default:
             printf("Unknown tower type %d\n", type);
             break;
@@ -93,7 +123,42 @@ void new_enemy(Enemy &enemy, EnemyType type) {
             }
             break;
         case RABBIT:
-            if (define_enemy_template(enemy, "images/sun.png", 20, 10, 2, false) != 0) {
+            if (define_enemy_template(enemy, "images/sun.png", 20, 10, 45, false) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case FIRE_WIZARD:
+            if (define_enemy_template(enemy, "images/sun.png", 75, 15, 20, false) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case CAMPFIRE:
+            if (define_enemy_template(enemy, "images/sun.png", 300, 75, 8, false) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case FIRE_SPRITE:
+            if (define_enemy_template(enemy, "images/sun.png", 30, 10, 60, false) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case EMBER:
+            if (define_enemy_template(enemy, "images/sun.png", 10, 1, 20, false) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case NEIGHBOR_BOSS:
+            if (define_enemy_template(enemy, "images/sun.png", 1000, 100, 20, true) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case TODDLER_BOSS:
+            if (define_enemy_template(enemy, "images/sun.png", 2000, 200, 20, true) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case SUN_BOSS:
+            if (define_enemy_template(enemy, "images/sun.png", 3000, 300, 20, true) != 0) {
                 printf("Failed to create new tower");
             }
             break;

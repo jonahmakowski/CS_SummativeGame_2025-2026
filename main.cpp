@@ -20,7 +20,7 @@ void frame_logic() {
 
     update_camera_position();
 
-    display_map(active_map);
+    display_map();
 
     run_enemies();
 
@@ -34,7 +34,7 @@ void frame_logic() {
 
     check_projectiles();
 
-    draw_stats();
+    draw_ui();
 }
 
 // Handling the keyboard input ev is the allegro event

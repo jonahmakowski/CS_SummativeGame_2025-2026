@@ -29,11 +29,24 @@ typedef enum EnemyType {
     ICE_SPRITE,
     ICE_GIANT,
     YAK,
-    RABBIT
+    RABBIT,
+    FIRE_WIZARD,
+    CAMPFIRE,
+    FIRE_SPRITE,
+    EMBER,
+    NEIGHBOR_BOSS,
+    TODDLER_BOSS,
+    SUN_BOSS
 } EnemyType;
 
 typedef enum TowerType {
-    SNOWMAN
+    SNOWMAN,
+    SNOWBALL_THROWER,
+    WATER_BALLOON,
+    ICICLE_LAUNCHER,
+    SNOWBLOWER,
+    MAMMOTH,
+    ICE_WIZARD
 } TowerType;
 
 // Structs
@@ -169,9 +182,21 @@ struct TowerSpot {
 // A struct representing sub-waves of enemies
 struct SubWaves {
     int count;
-    int type;
-    int interval;
-    int delay;
+    EnemyType type;
+    float interval;
+
+    float delay = 0.0;
+    bool delay_passed = false;
+
+    int count_spawned = 0;
+    float time_since_last_spawn;
+};
+
+// A struct representing a wave of enemies
+struct Wave {
+    int sub_wave_count = 0;
+    bool wave_complete = false;
+    SubWaves sub_waves[100];
 };
 
 // Map struct representing the game map
@@ -188,10 +213,9 @@ struct Map {
     TowerSpot tower_spots[1000];
     int tower_spots_count;
 
-    int spawn_rate;
-    float time_since_last_spawn;
-
-    SubWaves sub_waves[100][100];
+    Wave waves[100];
+    int wave_count = 0;
+    int current_wave_index = 0;
 };
 
 // Globals
@@ -376,11 +400,11 @@ void draw_all_towers();
 void draw_all_enemies();
 void check_projectiles();
 int load_tile_images();
-void display_map(Map map);
-void print_map(Map map);
+void display_map();
+void print_map();
 bool is_in_array(Vector2i point, Vector2i arr[], int count);
 void add_path_points_to_map(Map &map);
 Map load_map(const char* file_path);
 void run_enemies();
-void draw_stats();
+void draw_ui();
 void build_tower_on_click(ALLEGRO_EVENT ev);

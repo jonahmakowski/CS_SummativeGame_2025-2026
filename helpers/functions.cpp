@@ -143,9 +143,9 @@ int load_tile_images() {
 }
 
 // Function to display the map
-void display_map(Map map) {
-    for (int i = 0; i < map.tile_count; i++) {
-        MapTile tile = map.tiles[i];
+void display_map() {
+    for (int i = 0; i < active_map.tile_count; i++) {
+        MapTile tile = active_map.tiles[i];
         Vector2i tile_position = tile_pos_to_pixel_pos(tile.position);
         Vector2 scale = {1.0f, 1.0f};
         switch (tile.type) {
@@ -173,18 +173,16 @@ void display_map(Map map) {
 }
 
 // Function to print map details for debugging
-void print_map(Map map) {
-    printf("Map Name: %s\n", map.name);
-    for (int i = 0; i < map.tile_count; i++) {
-        printf("Tile %d: Type %d at Position (%d, %d)\n", i, map.tiles[i].type, map.tiles[i].position.x, map.tiles[i].position.y);
+void print_map() {
+    printf("Map Name: %s\n", active_map.name);
+    for (int i = 0; i < active_map.tile_count; i++) {
+        printf("Tile %d: Type %d at Position (%d, %d)\n", i, active_map.tiles[i].type, active_map.tiles[i].position.x, active_map.tiles[i].position.y);
     }
 
     printf("\n\nPath Points:\n");
-    for (int i = 0; i < map.path_count; i++) {
-        printf("Path Point %d: (%d, %d)\n", i, map.path[i].x, map.path[i].y);
+    for (int i = 0; i < active_map.path_count; i++) {
+        printf("Path Point %d: (%d, %d)\n", i, active_map.path[i].x, active_map.path[i].y);
     }
-
-    printf("Spawn Rate: %d\n", map.spawn_rate);
 }
 
 // Adds path points to the map based on the tiles
@@ -257,7 +255,6 @@ Map load_map(const char* file_path) {
 
     fgets(map.name, sizeof(map.name)-1, file);
     fscanf(file, "%d %d", &width, &height);
-    fscanf(file, "%d", &map.spawn_rate);
 
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
@@ -276,7 +273,34 @@ Map load_map(const char* file_path) {
         }
     }
 
-    map.time_since_last_spawn = map.spawn_rate + 1.0f;
+    int last_wave_num = 0;
+    int sub_wave_index = 0;
+
+    char line[256];
+    fgets(line, sizeof(line) - 1, file);
+
+    map.wave_count = 1;
+
+    while (fgets(line, sizeof(line) - 1, file)) {
+        int wave_num, num_enemies, enemy_type;
+        float interval, delay;
+        sscanf(line, "%d %d %d %f %f", &wave_num, &num_enemies, &enemy_type, &interval, &delay);
+        
+        if (wave_num != last_wave_num) {
+            map.wave_count++;
+            map.waves[wave_num].sub_wave_count = 0;
+            sub_wave_index = 0;
+        }
+
+        SubWaves *sub_wave = &map.waves[wave_num].sub_waves[sub_wave_index];
+        sub_wave->count = num_enemies;
+        sub_wave->type = (EnemyType)enemy_type;
+        sub_wave->interval = interval;
+        sub_wave->delay = delay;
+        sub_wave_index++;
+        last_wave_num = wave_num;
+        map.waves[wave_num].sub_wave_count++;
+    }
 
     add_path_points_to_map(map);
 
@@ -287,22 +311,54 @@ Map load_map(const char* file_path) {
 // Function that recaclulates enemies and spawns new ones based on the spawn rate
 void run_enemies() {
     // Enemy spawning
-    active_map.time_since_last_spawn += 1.0f / FPS;
-    if (active_map.time_since_last_spawn >= active_map.spawn_rate) {
-        active_map.time_since_last_spawn = 0;
+    for (int i = 0; i < active_map.wave_count; i++) {
+        if (active_map.waves[i].wave_complete) {
+            continue;
+        }
 
-        Enemy* enemy = new Enemy();
+        bool wave_done = true;
 
-        new_enemy(*enemy, PENGUIN);
+        for (int j = 0; j < active_map.waves[i].sub_wave_count; j++) {
+            SubWaves *sub_wave = &active_map.waves[i].sub_waves[j];
 
-        enemy->object.scale = {0.25f, 0.25f};
+            sub_wave->time_since_last_spawn += 1.0f / FPS;
 
-        Vector2i spawn_position = tile_pos_to_pixel_pos(active_map.path[0]);
-        enemy->object.position = spawn_position;
+            if (sub_wave->time_since_last_spawn <= sub_wave->delay && !sub_wave->delay_passed) {
+                wave_done = false;
+                continue;
+            } else if (sub_wave->time_since_last_spawn >= sub_wave->delay && !sub_wave->delay_passed) {
+                sub_wave->delay_passed = true;
+                sub_wave->time_since_last_spawn = sub_wave->interval + 5;
+            }
 
-        enemy->path_index = 1;
+            if (sub_wave->time_since_last_spawn >= sub_wave->interval && sub_wave->count_spawned < sub_wave->count) {
+                sub_wave->time_since_last_spawn = 0;
 
-        add_enemy(*enemy);
+                Enemy *enemy = new Enemy();
+
+                new_enemy(*enemy, sub_wave->type);
+
+                enemy->object.scale = {0.25f, 0.25f};
+
+                enemy->object.position = tile_pos_to_pixel_pos(active_map.path[0]);
+
+                enemy->path_index = 1;
+
+                add_enemy(*enemy);
+
+                sub_wave->count_spawned += 1;
+            }
+
+            if (sub_wave->count_spawned < sub_wave->count) {
+                wave_done = false;
+            }
+        }
+        
+        active_map.waves[i].wave_complete = wave_done;
+
+        if (!wave_done) {
+            break;
+        }
     }
 
     // Update enemies
@@ -359,7 +415,7 @@ void run_enemies() {
 }
 
 // Function to draw player stats
-void draw_stats() {
+void draw_ui() {
     // Health
     Panel health_panel;
     health_panel.top_left = {0, 0};
