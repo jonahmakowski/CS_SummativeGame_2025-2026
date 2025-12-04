@@ -6,6 +6,14 @@
 
 #include "helpers.hpp"
 
+// Converts tile position to pixel position (center of tile)
+Vector2i tile_pos_to_pixel_pos(Vector2i tile_pos) {
+    Vector2i pixel_pos;
+    pixel_pos.x = tile_pos.x * TILE_SIZE + TILE_SIZE / 2;
+    pixel_pos.y = tile_pos.y * TILE_SIZE + TILE_SIZE / 2;
+    return pixel_pos;
+}
+
 // Applies an upgrade to a tower and removes it from the possible upgrades
 void apply_upgrade(Tower &tower, int upgrade_index) {
     tower.damage = (int)(tower.damage * tower.possible_upgrades[upgrade_index].damage_multiplier);
@@ -27,11 +35,11 @@ void current_shots() {
         active_towers[i]->time_since_last_shot += 1.0f / FPS;
         for (int j = 0; j < active_enemies_count; j++) {
             if (distance_between(active_towers[i]->object.position, active_enemies[j]->object.position) <= active_towers[i]->range) {
-                if (active_towers[i]->time_since_last_shot >= active_towers[i]->fire_rate) {
+                if (active_towers[i]->time_since_last_shot >= active_towers[i]->fire_rate && active_enemies[j]->expected_damage < active_enemies[j]->health) {
                     shoot_projectile(*active_towers[i], active_enemies[j]);
                     active_towers[i]->time_since_last_shot = 0.0f;
+                    break;
                 }
-                break;
             }
         }
     }
@@ -49,6 +57,8 @@ void shoot_projectile(Tower tower, Enemy* target_enemy) {
     new_projectile->damage = tower.damage;
 
     new_projectile->target = target_enemy;
+
+    target_enemy->expected_damage += new_projectile->damage;
 
     Vector2 direction = get_direction_to(tower.object.position, target_enemy->object.position);
     Vector2i velocity = vector2_to_vector2i(multiply_vector(direction, new_projectile->speed));
@@ -132,10 +142,11 @@ int load_tile_images() {
     return 0;
 }
 
+// Function to display the map
 void display_map(Map map) {
     for (int i = 0; i < map.tile_count; i++) {
         MapTile tile = map.tiles[i];
-        Vector2i tile_position = {tile.position.x * TILE_SIZE + TILE_SIZE / 2, tile.position.y * TILE_SIZE + TILE_SIZE / 2};
+        Vector2i tile_position = tile_pos_to_pixel_pos(tile.position);
         Vector2 scale = {1.0f, 1.0f};
         switch (tile.type) {
             case GRASS:
@@ -154,6 +165,7 @@ void display_map(Map map) {
                 draw(enemy_goal_tile, tile_position, scale);
                 break;
             default:
+                printf("Unknown tile type %d at position (%d, %d)\n", tile.type, tile.position.x, tile.position.y);
                 draw(grass_tile, tile_position, scale);
                 break;
         }
@@ -168,25 +180,16 @@ void print_map(Map map) {
     }
 
     printf("\n\nPath Points:\n");
-    for (int i = 0; i < map.paths_count; i++) {
-        printf("Path Point %d: (%d, %d)\n", i, map.paths[i].x, map.paths[i].y);
+    for (int i = 0; i < map.path_count; i++) {
+        printf("Path Point %d: (%d, %d)\n", i, map.path[i].x, map.path[i].y);
     }
 
     printf("Spawn Rate: %d\n", map.spawn_rate);
 }
 
-bool is_in_array(Vector2i point, Vector2i arr[], int count) {
-    for (int i = 0; i < count; i++) {
-        if (arr[i].x == point.x && arr[i].y == point.y) {
-            return true;
-        }
-    }
-    return false;
-}
-
 // Adds path points to the map based on the tiles
 void add_path_points_to_map(Map &map) {
-    map.paths_count = 0;
+    map.path_count = 0;
 
     MapTile *spawn_point = nullptr;
     MapTile *goal_point = nullptr;
@@ -201,8 +204,8 @@ void add_path_points_to_map(Map &map) {
 
     MapTile *current_tile = spawn_point;
     while (current_tile->position.x != goal_point->position.x || current_tile->position.y != goal_point->position.y) {
-        map.paths[map.paths_count] = current_tile->position;
-        map.paths_count++;
+        map.path[map.path_count] = current_tile->position;
+        map.path_count++;
 
         bool found_next = false;
         for (int i = -1; i <= 1; i++) {
@@ -213,7 +216,7 @@ void add_path_points_to_map(Map &map) {
                 
                 MapTile *neighbor_tile;
                 if (index_of_in_array({current_tile->position.x + i, current_tile->position.y + j}, map.tiles, map.tile_count) != -1) {
-                    if (index_of_in_array({current_tile->position.x + i, current_tile->position.y + j}, map.paths, map.paths_count) != -1) {
+                    if (index_of_in_array({current_tile->position.x + i, current_tile->position.y + j}, map.path, map.path_count) != -1) {
                         continue;
                     }
                     neighbor_tile = &map.tiles[index_of_in_array({current_tile->position.x + i, current_tile->position.y + j}, map.tiles, map.tile_count)];
@@ -236,8 +239,8 @@ void add_path_points_to_map(Map &map) {
         }
     }
 
-    map.paths[map.paths_count] = current_tile->position;
-    map.paths_count++;
+    map.path[map.path_count] = current_tile->position;
+    map.path_count++;
 }
 
 // Function to load a map from a file
@@ -265,6 +268,11 @@ Map load_map(const char* file_path) {
             tile.position = {x, y};
             map.tiles[map.tile_count] = tile;
             map.tile_count++;
+
+            if (tile.type == TOWER_SPOT) {
+                map.tower_spots[map.tower_spots_count].position = tile.position;
+                map.tower_spots_count++;
+            }
         }
     }
 
@@ -283,19 +291,18 @@ void run_enemies() {
     if (active_map.time_since_last_spawn >= active_map.spawn_rate) {
         active_map.time_since_last_spawn = 0;
 
-        Enemy* new_enemy = new Enemy();
-        new_penguin(*new_enemy);
+        Enemy* enemy = new Enemy();
 
-        new_enemy->object.scale = {0.25f, 0.25f};
+        new_enemy(*enemy, PENGUIN);
 
-        Vector2i spawn_position = multiply_vector(active_map.paths[0], TILE_SIZE);
-        spawn_position.x += TILE_SIZE / 2;
-        spawn_position.y += TILE_SIZE / 2;
-        new_enemy->object.position = spawn_position;
+        enemy->object.scale = {0.25f, 0.25f};
 
-        new_enemy->path_index = 1;
+        Vector2i spawn_position = tile_pos_to_pixel_pos(active_map.path[0]);
+        enemy->object.position = spawn_position;
 
-        add_enemy(*new_enemy);
+        enemy->path_index = 1;
+
+        add_enemy(*enemy);
     }
 
     // Update enemies
@@ -305,13 +312,13 @@ void run_enemies() {
             continue;
         }
 
-        Vector2i direction = subtract_vector(active_map.paths[enemy->path_index], 
-                                active_map.paths[enemy->path_index - 1]);
+        Vector2i direction = subtract_vector(active_map.path[enemy->path_index], 
+                                active_map.path[enemy->path_index - 1]);
 
         if (direction.x == 0) {
-            enemy->object.position.x = active_map.paths[enemy->path_index - 1].x * TILE_SIZE + TILE_SIZE / 2;
+            enemy->object.position.x = tile_pos_to_pixel_pos(active_map.path[enemy->path_index - 1]).x;
         } else if (direction.y == 0) {
-            enemy->object.position.y = active_map.paths[enemy->path_index - 1].y * TILE_SIZE + TILE_SIZE / 2;
+            enemy->object.position.y = tile_pos_to_pixel_pos(active_map.path[enemy->path_index - 1]).y;
         }
         
         Vector2i velocity = multiply_vector(direction, enemy->speed);
@@ -321,26 +328,26 @@ void run_enemies() {
         update_position(enemy->object);
 
         if (direction.x != 0) {
-            if (enemy->object.position.x >= active_map.paths[enemy->path_index].x * TILE_SIZE + TILE_SIZE / 2 && direction.x > 0) {
+            if (enemy->object.position.x >= tile_pos_to_pixel_pos(active_map.path[enemy->path_index]).x && direction.x > 0) {
                 enemy->path_index++;
-            } else if (enemy->object.position.x <= active_map.paths[enemy->path_index].x * TILE_SIZE + TILE_SIZE / 2 && direction.x < 0) {
+            } else if (enemy->object.position.x <= tile_pos_to_pixel_pos(active_map.path[enemy->path_index]).x && direction.x < 0) {
                 enemy->path_index++;
             }
         } else if (direction.y != 0) {
-            if (enemy->object.position.y >= active_map.paths[enemy->path_index].y * TILE_SIZE + TILE_SIZE / 2 && direction.y > 0) {
+            if (enemy->object.position.y >= tile_pos_to_pixel_pos(active_map.path[enemy->path_index]).y && direction.y > 0) {
                 enemy->path_index++;
-            } else if (enemy->object.position.y <= active_map.paths[enemy->path_index].y * TILE_SIZE + TILE_SIZE / 2 && direction.y < 0) {
+            } else if (enemy->object.position.y <= tile_pos_to_pixel_pos(active_map.path[enemy->path_index]).y && direction.y < 0) {
                 enemy->path_index++;
             }
         }
         
-        if (enemy->path_index >= active_map.paths_count) {
+        if (enemy->path_index >= active_map.path_count) {
             player_health -= enemy->reward;
         } else if (enemy->health <= 0) {
             player_coins += enemy->reward;
         }
         
-        if (enemy->path_index >= active_map.paths_count || enemy->health <= 0) {
+        if (enemy->path_index >= active_map.path_count || enemy->health <= 0) {
             enemy->object.exists = false;
             for (int j = i; j < active_enemies_count; j++) {
                 active_enemies[j] = active_enemies[j + 1]; 
@@ -351,17 +358,15 @@ void run_enemies() {
     }
 }
 
-//Drawing player stats
+// Function to draw player stats
 void draw_stats() {
     // Health
     Panel health_panel;
     health_panel.top_left = {0, 0};
     health_panel.bottom_right = {300, 80};
     health_panel.color = GREEN;
-    health_panel.font = default_font;
 
     snprintf(health_panel.text, sizeof(health_panel.text), "Health: %d", player_health);
-
     draw(health_panel);
 
     // Coins
@@ -369,9 +374,28 @@ void draw_stats() {
     health_panel.top_left = {get_display_width() - 300, 0};
     health_panel.bottom_right = {get_display_width(), 80};
     health_panel.color = GREEN;
-    health_panel.font = default_font;
 
     snprintf(health_panel.text, sizeof(health_panel.text), "Coins: %d", player_coins);
-
     draw(health_panel);
+}
+
+// Function to build a tower on mouse click
+void build_tower_on_click(ALLEGRO_EVENT ev) {
+    if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1) {
+        Vector2i mouse_tile_pos = get_mouse_pos();
+        mouse_tile_pos.x /= TILE_SIZE;
+        mouse_tile_pos.y /= TILE_SIZE;
+
+        for (int i = 0; i < active_map.tower_spots_count; i++) {
+            if (active_map.tower_spots[i].position.x == mouse_tile_pos.x && active_map.tower_spots[i].position.y == mouse_tile_pos.y && !active_map.tower_spots[i].occupied) {
+                Tower* tower = new Tower();
+                new_tower(*tower, SNOWMAN);
+                tower->object.position = tile_pos_to_pixel_pos(active_map.tower_spots[i].position);
+                tower->object.scale = {0.5f, 0.5f};
+                active_map.tower_spots[i].occupied = true;
+                add_tower(*tower);
+                break;
+            }
+        }
+    }
 }

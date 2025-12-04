@@ -40,7 +40,7 @@ void draw_child_panel(Panel panel, Vector2i parent_top_left) {
     Vector2i adjusted_top_left = {panel.top_left.x + parent_top_left.x, panel.top_left.y + parent_top_left.y};
     Vector2i adjusted_bottom_right = {panel.bottom_right.x + parent_top_left.x, panel.bottom_right.y + parent_top_left.y};
     draw_rectangle_rounded(adjusted_top_left, adjusted_bottom_right, PANEL_ROUNDING, panel.color);
-    draw_text(panel.font, panel.text_color, 
+    draw_text(*panel.font, panel.text_color, 
         {adjusted_top_left.x + (adjusted_bottom_right.x - adjusted_top_left.x) / 2, adjusted_top_left.y + (adjusted_bottom_right.y - adjusted_top_left.y) / 2}, 
         panel.text);
 }
@@ -48,7 +48,7 @@ void draw_child_panel(Panel panel, Vector2i parent_top_left) {
 // Draws a panel and its children
 void draw(Panel panel) {
     draw_rectangle_rounded(panel.top_left, panel.bottom_right, PANEL_ROUNDING, panel.color);
-    draw_text(panel.font, panel.text_color, 
+    draw_text(*panel.font, panel.text_color, 
         {panel.top_left.x + (panel.bottom_right.x - panel.top_left.x) / 2, panel.top_left.y + (panel.bottom_right.y - panel.top_left.y) / 2}, 
         panel.text);
 
@@ -254,6 +254,7 @@ Vector2 multiply_vector(Vector2 vec, float multiplier) {
     return result;
 }
 
+// Checks if a MapTile is in an array of MapTiles
 int index_of_in_array(MapTile tile, MapTile arr[], int count) {
     for (int i = 0; i < count; i++) {
         if (arr[i].position.x == tile.position.x && arr[i].position.y == tile.position.y) {
@@ -263,6 +264,7 @@ int index_of_in_array(MapTile tile, MapTile arr[], int count) {
     return -1;
 }
 
+// Checks if a Vector2i point is in an array of MapTiles
 int index_of_in_array(Vector2i point, MapTile arr[], int count) {
     for (int i = 0; i < count; i++) {
         if (arr[i].position.x == point.x && arr[i].position.y == point.y) {
@@ -272,6 +274,17 @@ int index_of_in_array(Vector2i point, MapTile arr[], int count) {
     return -1;
 }
 
+// Checks if a Vector2i point is in an array of Vector2i
+bool is_in_array(Vector2i point, Vector2i arr[], int count) {
+    for (int i = 0; i < count; i++) {
+        if (arr[i].x == point.x && arr[i].y == point.y) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Checks if a Vector2i point is in an array of Vector2i and returns its index
 int index_of_in_array(Vector2i point, Vector2i arr[], int count) {
     for (int i = 0; i < count; i++) {
         if (arr[i].x == point.x && arr[i].y == point.y) {
@@ -281,6 +294,7 @@ int index_of_in_array(Vector2i point, Vector2i arr[], int count) {
     return -1;
 }
 
+// Subtracts one Vector2i from another
 Vector2i subtract_vector(Vector2i a, Vector2i b) {
     Vector2i result;
     result.x = a.x - b.x;

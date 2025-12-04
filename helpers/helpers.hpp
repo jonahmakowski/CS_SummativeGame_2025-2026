@@ -23,6 +23,19 @@ typedef enum TileType {
     ENEMY_GOAL
 } TileType;
 
+typedef enum EnemyType {
+    PENGUIN,
+    YETI,
+    ICE_SPRITE,
+    ICE_GIANT,
+    YAK,
+    RABBIT
+} EnemyType;
+
+typedef enum TowerType {
+    SNOWMAN
+} TowerType;
+
 // Structs
 
 // Vector with x,y positions as floats
@@ -64,6 +77,8 @@ struct Font {
     int size;
 };
 
+extern Font default_font;
+
 // Panel struct representing a UI panel
 struct Panel {
     Vector2i top_left;
@@ -72,7 +87,7 @@ struct Panel {
 
     char text[250];
     ALLEGRO_COLOR text_color = BLACK;
-    Font font;
+    Font* font = &default_font;
 
     struct Panel* children[20];
     int child_count = 0;
@@ -106,6 +121,8 @@ struct Tower {
 
     Upgrade possible_upgrades[10];
     int possible_upgrades_count;
+
+    TowerType type;
 };
 
 // Enemy struct representing an enemy in the game
@@ -120,10 +137,11 @@ struct Enemy {
 
     int reward;
 
-    int in_levels[20];
-    int in_levels_count;
-
     bool is_boss;
+
+    int expected_damage = 0;
+
+    EnemyType type;
 };
 
 // Projectile struct representing a projectile in the game
@@ -136,24 +154,44 @@ struct Projectile {
     int damage;
 };
 
+// Struct representing a tile on the map
 struct MapTile {
     TileType type;
     Vector2i position;
 };
 
+// Struct representing a tower spot on the map
+struct TowerSpot {
+    Vector2i position;
+    bool occupied = false;
+};
+
+// A struct representing sub-waves of enemies
+struct SubWaves {
+    int count;
+    int type;
+    int interval;
+    int delay;
+};
+
+// Map struct representing the game map
 struct Map {
     char name[100];
     MapTile tiles[1000];
+    int tile_count;
 
     // In paths, the sequence of tiles that form the enemy path
     // Where index 0 is the spawn point and the last index is the goal
-    Vector2i paths[1000];
-    int paths_count;
+    Vector2i path[1000];
+    int path_count;
+
+    TowerSpot tower_spots[1000];
+    int tower_spots_count;
 
     int spawn_rate;
     float time_since_last_spawn;
 
-    int tile_count;
+    SubWaves sub_waves[100][100];
 };
 
 // Globals
@@ -180,7 +218,6 @@ extern ALLEGRO_DISPLAY *display;
 extern ALLEGRO_EVENT_QUEUE *event_queue;
 extern ALLEGRO_TIMER *timer;
 
-extern Font default_font;
 extern Vector2i mouse_pos;
 extern Camera camera;
 
@@ -272,10 +309,8 @@ extern Keybind kill_keybind;
 
 // Prototypes
 // enemies_and_towers.cpp
-int define_tower_template(Tower &template_tower, const char* image_path, const char* name, float rate, float range, int damage, int cubes);
-void new_snowman(Tower &tower);
-int define_enemy_template(Enemy &enemy_template, const char* image_path, int in_levels[20], int in_levels_count, int health, int reward, int speed, bool is_boss);
-void new_penguin(Enemy &enemy);
+void new_tower(Tower &tower, TowerType type);
+void new_enemy(Enemy &enemy, EnemyType type);
 
 // rewritten_allegro_crap.cpp
 void draw_rectangle(Vector2i top_left, Vector2i bottom_right, ALLEGRO_COLOR color);
@@ -328,6 +363,7 @@ int index_of_in_array(Vector2i point, Vector2i arr[], int count);
 Vector2i subtract_vector(Vector2i a, Vector2i b);
 
 // functions.cpp
+Vector2i tile_pos_to_pixel_pos(Vector2i tile_pos);
 void apply_upgrade(Tower &tower, int upgrade_index);
 void draw_range_circle(Tower tower);
 void current_shots();
@@ -347,3 +383,4 @@ void add_path_points_to_map(Map &map);
 Map load_map(const char* file_path);
 void run_enemies();
 void draw_stats();
+void build_tower_on_click(ALLEGRO_EVENT ev);

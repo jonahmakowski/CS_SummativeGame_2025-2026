@@ -27,22 +27,25 @@ int define_tower_template(Tower &template_tower, const char* image_path, const c
     return 0;
 }
 
-void new_snowman(Tower &tower) {
-    if (define_tower_template(tower, "images/sun.png", "Snowman", 2, 500, 100, 0) != 0) {
-        printf("Failed to create new tower");
+void new_tower(Tower &tower, TowerType type) {
+    tower.type = type;
+    switch (type) {
+        case SNOWMAN:
+            if (define_tower_template(tower, "images/sun.png", "Snowman", 2, 500, 100, 0) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        default:
+            printf("Unknown tower type %d\n", type);
+            break;
     }
 }
 
 // Enemies
 
-int define_enemy_template(Enemy &enemy_template, const char* image_path, int in_levels[20], int in_levels_count, int health, int reward, int speed, bool is_boss) {
+int define_enemy_template(Enemy &enemy_template, const char* image_path, int health, int reward, int speed, bool is_boss) {
     enemy_template.health = health;
     
-    for (int i = 0; i < in_levels_count; i++) {
-        enemy_template.in_levels[i] = in_levels[i];
-    }
-    
-    enemy_template.in_levels_count = in_levels_count;
     enemy_template.health = health;
     enemy_template.reward = reward;
     enemy_template.speed = speed;
@@ -61,9 +64,41 @@ int define_enemy_template(Enemy &enemy_template, const char* image_path, int in_
     return 0;
 }
 
-void new_penguin(Enemy &enemy) {
-    int in_levels[20] = {1};
-    if (define_enemy_template(enemy, "images/earth.png", in_levels, 1, 10, 1, 10, false) != 0) {
-        printf("Failed to create new tower");
+void new_enemy(Enemy &enemy, EnemyType type) {
+    enemy.type = type;
+    switch (type) {
+        case PENGUIN:
+            if (define_enemy_template(enemy, "images/earth.png", 10, 1, 10, false) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case YETI:
+            if (define_enemy_template(enemy, "images/sun.png", 100, 10, 2, false) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case ICE_SPRITE:
+            if (define_enemy_template(enemy, "images/sun.png", 5, 5, 30, false) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case ICE_GIANT:
+            if (define_enemy_template(enemy, "images/sun.png", 50, 10, 15, false) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case YAK:
+            if (define_enemy_template(enemy, "images/sun.png", 200, 50, 5, false) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        case RABBIT:
+            if (define_enemy_template(enemy, "images/sun.png", 20, 10, 2, false) != 0) {
+                printf("Failed to create new tower");
+            }
+            break;
+        default:
+            printf("Unknown enemy type %d\n", type);
+            break;
     }
 }

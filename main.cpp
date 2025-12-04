@@ -14,8 +14,6 @@
 
 #include "helpers/helpers.hpp"
 
-Tower test_tower;
-
 // Run every frame
 void frame_logic() {
     fill_screen(WHITE);
@@ -70,7 +68,7 @@ void handle_keyboard_input_up(ALLEGRO_EVENT ev) {
 
 // Run when mouse input is detected
 void handle_mouse_input(ALLEGRO_EVENT ev) {
-    
+    build_tower_on_click(ev);
 }
 
 // Run to setup the game before the main loop
@@ -83,12 +81,6 @@ bool setup_game() {
     if (load_tile_images() != 0) {
         return false;
     }
-
-    new_snowman(test_tower);
-    test_tower.object.position.x = TILE_SIZE * 2 + TILE_SIZE / 2;
-    test_tower.object.position.y = TILE_SIZE * 4 + TILE_SIZE / 2;
-    test_tower.object.scale = {0.5f, 0.5f};
-    add_tower(test_tower);
     
     return true;
 }
