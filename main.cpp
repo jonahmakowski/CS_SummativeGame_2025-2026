@@ -18,7 +18,7 @@
 void frame_logic() {
     fill_screen(WHITE);
 
-    update_camera_position();
+    update_camera_position({0, 0}, {(active_map.size.x * TILE_SIZE - get_display_width()) * -1, (active_map.size.y * TILE_SIZE - get_display_height()) * -1});
 
     display_map();
 
@@ -34,7 +34,7 @@ void frame_logic() {
 
     check_projectiles();
 
-    draw_ui();
+    do_ui();
 }
 
 // Handling the keyboard input ev is the allegro event
@@ -69,6 +69,7 @@ void handle_keyboard_input_up(ALLEGRO_EVENT ev) {
 // Run when mouse input is detected
 void handle_mouse_input(ALLEGRO_EVENT ev) {
     build_tower_on_click(ev);
+    handle_button_clicks(ev);
 }
 
 // Run to setup the game before the main loop

@@ -49,6 +49,11 @@ typedef enum TowerType {
     ICE_WIZARD
 } TowerType;
 
+typedef enum ButtonIndex {
+    START_WAVE_BUTTON,
+    END
+} ButtonIndex;
+
 // Structs
 
 // Vector with x,y positions as floats
@@ -215,7 +220,10 @@ struct Map {
 
     Wave waves[100];
     int wave_count = 0;
+
     int current_wave_index = 0;
+
+    Vector2i size;
 };
 
 // Globals
@@ -226,7 +234,7 @@ struct Map {
 
 #define SCREEN_WIDTH 2160
 #define SCREEN_HEIGHT 1440
-#define FULLSCREEN false
+#define FULLSCREEN false // May cause issues, not tested much
 
 #define PANEL_ROUNDING 10.0f
 
@@ -260,6 +268,8 @@ extern ALLEGRO_BITMAP* enemy_spawn_tile;
 extern ALLEGRO_BITMAP* enemy_goal_tile;
 
 extern Map active_map;
+
+extern Panel *buttons[1000];
 
 // Keybinds
 
@@ -324,8 +334,8 @@ extern Keybind kill_keybind;
 #define min(a, b) (a < b) ? a : b
 
 #define check_for_exit(ev) { \
-    if (ev.type == ALLEGRO_EVENT_KEY_DOWN && pressing_keybind(kill_keybind, ev)) { \
-        printf("Exiting due to kill keybind\n"); \
+    if ((ev.type == ALLEGRO_EVENT_KEY_DOWN && pressing_keybind(kill_keybind, ev)) || ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) { \
+        printf("Exiting due to kill keybind or window close\n"); \
         al_destroy_display(display); \
         return 0; \
     } \
@@ -365,7 +375,7 @@ void update_position(Object &obj);
 void update_position(Projectile &projectile);
 Vector2 normalize(Vector2 vec);
 Vector2 get_direction_to(Vector2i from, Vector2i to);
-void update_camera_position();
+void update_camera_position(Vector2i limit_top_left, Vector2i limit_bottom_right);
 float distance_between(Vector2i a, Vector2i b);
 Vector2 get_object_size(Object obj);
 Vector2i vector2_to_vector2i(Vector2 vec);
@@ -406,5 +416,6 @@ bool is_in_array(Vector2i point, Vector2i arr[], int count);
 void add_path_points_to_map(Map &map);
 Map load_map(const char* file_path);
 void run_enemies();
-void draw_ui();
+void do_ui();
+void handle_button_clicks(ALLEGRO_EVENT ev);
 void build_tower_on_click(ALLEGRO_EVENT ev);

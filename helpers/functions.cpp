@@ -256,6 +256,8 @@ Map load_map(const char* file_path) {
     fgets(map.name, sizeof(map.name)-1, file);
     fscanf(file, "%d %d", &width, &height);
 
+    map.size = {width, height};
+
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
             int tile_type;
@@ -311,15 +313,11 @@ Map load_map(const char* file_path) {
 // Function that recaclulates enemies and spawns new ones based on the spawn rate
 void run_enemies() {
     // Enemy spawning
-    for (int i = 0; i < active_map.wave_count; i++) {
-        if (active_map.waves[i].wave_complete) {
-            continue;
-        }
-
+    if (!active_map.waves[active_map.current_wave_index].wave_complete) {
         bool wave_done = true;
 
-        for (int j = 0; j < active_map.waves[i].sub_wave_count; j++) {
-            SubWaves *sub_wave = &active_map.waves[i].sub_waves[j];
+        for (int j = 0; j < active_map.waves[active_map.current_wave_index].sub_wave_count; j++) {
+            SubWaves *sub_wave = &active_map.waves[active_map.current_wave_index].sub_waves[j];
 
             sub_wave->time_since_last_spawn += 1.0f / FPS;
 
@@ -353,12 +351,8 @@ void run_enemies() {
                 wave_done = false;
             }
         }
-        
-        active_map.waves[i].wave_complete = wave_done;
 
-        if (!wave_done) {
-            break;
-        }
+        active_map.waves[active_map.current_wave_index].wave_complete = wave_done;
     }
 
     // Update enemies
@@ -415,7 +409,7 @@ void run_enemies() {
 }
 
 // Function to draw player stats
-void draw_ui() {
+void do_ui() {
     // Health
     Panel health_panel;
     health_panel.top_left = {0, 0};
@@ -427,12 +421,44 @@ void draw_ui() {
 
     // Coins
     Panel coin_panel;
-    health_panel.top_left = {get_display_width() - 300, 0};
-    health_panel.bottom_right = {get_display_width(), 80};
-    health_panel.color = GREEN;
+    coin_panel.top_left = {get_display_width() - 300, 0};
+    coin_panel.bottom_right = {get_display_width(), 80};
+    coin_panel.color = GREEN;
 
-    snprintf(health_panel.text, sizeof(health_panel.text), "Coins: %d", player_coins);
-    draw(health_panel);
+    snprintf(coin_panel.text, sizeof(coin_panel.text), "Coins: %d", player_coins);
+    draw(coin_panel);
+
+    // Next Wave Button
+    if (active_map.waves[active_map.current_wave_index].wave_complete && active_map.current_wave_index < active_map.wave_count - 1) {
+        Panel *next_wave_button = new Panel();
+        next_wave_button->top_left = {get_display_width() / 2 - 150, get_display_height() - 80};
+        next_wave_button->bottom_right = {get_display_width() / 2 + 150, get_display_height()};
+        next_wave_button->color = BLUE;
+
+        snprintf(next_wave_button->text, sizeof(next_wave_button->text), "Start Next Wave");
+        draw(*next_wave_button);
+
+        buttons[ButtonIndex::START_WAVE_BUTTON] = next_wave_button;
+    }
+}
+
+void handle_button_clicks(ALLEGRO_EVENT ev) {
+    if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1) {
+        for (ButtonIndex i = (ButtonIndex)0; i < END; i = (ButtonIndex)(i + 1)) {
+            Panel* button = buttons[i];
+            if (button != nullptr && currently_clicking(*button)) {
+                switch (i) {
+                    case START_WAVE_BUTTON:
+                        active_map.current_wave_index++;
+                        buttons[i] = nullptr;
+                        break;
+                    default:
+                        printf("Unknown button index %d\n", i);
+                        break;
+                }
+            }
+        }
+    }
 }
 
 // Function to build a tower on mouse click

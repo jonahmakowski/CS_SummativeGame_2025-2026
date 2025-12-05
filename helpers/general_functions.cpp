@@ -116,9 +116,15 @@ Vector2 get_direction_to(Vector2i from, Vector2i to) {
 }
 
 // Updates the camera's position based on its velocity
-void update_camera_position() {
+void update_camera_position(Vector2i limit_top_left, Vector2i limit_bottom_right) {
     camera.position.x += camera.velocity.x;
     camera.position.y += camera.velocity.y;
+
+    camera.position.x = fmin(limit_top_left.x, camera.position.x);
+    camera.position.y = fmin(limit_top_left.y, camera.position.y);
+
+    camera.position.y = fmax(limit_bottom_right.y, camera.position.y);
+    camera.position.x = fmax(limit_bottom_right.x, camera.position.x);
 }
 
 // Gets the distance between two Vector2i points using the Pythagorean theorem
@@ -184,7 +190,7 @@ bool is_within(Enemy enemy, Vector2i point) {
 
 // Checks if the mouse is currently within a panel
 bool currently_clicking(Panel panel) {
-    return is_within(panel, get_mouse_pos());
+    return is_within(panel, mouse_pos);
 }
 
 // Checks if the mouse is currently within an object

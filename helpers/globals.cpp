@@ -28,6 +28,8 @@ ALLEGRO_BITMAP* enemy_goal_tile;
 
 Map active_map;
 
+Panel *buttons[1000];
+
 // Keybinds
 
 Keybind move_up = { { ALLEGRO_KEY_W, ALLEGRO_KEY_UP, -1 } };
@@ -36,3 +38,4 @@ Keybind move_left = { { ALLEGRO_KEY_A, ALLEGRO_KEY_LEFT, -1 } };
 Keybind move_right = { { ALLEGRO_KEY_D, ALLEGRO_KEY_RIGHT, -1 } };
 Keybind kill_keybind = { { ALLEGRO_KEY_ESCAPE, -1 } };
 Keybind range_circle_toggle = { { ALLEGRO_KEY_R, -1 } };
+Keybind fast_forward = { { ALLEGRO_KEY_F, -1 } };
