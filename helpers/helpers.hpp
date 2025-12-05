@@ -46,7 +46,8 @@ typedef enum TowerType {
     ICICLE_LAUNCHER,
     SNOWBLOWER,
     MAMMOTH,
-    ICE_WIZARD
+    ICE_WIZARD,
+    HOUSE
 } TowerType;
 
 typedef enum ButtonIndex {
@@ -82,11 +83,10 @@ struct Keybind {
     int keycodes[20];
 };
 
-// Camera struct representing the camera's position, velocity, and zoom level
+// Camera struct representing the camera's position, velocity
 struct Camera {
     Vector2i position;
     Vector2i velocity;
-    float zoom;
 };
 
 // Font struct representing a font and its size
@@ -101,7 +101,12 @@ extern Font default_font;
 struct Panel {
     Vector2i top_left;
     Vector2i bottom_right;
+
     ALLEGRO_COLOR color;
+
+    ALLEGRO_COLOR border_color = BLACK;
+    float border_thickness = 3.0f;
+    bool has_border = false;
 
     char text[250];
     ALLEGRO_COLOR text_color = BLACK;
@@ -129,7 +134,7 @@ struct Tower {
 
     char name[100];
 
-    float fire_rate;
+    float reload_time;
     float range;
     int damage;
 
@@ -349,6 +354,7 @@ void new_enemy(Enemy &enemy, EnemyType type);
 // rewritten_allegro_crap.cpp
 void draw_rectangle(Vector2i top_left, Vector2i bottom_right, ALLEGRO_COLOR color);
 void draw_rectangle_rounded(Vector2i top_left, Vector2i bottom_right, float radius, ALLEGRO_COLOR color);
+void draw_rectangle_rounded_outline(Vector2i top_left, Vector2i bottom_right, float radius, ALLEGRO_COLOR color, float thickness);
 void draw_circle(Vector2i center, float radius, ALLEGRO_COLOR color);
 void draw_triangle(Vector2i point1, Vector2i point2, Vector2i point3, ALLEGRO_COLOR color);
 void draw_line(Vector2i start, Vector2i end, ALLEGRO_COLOR color, float thickness);
@@ -356,7 +362,7 @@ void draw_circle_outline(Vector2i center, float radius, ALLEGRO_COLOR color, flo
 void draw_image(ALLEGRO_BITMAP *image, Vector2i position);
 void draw_text(Font font, ALLEGRO_COLOR color, Vector2i position, const char *text);
 Vector2i get_window_size();
-void draw_scaled_image(ALLEGRO_BITMAP *image, Vector2i position, Vector2 scale);
+void draw_scaled_image(ALLEGRO_BITMAP *image, Vector2i position, Vector2 scale, int rotation = 0);
 bool init_allegro();
 
 // general_functions.cpp

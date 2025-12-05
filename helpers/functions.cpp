@@ -17,7 +17,7 @@ Vector2i tile_pos_to_pixel_pos(Vector2i tile_pos) {
 // Applies an upgrade to a tower and removes it from the possible upgrades
 void apply_upgrade(Tower &tower, int upgrade_index) {
     tower.damage = (int)(tower.damage * tower.possible_upgrades[upgrade_index].damage_multiplier);
-    tower.fire_rate = (int)(tower.fire_rate * tower.possible_upgrades[upgrade_index].fire_rate_multiplier);
+    tower.reload_time = (int)(tower.reload_time * tower.possible_upgrades[upgrade_index].fire_rate_multiplier);
     tower.range = (int)(tower.range * tower.possible_upgrades[upgrade_index].range_multiplier);
 
     remove_object_from_array(tower.possible_upgrades, tower.possible_upgrades_count, upgrade_index);
@@ -26,17 +26,38 @@ void apply_upgrade(Tower &tower, int upgrade_index) {
 // Draws the range circle of a tower
 void draw_range_circle(Tower tower) {
     Vector2i tower_pos = camera_fixed_position(tower.object.position);
-    draw_circle_outline(tower_pos, tower.range * camera.zoom, BLUE, 2.0f);
+    draw_circle_outline(tower_pos, tower.range, BLUE, 2.0f);
+}
+
+// Sorts enemies by their path distance (furthest along the path first)
+void enemies_by_path_distance(Enemy *sorted_enemies[]) {
+    for (int i = 0; i < active_enemies_count; i++) {
+        sorted_enemies[i] = active_enemies[i];
+    }
+
+    for (int i = 0; i < active_enemies_count - 1; i++) {
+        for (int j = 0; j < active_enemies_count - i - 1; j++) {
+            if (sorted_enemies[j]->path_index < sorted_enemies[j + 1]->path_index) {
+                Enemy* temp = sorted_enemies[j];
+                sorted_enemies[j] = sorted_enemies[j + 1];
+                sorted_enemies[j + 1] = temp;
+            }
+        }
+    }
 }
 
 // Gets the enemies that towers can shoot at
 void current_shots() {
+    Enemy *sorted_enemies[100];
+
+    enemies_by_path_distance(sorted_enemies);
+
     for (int i = 0; i < active_towers_count; i++) {
         active_towers[i]->time_since_last_shot += 1.0f / FPS;
         for (int j = 0; j < active_enemies_count; j++) {
-            if (distance_between(active_towers[i]->object.position, active_enemies[j]->object.position) <= active_towers[i]->range) {
-                if (active_towers[i]->time_since_last_shot >= active_towers[i]->fire_rate && active_enemies[j]->expected_damage < active_enemies[j]->health) {
-                    shoot_projectile(*active_towers[i], active_enemies[j]);
+            if (distance_between(active_towers[i]->object.position, sorted_enemies[j]->object.position) <= active_towers[i]->range) {
+                if (active_towers[i]->time_since_last_shot >= active_towers[i]->reload_time && sorted_enemies[j]->expected_damage < sorted_enemies[j]->health) {
+                    shoot_projectile(*active_towers[i], sorted_enemies[j]);
                     active_towers[i]->time_since_last_shot = 0.0f;
                     break;
                 }
@@ -431,8 +452,8 @@ void do_ui() {
     // Next Wave Button
     if (active_map.waves[active_map.current_wave_index].wave_complete && active_map.current_wave_index < active_map.wave_count - 1) {
         Panel *next_wave_button = new Panel();
-        next_wave_button->top_left = {get_display_width() / 2 - 150, get_display_height() - 80};
-        next_wave_button->bottom_right = {get_display_width() / 2 + 150, get_display_height()};
+        next_wave_button->top_left = {0, get_display_height() / 2 - 40};
+        next_wave_button->bottom_right = {300, get_display_height() / 2 + 40};
         next_wave_button->color = BLUE;
 
         snprintf(next_wave_button->text, sizeof(next_wave_button->text), "Start Next Wave");
@@ -471,7 +492,7 @@ void build_tower_on_click(ALLEGRO_EVENT ev) {
         for (int i = 0; i < active_map.tower_spots_count; i++) {
             if (active_map.tower_spots[i].position.x == mouse_tile_pos.x && active_map.tower_spots[i].position.y == mouse_tile_pos.y && !active_map.tower_spots[i].occupied) {
                 Tower* tower = new Tower();
-                new_tower(*tower, SNOWMAN);
+                new_tower(*tower, SNOWBALL_THROWER);
                 tower->object.position = tile_pos_to_pixel_pos(active_map.tower_spots[i].position);
                 tower->object.scale = {0.5f, 0.5f};
                 active_map.tower_spots[i].occupied = true;

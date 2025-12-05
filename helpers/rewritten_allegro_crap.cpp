@@ -16,6 +16,10 @@ void draw_rectangle_rounded(Vector2i top_left, Vector2i bottom_right, float radi
     al_draw_filled_rounded_rectangle(top_left.x, top_left.y, bottom_right.x, bottom_right.y, radius, radius, color);
 }
 
+void draw_rectangle_rounded_outline(Vector2i top_left, Vector2i bottom_right, float radius, ALLEGRO_COLOR color, float thickness) {
+    al_draw_rounded_rectangle(top_left.x, top_left.y, bottom_right.x, bottom_right.y, radius, radius, color, thickness);
+}
+
 void draw_circle(Vector2i center, float radius, ALLEGRO_COLOR color) {
     al_draw_filled_circle(center.x, center.y, radius, color);
 }
@@ -54,18 +58,8 @@ Vector2i get_window_size() {
 }
 
 // Draws a scaled image centered at the position
-void draw_scaled_image(ALLEGRO_BITMAP *image, Vector2i position, Vector2 scale) {
-    int width = al_get_bitmap_width(image) * scale.x;
-    int height = al_get_bitmap_height(image) * scale.y;
-    
-    Vector2i position_upper_left;
-    if (!FULLSCREEN) {
-        position_upper_left = {position.x - width / 2, position.y - height / 2};
-    } else {
-        position_upper_left = {position.x - width / 2, position.y};
-    }
-
-    al_draw_scaled_bitmap(image, 0, 0, al_get_bitmap_width(image), al_get_bitmap_height(image), position_upper_left.x, position_upper_left.y, al_get_bitmap_width(image) * scale.x, al_get_bitmap_height(image) * scale.y, 0);
+void draw_scaled_image(ALLEGRO_BITMAP *image, Vector2i position, Vector2 scale, int rotation) {
+    al_draw_scaled_rotated_bitmap(image, al_get_bitmap_width(image) / 2, al_get_bitmap_height(image) / 2, position.x, position.y, scale.x, scale.y, rotation * ALLEGRO_PI / 180, 0);
 }
 
 // Setup Allegro and its components

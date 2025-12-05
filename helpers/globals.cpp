@@ -10,7 +10,7 @@ ALLEGRO_TIMER *timer = nullptr;
 
 Font default_font;
 Vector2i mouse_pos = {0, 0};
-Camera camera = {{0, 0}, {0, 0}, 1.0f};
+Camera camera = {{0, 0}, {0, 0}};
 
 Tower *active_towers[100];
 Enemy *active_enemies[100];

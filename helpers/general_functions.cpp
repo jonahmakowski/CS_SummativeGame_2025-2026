@@ -24,10 +24,10 @@ Vector2i camera_fixed_position(Vector2i position) {
     return camera_fixed_pos;
 }
 
-// Draws an image adjusted for the camera position and zoom
+// Draws an image adjusted for the camera position and DELETE_ME
 void draw(ALLEGRO_BITMAP *image, Vector2i position, Vector2 scale) {
     Vector2i fixed_pos = camera_fixed_position(position);
-    draw_scaled_image(image, fixed_pos, {scale.x * camera.zoom, scale.y * camera.zoom});
+    draw_scaled_image(image, fixed_pos, scale);
 }
 
 // Uses the draw function to draw an Object struct
@@ -40,6 +40,9 @@ void draw_child_panel(Panel panel, Vector2i parent_top_left) {
     Vector2i adjusted_top_left = {panel.top_left.x + parent_top_left.x, panel.top_left.y + parent_top_left.y};
     Vector2i adjusted_bottom_right = {panel.bottom_right.x + parent_top_left.x, panel.bottom_right.y + parent_top_left.y};
     draw_rectangle_rounded(adjusted_top_left, adjusted_bottom_right, PANEL_ROUNDING, panel.color);
+    if (panel.has_border) {
+        draw_rectangle_rounded_outline(adjusted_top_left, adjusted_bottom_right, PANEL_ROUNDING, panel.border_color, panel.border_thickness);
+    }
     draw_text(*panel.font, panel.text_color, 
         {adjusted_top_left.x + (adjusted_bottom_right.x - adjusted_top_left.x) / 2, adjusted_top_left.y + (adjusted_bottom_right.y - adjusted_top_left.y) / 2}, 
         panel.text);
@@ -48,6 +51,9 @@ void draw_child_panel(Panel panel, Vector2i parent_top_left) {
 // Draws a panel and its children
 void draw(Panel panel) {
     draw_rectangle_rounded(panel.top_left, panel.bottom_right, PANEL_ROUNDING, panel.color);
+    if (panel.has_border) {
+        draw_rectangle_rounded_outline(panel.top_left, panel.bottom_right, PANEL_ROUNDING, panel.border_color, panel.border_thickness);
+    }
     draw_text(*panel.font, panel.text_color, 
         {panel.top_left.x + (panel.bottom_right.x - panel.top_left.x) / 2, panel.top_left.y + (panel.bottom_right.y - panel.top_left.y) / 2}, 
         panel.text);
@@ -132,11 +138,11 @@ float distance_between(Vector2i a, Vector2i b) {
     return sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
 }
 
-// Gets the size of an object adjusted for its scale and camera zoom
+// Gets the size of an object adjusted for its scale and camera DELETE_ME
 Vector2 get_object_size(Object obj) {
     Vector2 size;
-    size.x = al_get_bitmap_width(obj.image) * obj.scale.x * camera.zoom;
-    size.y = al_get_bitmap_height(obj.image) * obj.scale.y * camera.zoom;
+    size.x = al_get_bitmap_width(obj.image) * obj.scale.x;
+    size.y = al_get_bitmap_height(obj.image) * obj.scale.y;
     return size;
 }
 
