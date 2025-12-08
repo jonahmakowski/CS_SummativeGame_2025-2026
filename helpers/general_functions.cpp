@@ -25,14 +25,14 @@ Vector2i camera_fixed_position(Vector2i position) {
 }
 
 // Draws an image adjusted for the camera position and DELETE_ME
-void draw(ALLEGRO_BITMAP *image, Vector2i position, Vector2 scale) {
+void draw(ALLEGRO_BITMAP *image, Vector2i position, Vector2 scale, int rotation) {
     Vector2i fixed_pos = camera_fixed_position(position);
-    draw_scaled_image(image, fixed_pos, scale);
+    draw_scaled_image(image, fixed_pos, scale, rotation);
 }
 
 // Uses the draw function to draw an Object struct
 void draw(Object obj) {
-    draw(obj.image, obj.position, obj.scale);
+    draw(obj.image, obj.position, obj.scale, obj.rotation_degrees);
 }
 
 // Draws a child of a panel relative to its parent panel

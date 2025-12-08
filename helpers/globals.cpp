@@ -20,8 +20,17 @@ int active_towers_count = 0;
 int active_enemies_count = 0;
 int active_projectiles_count = 0;
 
-ALLEGRO_BITMAP* grass_tile;
-ALLEGRO_BITMAP* path_tile;
+ALLEGRO_BITMAP* grass_tile_0;
+ALLEGRO_BITMAP* grass_tile_1;
+ALLEGRO_BITMAP* grass_tile_2;
+
+ALLEGRO_BITMAP* path_tile_0;
+ALLEGRO_BITMAP* path_tile_1;
+ALLEGRO_BITMAP* path_tile_2;
+ALLEGRO_BITMAP* path_tile_3;
+ALLEGRO_BITMAP* path_tile_4;
+ALLEGRO_BITMAP* path_tile_5;
+
 ALLEGRO_BITMAP* tower_spot_tile;
 ALLEGRO_BITMAP* enemy_spawn_tile;
 ALLEGRO_BITMAP* enemy_goal_tile;

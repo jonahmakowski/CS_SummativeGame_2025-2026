@@ -69,8 +69,8 @@ void current_shots() {
 // Shoots a projectile from a tower towards a target enemy
 void shoot_projectile(Tower tower, Enemy* target_enemy) {
     Projectile* new_projectile = new Projectile();
-    new_projectile->object.image = load_image("images/sun.png");
-    new_projectile->object.scale = {0.2f, 0.2f};
+    new_projectile->object.image = load_image(tower.projectile_image_path);
+    new_projectile->object.scale = tower.projectile_scale;
     new_projectile->object.position = tower.object.position;
     new_projectile->object.exists = true;
 
@@ -100,6 +100,8 @@ void recalculate_projectiles() {
         Vector2 direction = get_direction_to(proj->object.position, proj->target->object.position);
         Vector2i velocity = vector2_to_vector2i(multiply_vector(direction, proj->speed));
         proj->object.velocity = velocity;
+        proj->object.rotation_degrees = (atan2(direction.y, direction.x) * (180.0 / ALLEGRO_PI)) + 90;
+        proj->object.rotation_degrees = fmod(proj->object.rotation_degrees, 360.0f);
         update_position(proj->object);
     }
 }
@@ -155,8 +157,17 @@ void check_projectiles() {
 
 // Load the tile images
 int load_tile_images() {
-    load_image_with_checks("tiles/grass.png", grass_tile);
-    load_image_with_checks("tiles/path.png", path_tile);
+    load_image_with_checks("tiles/grass-0.png", grass_tile_0);
+    load_image_with_checks("tiles/grass-1.png", grass_tile_1);
+    load_image_with_checks("tiles/grass-2.png", grass_tile_2);
+
+    load_image_with_checks("tiles/path-0.png", path_tile_0);
+    load_image_with_checks("tiles/path-1.png", path_tile_1);
+    load_image_with_checks("tiles/path-2.png", path_tile_2);
+    load_image_with_checks("tiles/path-3.png", path_tile_3);
+    load_image_with_checks("tiles/path-4.png", path_tile_4);
+    load_image_with_checks("tiles/path-5.png", path_tile_5);
+
     load_image_with_checks("tiles/tower_spot.png", tower_spot_tile);
     load_image_with_checks("tiles/enemy_spawn.png", enemy_spawn_tile);
     load_image_with_checks("tiles/enemy_goal.png", enemy_goal_tile);
@@ -171,23 +182,52 @@ void display_map() {
         Vector2 scale = {1.0f, 1.0f};
         switch (tile.type) {
             case GRASS:
-                draw(grass_tile, tile_position, scale);
+                if (tile.variation == 0) {
+                    draw(grass_tile_0, tile_position, scale, 0);
+                } else if (tile.variation == 1) {
+                    draw(grass_tile_1, tile_position, scale, 0);
+                } else if (tile.variation == 2) {
+                    draw(grass_tile_2, tile_position, scale, 0);
+                }
                 break;
             case PATH:
-                draw(path_tile, tile_position, scale);
+                switch (tile.variation) {
+                    case 0:
+                        draw(path_tile_0, tile_position, scale, 0);
+                        break;
+                    case 1:
+                        draw(path_tile_1, tile_position, scale, 0);
+                        break;
+                    case 2:
+                        draw(path_tile_2, tile_position, scale, 0);
+                        break;
+                    case 3:
+                        draw(path_tile_3, tile_position, scale, 0);
+                        break;
+                    case 4:
+                        draw(path_tile_4, tile_position, scale, 0);
+                        break;
+                    case 5:
+                        draw(path_tile_5, tile_position, scale, 0);
+                        break;
+                    default:
+                        printf("Unknown path tile variation %d at position (%d, %d)\n", tile.variation, tile.position.x, tile.position.y);
+                        draw(path_tile_0, tile_position, scale, 0);
+                        break;
+                }
                 break;
             case TOWER_SPOT:
-                draw(tower_spot_tile, tile_position, scale);
+                draw(tower_spot_tile, tile_position, scale, 0);
                 break;
             case ENEMY_SPAWN:
-                draw(enemy_spawn_tile, tile_position, scale);
+                draw(enemy_spawn_tile, tile_position, scale, 0);
                 break;
             case ENEMY_GOAL:
-                draw(enemy_goal_tile, tile_position, scale);
+                draw(enemy_goal_tile, tile_position, scale, 0);
                 break;
             default:
                 printf("Unknown tile type %d at position (%d, %d)\n", tile.type, tile.position.x, tile.position.y);
-                draw(grass_tile, tile_position, scale);
+                draw(grass_tile_0, tile_position, scale, 0);
                 break;
         }
     }
@@ -222,26 +262,39 @@ void add_path_points_to_map(Map &map) {
     }
 
     MapTile *current_tile = spawn_point;
+    MapTile *previous_tile = nullptr;
     while (current_tile->position.x != goal_point->position.x || current_tile->position.y != goal_point->position.y) {
         map.path[map.path_count] = current_tile->position;
         map.path_count++;
 
         bool found_next = false;
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                if (i == 0 && j == 0 || i != 0 && j != 0) {
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                if (x == 0 && y == 0 || x != 0 && y != 0) {
                     continue;
                 }
                 
-                MapTile *neighbor_tile;
-                if (index_of_in_array({current_tile->position.x + i, current_tile->position.y + j}, map.tiles, map.tile_count) != -1) {
-                    if (index_of_in_array({current_tile->position.x + i, current_tile->position.y + j}, map.path, map.path_count) != -1) {
+                MapTile *next_tile;
+                if (index_of_in_array({current_tile->position.x + x, current_tile->position.y + y}, map.tiles, map.tile_count) != -1) { // If this position is in the array
+                    if (index_of_in_array({current_tile->position.x + x, current_tile->position.y + y}, map.path, map.path_count) != -1) { // If it's already in the array somehow, shouldn't ever happen
                         continue;
                     }
-                    neighbor_tile = &map.tiles[index_of_in_array({current_tile->position.x + i, current_tile->position.y + j}, map.tiles, map.tile_count)];
-                    if (neighbor_tile->type == PATH || neighbor_tile->type == ENEMY_GOAL) {
+                    
+                    next_tile = &map.tiles[index_of_in_array({current_tile->position.x + x, current_tile->position.y + y}, map.tiles, map.tile_count)]; // Get the array at our neighbor position
+                    if (next_tile->type == PATH || next_tile->type == ENEMY_GOAL) { // If it's a path tile or the goal, we found our next tile
                         found_next = true;
-                        current_tile = neighbor_tile;
+
+                        /* diagram to help my poor brain
+                        (-1,-1) (0,-1) (1,-1)
+                        (-1, 0) (0, 0) (1, 0)
+                        (-1, 1) (0, 1) (1, 1)
+                        */
+                        // Path direction logic
+                        if (previous_tile->position.x - current_tile->position.x == 1 && previous_tile->position.y - current_tile->position.y == 1){
+
+                        }
+                        previous_tile = current_tile;
+                        current_tile = next_tile;
                         break;
                     }
                 }
@@ -284,15 +337,20 @@ Map load_map(const char* file_path) {
             int tile_type;
             fscanf(file, "%d", &tile_type);
             MapTile tile;
+
+            tile.variation = 0;
             tile.type = (TileType)tile_type;
             tile.position = {x, y};
-            map.tiles[map.tile_count] = tile;
-            map.tile_count++;
 
-            if (tile.type == TOWER_SPOT) {
+            if (tile.type == GRASS) {
+                tile.variation = rand() % 3;
+            } else if (tile.type == TOWER_SPOT) {
                 map.tower_spots[map.tower_spots_count].position = tile.position;
                 map.tower_spots_count++;
             }
+
+            map.tiles[map.tile_count] = tile;
+            map.tile_count++;
         }
     }
 
@@ -334,7 +392,7 @@ Map load_map(const char* file_path) {
 // Function that recaclulates enemies and spawns new ones based on the spawn rate
 void run_enemies() {
     // Enemy spawning
-    if (!active_map.waves[active_map.current_wave_index].wave_complete) {
+    if (!active_map.waves[active_map.current_wave_index].wave_complete || active_map.current_wave_index == -1) {
         bool wave_done = true;
 
         for (int j = 0; j < active_map.waves[active_map.current_wave_index].sub_wave_count; j++) {
@@ -450,7 +508,7 @@ void do_ui() {
     draw(coin_panel);
 
     // Next Wave Button
-    if (active_map.waves[active_map.current_wave_index].wave_complete && active_map.current_wave_index < active_map.wave_count - 1) {
+    if ((active_map.waves[active_map.current_wave_index].wave_complete || active_map.current_wave_index == -1) && active_map.current_wave_index < active_map.wave_count - 1) {
         Panel *next_wave_button = new Panel();
         next_wave_button->top_left = {0, get_display_height() / 2 - 40};
         next_wave_button->bottom_right = {300, get_display_height() / 2 + 40};

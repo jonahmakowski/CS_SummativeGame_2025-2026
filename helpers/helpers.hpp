@@ -75,6 +75,7 @@ struct Object {
     Vector2 scale;
     Vector2i velocity;
     Vector2i position;
+    float rotation_degrees = 0;
     bool exists;
 };
 
@@ -146,6 +147,9 @@ struct Tower {
     int possible_upgrades_count;
 
     TowerType type;
+
+    char projectile_image_path[100];
+    Vector2 projectile_scale;
 };
 
 // Enemy struct representing an enemy in the game
@@ -181,6 +185,7 @@ struct Projectile {
 struct MapTile {
     TileType type;
     Vector2i position;
+    int variation;
 };
 
 // Struct representing a tower spot on the map
@@ -226,7 +231,7 @@ struct Map {
     Wave waves[100];
     int wave_count = 0;
 
-    int current_wave_index = 0;
+    int current_wave_index = -1;
 
     Vector2i size;
 };
@@ -266,8 +271,15 @@ extern int active_towers_count;
 extern int active_enemies_count;
 extern int active_projectiles_count;
 
-extern ALLEGRO_BITMAP* grass_tile;
-extern ALLEGRO_BITMAP* path_tile;
+extern ALLEGRO_BITMAP* grass_tile_0;
+extern ALLEGRO_BITMAP* grass_tile_1;
+extern ALLEGRO_BITMAP* grass_tile_2;
+extern ALLEGRO_BITMAP* path_tile_0;
+extern ALLEGRO_BITMAP* path_tile_1;
+extern ALLEGRO_BITMAP* path_tile_2;
+extern ALLEGRO_BITMAP* path_tile_3;
+extern ALLEGRO_BITMAP* path_tile_4;
+extern ALLEGRO_BITMAP* path_tile_5;
 extern ALLEGRO_BITMAP* tower_spot_tile;
 extern ALLEGRO_BITMAP* enemy_spawn_tile;
 extern ALLEGRO_BITMAP* enemy_goal_tile;
@@ -368,7 +380,7 @@ bool init_allegro();
 // general_functions.cpp
 bool pressing_keybind(Keybind keybind, ALLEGRO_EVENT ev);
 Vector2i camera_fixed_position(Vector2i position);
-void draw(ALLEGRO_BITMAP *image, Vector2i position, Vector2 scale);
+void draw(ALLEGRO_BITMAP *image, Vector2i position, Vector2 scale, int rotation);
 void draw(Object obj);
 void draw_child_panel(Panel panel, Vector2i parent_top_left);
 void draw(Panel panel);
