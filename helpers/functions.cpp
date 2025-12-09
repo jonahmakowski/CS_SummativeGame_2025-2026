@@ -291,19 +291,22 @@ void add_path_points_to_map(Map &map) {
                             (-1, 1) (0, 1) (1, 1)
                         */
                         // Path direction logic
-                        if (previous_tile->position.x - current_tile->position.x == 1 || next_tile->position.x - current_tile->position.x == 1 && previous_tile->position.y - current_tile->position.y == 1 || next_tile->position.y - current_tile->position.y == 1){
-                            //path tile 2
-                        }else if (previous_tile->position.x - current_tile->position.x == 1 || next_tile->position.x - current_tile->position.x == 1 && previous_tile->position.y - current_tile->position.y == -1 || next_tile->position.y - current_tile->position.y == -1){
-                            //path tile 5
-                        }else if (previous_tile->position.x - current_tile->position.x == -1 || next_tile->position.x - current_tile->position.x == -1 && previous_tile->position.y - current_tile->position.y == 1 || next_tile->position.y - current_tile->position.y == 1){
-                            //path tile 3
-                        }else if (previous_tile->position.x - current_tile->position.x == -1 || next_tile->position.x - current_tile->position.x == -1 && previous_tile->position.y - current_tile->position.y == -1 || next_tile->position.y - current_tile->position.y == -1){
-                            //path tile 4
-                        }else if(previous_tile->position.x == next_tile->position.x){
-                            //path tile 0
-                        }else if(previous_tile->position.y == next_tile->position.y){
-                            //path tile 1
+                        if (previous_tile != nullptr) {
+                            if(previous_tile->position.x == next_tile->position.x) {
+                                current_tile->variation = 0;
+                            } else if(previous_tile->position.y == next_tile->position.y) {
+                                current_tile->variation = 1;
+                            } else if ((previous_tile->position.x - current_tile->position.x == 1 || next_tile->position.x - current_tile->position.x == 1) && (previous_tile->position.y - current_tile->position.y == 1 || next_tile->position.y - current_tile->position.y == 1)) {
+                                current_tile->variation = 2;
+                            } else if ((previous_tile->position.x - current_tile->position.x == 1 || next_tile->position.x - current_tile->position.x == 1) && (previous_tile->position.y - current_tile->position.y == -1 || next_tile->position.y - current_tile->position.y == -1)) {
+                                current_tile->variation = 5;
+                            } else if ((previous_tile->position.x - current_tile->position.x == -1 || next_tile->position.x - current_tile->position.x == -1) && (previous_tile->position.y - current_tile->position.y == 1 || next_tile->position.y - current_tile->position.y == 1)) {
+                                current_tile->variation = 3;
+                            } else if ((previous_tile->position.x - current_tile->position.x == -1 || next_tile->position.x - current_tile->position.x == -1) && (previous_tile->position.y - current_tile->position.y == -1 || next_tile->position.y - current_tile->position.y == -1)) {
+                                current_tile->variation = 4;
+                            } 
                         }
+                        
                         previous_tile = current_tile;
                         current_tile = next_tile;
                         break;

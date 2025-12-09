@@ -95,7 +95,6 @@ int main(int argc, char *argv[]) {
     }
 
     active_map = load_map("maps/level1.map");
-    //print_map(active_map);
 
     al_start_timer(timer);
     al_get_mouse_cursor_position(&mouse_pos.x, &mouse_pos.y);
