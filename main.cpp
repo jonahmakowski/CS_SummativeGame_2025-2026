@@ -18,58 +18,70 @@
 void frame_logic() {
     fill_screen(WHITE);
 
-    update_camera_position({0, 0}, {(active_map.size.x * TILE_SIZE - get_display_width()) * -1, (active_map.size.y * TILE_SIZE - get_display_height()) * -1});
+    if (game_state == IN_GAME) {
+        update_camera_position(true, {0, 0}, {(active_map.size.x * TILE_SIZE - get_display_width()) * -1, (active_map.size.y * TILE_SIZE - get_display_height()) * -1});
 
-    display_map();
+        display_map();
 
-    run_enemies();
+        run_enemies();
 
-    current_shots();
+        current_shots();
 
-    recalculate_projectiles();
+        recalculate_projectiles();
 
-    draw_all_towers();
-    draw_all_enemies();
-    draw_all_projectiles();
+        draw_all_towers();
+        draw_all_enemies();
+        draw_all_projectiles();
 
-    check_projectiles();
+        check_projectiles();
 
-    do_ui();
+        do_ui();
+    } else if (game_state == MAIN_MENU) {
+        draw_main_menu();
+    }
 }
 
 // Handling the keyboard input ev is the allegro event
 void handle_keyboard_input_down(ALLEGRO_EVENT ev) {
-    if (pressing_keybind(move_up, ev)) {
-        camera.velocity.y = 10;
-    }
-    if (pressing_keybind(move_down, ev)) {
-        camera.velocity.y = -10;
-    }
-    if (pressing_keybind(move_left, ev)) {
-        camera.velocity.x = 10;
-    }
-    if (pressing_keybind(move_right, ev)) {
-        camera.velocity.x = -10;
-    }
-    if (pressing_keybind(range_circle_toggle, ev)) {
-        draw_range_circles = !draw_range_circles;
+    if (game_state == IN_GAME) {
+        if (pressing_keybind(move_up, ev)) {
+            camera.velocity.y = 10;
+        }
+        if (pressing_keybind(move_down, ev)) {
+            camera.velocity.y = -10;
+        }
+        if (pressing_keybind(move_left, ev)) {
+            camera.velocity.x = 10;
+        }
+        if (pressing_keybind(move_right, ev)) {
+            camera.velocity.x = -10;
+        }
+        if (pressing_keybind(range_circle_toggle, ev)) {
+            draw_range_circles = !draw_range_circles;
+        }
     }
 }
 
 // Run when a key is released
 void handle_keyboard_input_up(ALLEGRO_EVENT ev) {
-    if (pressing_keybind(move_up, ev) || pressing_keybind(move_down, ev)) {
-        camera.velocity.y = 0;
-    }
-    if (pressing_keybind(move_left, ev) || pressing_keybind(move_right, ev)) {
-        camera.velocity.x = 0;
+    if (game_state == IN_GAME) {
+        if (pressing_keybind(move_up, ev) || pressing_keybind(move_down, ev)) {
+            camera.velocity.y = 0;
+        }
+        if (pressing_keybind(move_left, ev) || pressing_keybind(move_right, ev)) {
+            camera.velocity.x = 0;
+        }
     }
 }
 
 // Run when mouse input is detected
 void handle_mouse_input(ALLEGRO_EVENT ev) {
-    build_tower_on_click(ev);
-    handle_button_clicks(ev);
+    if (game_state == IN_GAME) {
+        build_tower_on_click(ev);
+        handle_button_clicks(ev);
+    } else if (game_state == MAIN_MENU) {
+        do_main_menu_buttons();
+    }
 }
 
 // Run to setup the game before the main loop
@@ -82,6 +94,8 @@ bool setup_game() {
     if (load_tile_images() != 0) {
         return false;
     }
+
+    load_map_list();
     
     return true;
 }
@@ -94,7 +108,7 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    active_map = load_map("maps/level1.map");
+    //active_map = load_map("maps/level1.map");
 
     al_start_timer(timer);
     al_get_mouse_cursor_position(&mouse_pos.x, &mouse_pos.y);

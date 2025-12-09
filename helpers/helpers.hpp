@@ -10,6 +10,7 @@ const ALLEGRO_COLOR GREEN = al_map_rgb(0, 255, 0);
 const ALLEGRO_COLOR BLUE = al_map_rgb(0, 0, 255);
 const ALLEGRO_COLOR WHITE = al_map_rgb(255, 255, 255);
 const ALLEGRO_COLOR BLACK = al_map_rgb(0, 0, 0);
+const ALLEGRO_COLOR LIGHT_GRAY = al_map_rgb(211,211,211);
 
 // Enums
 
@@ -54,6 +55,11 @@ typedef enum ButtonIndex {
     START_WAVE_BUTTON,
     END
 } ButtonIndex;
+
+typedef enum GameState {
+    MAIN_MENU,
+    IN_GAME,
+} GameState;
 
 // Structs
 
@@ -236,6 +242,12 @@ struct Map {
     Vector2i size;
 };
 
+// Struct representing a possible map for the main menu
+struct PossibleMap {
+    char name[200];
+    char file_path[200];
+};
+
 // Globals
 
 #define MAX_WIDTH 800
@@ -252,6 +264,8 @@ struct Map {
 
 #define TILE_SIZE 128
 
+#define MAP_DIRECTORY "maps/"
+
 extern int player_health;
 extern int player_coins;
 extern bool draw_range_circles;
@@ -263,9 +277,9 @@ extern ALLEGRO_TIMER *timer;
 extern Vector2i mouse_pos;
 extern Camera camera;
 
-extern Tower *active_towers[100];
-extern Enemy *active_enemies[100];
-extern Projectile *active_projectiles[100];
+extern Tower *active_towers[1000];
+extern Enemy *active_enemies[1000];
+extern Projectile *active_projectiles[1000];
 
 extern int active_towers_count;
 extern int active_enemies_count;
@@ -287,6 +301,11 @@ extern ALLEGRO_BITMAP* enemy_goal_tile;
 extern Map active_map;
 
 extern Panel *buttons[1000];
+
+extern PossibleMap possible_maps[100];
+extern int possible_maps_count;
+
+extern GameState game_state;
 
 // Keybinds
 
@@ -378,6 +397,7 @@ void draw_scaled_image(ALLEGRO_BITMAP *image, Vector2i position, Vector2 scale, 
 bool init_allegro();
 
 // general_functions.cpp
+void remove_newline_from_string(char str[]);
 bool pressing_keybind(Keybind keybind, ALLEGRO_EVENT ev);
 Vector2i camera_fixed_position(Vector2i position);
 void draw(ALLEGRO_BITMAP *image, Vector2i position, Vector2 scale, int rotation);
@@ -393,7 +413,7 @@ void update_position(Object &obj);
 void update_position(Projectile &projectile);
 Vector2 normalize(Vector2 vec);
 Vector2 get_direction_to(Vector2i from, Vector2i to);
-void update_camera_position(Vector2i limit_top_left, Vector2i limit_bottom_right);
+void update_camera_position(bool limit, Vector2i limit_top_left, Vector2i limit_bottom_right);
 float distance_between(Vector2i a, Vector2i b);
 Vector2 get_object_size(Object obj);
 Vector2i vector2_to_vector2i(Vector2 vec);
@@ -437,3 +457,8 @@ void run_enemies();
 void do_ui();
 void handle_button_clicks(ALLEGRO_EVENT ev);
 void build_tower_on_click(ALLEGRO_EVENT ev);
+
+// main_menu.cpp
+void load_map_list();
+void draw_main_menu();
+void do_main_menu_buttons();

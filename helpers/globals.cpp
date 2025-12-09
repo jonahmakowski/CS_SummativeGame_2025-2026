@@ -12,9 +12,9 @@ Font default_font;
 Vector2i mouse_pos = {0, 0};
 Camera camera = {{0, 0}, {0, 0}};
 
-Tower *active_towers[100];
-Enemy *active_enemies[100];
-Projectile *active_projectiles[100];
+Tower *active_towers[1000];
+Enemy *active_enemies[1000];
+Projectile *active_projectiles[1000];
 
 int active_towers_count = 0;
 int active_enemies_count = 0;
@@ -38,6 +38,11 @@ ALLEGRO_BITMAP* enemy_goal_tile;
 Map active_map;
 
 Panel *buttons[1000];
+
+PossibleMap possible_maps[100];
+int possible_maps_count = 0;
+
+GameState game_state = MAIN_MENU;
 
 // Keybinds
 

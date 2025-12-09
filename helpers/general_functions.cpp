@@ -6,6 +6,12 @@
 
 #include "helpers.hpp"
 
+// Removes newline characters from a string
+void remove_newline_from_string(char str[]) {
+    str[strcspn(str, "\n")] = 0;
+    str[strcspn(str, "\r")] = 0;
+}
+
 // Using a keybind struct, checks if the key pressed in the event is one of the keycodes in the keybind
 bool pressing_keybind(Keybind keybind, ALLEGRO_EVENT ev) {
     for (int i = 0; i < 20; i++) {
@@ -122,9 +128,13 @@ Vector2 get_direction_to(Vector2i from, Vector2i to) {
 }
 
 // Updates the camera's position based on its velocity
-void update_camera_position(Vector2i limit_top_left, Vector2i limit_bottom_right) {
+void update_camera_position(bool limit, Vector2i limit_top_left, Vector2i limit_bottom_right) {
     camera.position.x += camera.velocity.x;
     camera.position.y += camera.velocity.y;
+    
+    if (!limit) {
+        return;
+    }
 
     camera.position.x = fmin(limit_top_left.x, camera.position.x);
     camera.position.y = fmin(limit_top_left.y, camera.position.y);
