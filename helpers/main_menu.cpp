@@ -41,11 +41,25 @@ void load_map_list() {
         }
 
         fgets(possible_maps[possible_maps_count].name, sizeof(possible_maps[possible_maps_count].name) - 1, file);
+        fscanf(file, "%d", &possible_maps[possible_maps_count].map_num);
+
         remove_newline_from_string(possible_maps[possible_maps_count].name);
         snprintf(possible_maps[possible_maps_count].file_path, sizeof(possible_maps[possible_maps_count].file_path), "%s", file_path);
         possible_maps_count++;
 
         fclose(file);
+    }
+
+    closedir(dir);
+
+    for (int i = 0; i < possible_maps_count - 1; i++) {
+        for (int j = 0; j < possible_maps_count - i - 1; j++) {
+            if (possible_maps[j].map_num > possible_maps[j + 1].map_num) {
+                PossibleMap temp = possible_maps[j];
+                possible_maps[j] = possible_maps[j + 1];
+                possible_maps[j + 1] = temp;
+            }
+        }
     }
 
     for (int i = 0; i < possible_maps_count; i++) {

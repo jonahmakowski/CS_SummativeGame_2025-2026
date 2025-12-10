@@ -30,6 +30,10 @@ ALLEGRO_BITMAP* path_tile_2;
 ALLEGRO_BITMAP* path_tile_3;
 ALLEGRO_BITMAP* path_tile_4;
 ALLEGRO_BITMAP* path_tile_5;
+ALLEGRO_BITMAP* path_tile_6;
+ALLEGRO_BITMAP* path_tile_7;
+ALLEGRO_BITMAP* path_tile_8;
+ALLEGRO_BITMAP* path_tile_9;
 
 ALLEGRO_BITMAP* tower_spot_tile;
 ALLEGRO_BITMAP* enemy_spawn_tile;
@@ -50,6 +54,6 @@ Keybind move_up = { { ALLEGRO_KEY_W, ALLEGRO_KEY_UP, -1 } };
 Keybind move_down = { { ALLEGRO_KEY_S, ALLEGRO_KEY_DOWN, -1 } };
 Keybind move_left = { { ALLEGRO_KEY_A, ALLEGRO_KEY_LEFT, -1 } };
 Keybind move_right = { { ALLEGRO_KEY_D, ALLEGRO_KEY_RIGHT, -1 } };
-Keybind kill_keybind = { { ALLEGRO_KEY_ESCAPE, -1 } };
+Keybind kill_keybind = { { ALLEGRO_KEY_BACKQUOTE, -1 } };
 Keybind range_circle_toggle = { { ALLEGRO_KEY_R, -1 } };
 Keybind fast_forward = { { ALLEGRO_KEY_F, -1 } };

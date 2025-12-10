@@ -225,6 +225,7 @@ struct Map {
     char name[100];
     MapTile tiles[1000];
     int tile_count;
+    int map_num;
 
     // In paths, the sequence of tiles that form the enemy path
     // Where index 0 is the spawn point and the last index is the goal
@@ -246,6 +247,7 @@ struct Map {
 struct PossibleMap {
     char name[200];
     char file_path[200];
+    int map_num;
 };
 
 // Globals
@@ -294,6 +296,10 @@ extern ALLEGRO_BITMAP* path_tile_2;
 extern ALLEGRO_BITMAP* path_tile_3;
 extern ALLEGRO_BITMAP* path_tile_4;
 extern ALLEGRO_BITMAP* path_tile_5;
+extern ALLEGRO_BITMAP* path_tile_6;
+extern ALLEGRO_BITMAP* path_tile_7;
+extern ALLEGRO_BITMAP* path_tile_8;
+extern ALLEGRO_BITMAP* path_tile_9;
 extern ALLEGRO_BITMAP* tower_spot_tile;
 extern ALLEGRO_BITMAP* enemy_spawn_tile;
 extern ALLEGRO_BITMAP* enemy_goal_tile;

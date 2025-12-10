@@ -167,6 +167,10 @@ int load_tile_images() {
     load_image_with_checks("tiles/path-3.png", path_tile_3);
     load_image_with_checks("tiles/path-4.png", path_tile_4);
     load_image_with_checks("tiles/path-5.png", path_tile_5);
+    load_image_with_checks("tiles/path-6.png", path_tile_6);
+    load_image_with_checks("tiles/path-7.png", path_tile_7);
+    load_image_with_checks("tiles/path-8.png", path_tile_8);
+    load_image_with_checks("tiles/path-9.png", path_tile_9);
 
     load_image_with_checks("tiles/tower_spot.png", tower_spot_tile);
     load_image_with_checks("tiles/enemy_spawn.png", enemy_spawn_tile);
@@ -209,6 +213,18 @@ void display_map() {
                         break;
                     case 5:
                         draw(path_tile_5, tile_position, scale, 0);
+                        break;
+                    case 6:
+                        draw(path_tile_6, tile_position, scale, 0);
+                        break;
+                    case 7:
+                        draw(path_tile_7, tile_position, scale, 0);
+                        break;
+                    case 8:
+                        draw(path_tile_8, tile_position, scale, 0);
+                        break;
+                    case 9:
+                        draw(path_tile_9, tile_position, scale, 0);
                         break;
                     default:
                         printf("Unknown path tile variation %d at position (%d, %d)\n", tile.variation, tile.position.x, tile.position.y);
@@ -293,9 +309,15 @@ void add_path_points_to_map(Map &map) {
                         // Path direction logic
                         if (previous_tile != nullptr) {
                             if(previous_tile->position.x == next_tile->position.x) {
-                                current_tile->variation = 0;
+                                current_tile->variation = rand() % 3 + 8;
+                                if (current_tile->variation == 10) {
+                                    current_tile->variation = 0;
+                                }
                             } else if(previous_tile->position.y == next_tile->position.y) {
-                                current_tile->variation = 1;
+                                current_tile->variation = rand() % 3 + 6;
+                                if (current_tile->variation == 8) {
+                                    current_tile->variation = 1;
+                                }
                             } else if ((previous_tile->position.x - current_tile->position.x == 1 || next_tile->position.x - current_tile->position.x == 1) && (previous_tile->position.y - current_tile->position.y == 1 || next_tile->position.y - current_tile->position.y == 1)) {
                                 current_tile->variation = 2;
                             } else if ((previous_tile->position.x - current_tile->position.x == 1 || next_tile->position.x - current_tile->position.x == 1) && (previous_tile->position.y - current_tile->position.y == -1 || next_tile->position.y - current_tile->position.y == -1)) {
@@ -342,6 +364,7 @@ Map load_map(const char* file_path) {
     }
 
     fgets(map.name, sizeof(map.name)-1, file);
+    fscanf(file, "%d", &map.map_num);
     fscanf(file, "%d %d", &width, &height);
 
     map.size = {width, height};
@@ -429,8 +452,6 @@ void run_enemies() {
 
                 new_enemy(*enemy, sub_wave->type);
 
-                enemy->object.scale = {0.25f, 0.25f};
-
                 enemy->object.position = tile_pos_to_pixel_pos(active_map.path[0]);
 
                 enemy->path_index = 1;
@@ -498,6 +519,8 @@ void run_enemies() {
             active_enemies_count--;
             i--;
         }
+
+        enemy->object.rotation_degrees = (atan2(direction.y, direction.x) * (180.0 / ALLEGRO_PI)) + 90;
     }
 }
 
