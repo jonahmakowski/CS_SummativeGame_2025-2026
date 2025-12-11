@@ -3,7 +3,7 @@
 #include "helpers.hpp"
 
 // Towers
-
+// Return a template tower based on passed parameters
 int define_tower_template(Tower &template_tower, const char* image_path, const char* name, float reload_time, float range, int damage, int cubes, const char* projectile_image_path, Vector2 projectile_scale) {
     load_image_with_checks(image_path, template_tower.object.image);
     template_tower.object.scale = {1.0f, 1.0f};
@@ -31,6 +31,7 @@ int define_tower_template(Tower &template_tower, const char* image_path, const c
     return 0;
 }
 
+// Makes a new instance tower based on type
 void new_tower(Tower &tower, TowerType type) {
     tower.type = type;
     switch (type) {
@@ -81,7 +82,7 @@ void new_tower(Tower &tower, TowerType type) {
 }
 
 // Enemies
-
+// Return a template enemy based on passed parameters
 int define_enemy_template(Enemy &enemy_template, const char* image_path, int health, int reward, int speed, bool is_boss, Vector2 scale) {
     enemy_template.health = health;
     
@@ -103,6 +104,7 @@ int define_enemy_template(Enemy &enemy_template, const char* image_path, int hea
     return 0;
 }
 
+// Makes a new enemy instance based on the passed type
 void new_enemy(Enemy &enemy, EnemyType type) {
     enemy.type = type;
     switch (type) {

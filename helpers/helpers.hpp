@@ -118,9 +118,6 @@ struct Panel {
     char text[250];
     ALLEGRO_COLOR text_color = BLACK;
     Font* font = &default_font;
-
-    struct Panel* children[20];
-    int child_count = 0;
 };
 
 // A Upgrade for a tower
@@ -279,9 +276,9 @@ extern ALLEGRO_TIMER *timer;
 extern Vector2i mouse_pos;
 extern Camera camera;
 
-extern Tower *active_towers[1000];
-extern Enemy *active_enemies[1000];
-extern Projectile *active_projectiles[1000];
+extern Tower active_towers[1000];
+extern Enemy active_enemies[1000];
+extern Projectile active_projectiles[1000];
 
 extern int active_towers_count;
 extern int active_enemies_count;
@@ -325,12 +322,12 @@ extern Keybind kill_keybind;
 // Defines
 
 #define add_enemy(enemy) { \
-    active_enemies[active_enemies_count] = &enemy; \
+    active_enemies[active_enemies_count] = enemy; \
     active_enemies_count++; \
 }
 
 #define add_tower(tower) { \
-    active_towers[active_towers_count] = &tower; \
+    active_towers[active_towers_count] = tower; \
     active_towers_count++; \
 }
 

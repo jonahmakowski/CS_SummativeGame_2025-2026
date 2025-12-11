@@ -15,25 +15,32 @@ struct MainMenuButton {
 
 MainMenuButton main_menu_buttons[100];
 
+// Function that loads a list of maps from the maps directory
 void load_map_list() {
     DIR *dir;
     struct dirent *in_file;
 
+    // Open the maps directory
     dir = opendir(MAP_DIRECTORY);
 
+    // Make sure it opened correctly
     if (dir == NULL) {
         printf("Could not open maps directory: %s\n", MAP_DIRECTORY);
         return;
     }
 
+    // For file in the maps directory
     while ((in_file = readdir(dir))) {
         char file_path[200], level_name[200];
+        // Get the full file path
         snprintf(file_path, sizeof(file_path), "%s%s", MAP_DIRECTORY, in_file->d_name);
 
+        // If it's not a .map file, skip it
         if (strstr(in_file->d_name, ".map") == NULL) {
             continue;
         }
 
+        // Load the map file to get its name and level number
         FILE *file = fopen(file_path, "r");
         if (!file) {
             printf("Could not open map file: %s\n", file_path);
@@ -51,7 +58,8 @@ void load_map_list() {
     }
 
     closedir(dir);
-
+    
+    // sorts the maps by level number
     for (int i = 0; i < possible_maps_count - 1; i++) {
         for (int j = 0; j < possible_maps_count - i - 1; j++) {
             if (possible_maps[j].map_num > possible_maps[j + 1].map_num) {
@@ -62,14 +70,17 @@ void load_map_list() {
         }
     }
 
+    // debug stuff to indicate loading a map
     for (int i = 0; i < possible_maps_count; i++) {
         printf("Loaded map: %s (%s)\n", possible_maps[i].name, possible_maps[i].file_path);
     }
 }
 
+// Draws main menu
 void draw_main_menu() {
     fill_screen(LIGHT_GRAY);
 
+    // Draws the title p
     Panel title_panel;
     title_panel.top_left = {get_display_width() / 2 - 300, 100};
     title_panel.bottom_right = {get_display_width() / 2 + 300, 200};
@@ -80,15 +91,16 @@ void draw_main_menu() {
     title_panel.font = &default_font;
     draw(title_panel);
 
+    // Draws the background for the map list
     Panel map_list_panel;
     map_list_panel.top_left = {get_display_width() / 2 - 300, 250};
     map_list_panel.bottom_right = {get_display_width() / 2 + 300, 250 + possible_maps_count * 70 + 10};
     map_list_panel.color = WHITE;
     map_list_panel.has_border = true;
     map_list_panel.border_color = BLACK;
-
     draw(map_list_panel);
 
+    // Draws each maps' button
     for (int i = 0; i < possible_maps_count; i++) {
         Panel map_panel;
         map_panel.top_left = {map_list_panel.top_left.x + 10, map_list_panel.top_left.y + 10 + i * 70};
@@ -106,6 +118,7 @@ void draw_main_menu() {
     }
 }
 
+// Handles main menu button clicks
 void do_main_menu_buttons() {
     for (int i = 0; i < possible_maps_count; i++) {
         if (currently_clicking(main_menu_buttons[i].panel)) {

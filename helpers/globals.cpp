@@ -12,9 +12,9 @@ Font default_font;
 Vector2i mouse_pos = {0, 0};
 Camera camera = {{0, 0}, {0, 0}};
 
-Tower *active_towers[1000];
-Enemy *active_enemies[1000];
-Projectile *active_projectiles[1000];
+Tower active_towers[1000];
+Enemy active_enemies[1000];
+Projectile active_projectiles[1000];
 
 int active_towers_count = 0;
 int active_enemies_count = 0;

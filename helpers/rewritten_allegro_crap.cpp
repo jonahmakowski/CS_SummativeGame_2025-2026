@@ -80,12 +80,14 @@ bool init_allegro() {
         return false;
     }
 
+    // Exit program if program fails to create timer
     timer = al_create_timer(1.0 / FPS);
    	if (!timer) {
    		printf("timer failed\n");
         return false;
    	}
 
+    // Exit program if program fails to create event queue
    	event_queue = al_create_event_queue();
    	if (!event_queue) {
    		printf("queue failed\n");
@@ -104,13 +106,16 @@ bool init_allegro() {
         return false;
     }
 
+    // Put event in queue
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
     al_register_event_source(event_queue, al_get_keyboard_event_source());
     al_register_event_source(event_queue, al_get_mouse_event_source());
     al_register_event_source(event_queue, al_get_display_event_source(display));
 
+    // sets the window title
     al_set_window_title(display, "Summative Game");
 
+    //loads font
     load_font_with_checks("fonts/OpenSans-Font.ttf", 24, 0, default_font);
 
     return true;
