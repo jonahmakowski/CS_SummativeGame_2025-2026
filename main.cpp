@@ -95,7 +95,9 @@ bool setup_game() {
         return false;
     }
 
-    load_map_list();
+    if (!load_map_list()) {
+        return false;
+    }
     
     return true;
 }
@@ -107,8 +109,6 @@ int main(int argc, char *argv[]) {
         printf("Failed to setup game\n");
         return -1;
     }
-
-    //active_map = load_map("maps/level1.map");
 
     al_start_timer(timer);
     al_get_mouse_cursor_position(&mouse_pos.x, &mouse_pos.y);

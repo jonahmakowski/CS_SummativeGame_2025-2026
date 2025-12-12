@@ -16,7 +16,7 @@ struct MainMenuButton {
 MainMenuButton main_menu_buttons[100];
 
 // Function that loads a list of maps from the maps directory
-void load_map_list() {
+bool load_map_list() {
     DIR *dir;
     struct dirent *in_file;
 
@@ -26,7 +26,7 @@ void load_map_list() {
     // Make sure it opened correctly
     if (dir == NULL) {
         printf("Could not open maps directory: %s\n", MAP_DIRECTORY);
-        return;
+        return false;
     }
 
     // For file in the maps directory
@@ -44,7 +44,7 @@ void load_map_list() {
         FILE *file = fopen(file_path, "r");
         if (!file) {
             printf("Could not open map file: %s\n", file_path);
-            continue;
+            return false;
         }
 
         fgets(possible_maps[possible_maps_count].name, sizeof(possible_maps[possible_maps_count].name) - 1, file);
@@ -74,6 +74,8 @@ void load_map_list() {
     for (int i = 0; i < possible_maps_count; i++) {
         printf("Loaded map: %s (%s)\n", possible_maps[i].name, possible_maps[i].file_path);
     }
+
+    return true;
 }
 
 // Draws main menu
