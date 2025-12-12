@@ -195,42 +195,43 @@ void display_map() {
                 }
                 break;
             // decides the correct path tile
-            switch (tile.variation) {
-                    case 0:
-                        draw(path_tile_0, tile_position, scale, 0);
-                        break;
-                    case 1:
-                        draw(path_tile_1, tile_position, scale, 0);
-                        break;
-                    case 2:
-                        draw(path_tile_2, tile_position, scale, 0);
-                        break;
-                    case 3:
-                        draw(path_tile_3, tile_position, scale, 0);
-                        break;
-                    case 4:
-                        draw(path_tile_4, tile_position, scale, 0);
-                        break;
-                    case 5:
-                        draw(path_tile_5, tile_position, scale, 0);
-                        break;
-                    case 6:
-                        draw(path_tile_6, tile_position, scale, 0);
-                        break;
-                    case 7:
-                        draw(path_tile_7, tile_position, scale, 0);
-                        break;
-                    case 8:
-                        draw(path_tile_8, tile_position, scale, 0);
-                        break;
-                    case 9:
-                        draw(path_tile_9, tile_position, scale, 0);
-                        break;
-                    default:
-                        printf("Unknown path tile variation %d at position (%d, %d)\n", tile.variation, tile.position.x, tile.position.y);
-                        draw(path_tile_0, tile_position, scale, 0);
-                        break;
-                }
+            case PATH:
+                switch (tile.variation) {
+                        case 0:
+                            draw(path_tile_0, tile_position, scale, 0);
+                            break;
+                        case 1:
+                            draw(path_tile_1, tile_position, scale, 0);
+                            break;
+                        case 2:
+                            draw(path_tile_2, tile_position, scale, 0);
+                            break;
+                        case 3:
+                            draw(path_tile_3, tile_position, scale, 0);
+                            break;
+                        case 4:
+                            draw(path_tile_4, tile_position, scale, 0);
+                            break;
+                        case 5:
+                            draw(path_tile_5, tile_position, scale, 0);
+                            break;
+                        case 6:
+                            draw(path_tile_6, tile_position, scale, 0);
+                            break;
+                        case 7:
+                            draw(path_tile_7, tile_position, scale, 0);
+                            break;
+                        case 8:
+                            draw(path_tile_8, tile_position, scale, 0);
+                            break;
+                        case 9:
+                            draw(path_tile_9, tile_position, scale, 0);
+                            break;
+                        default:
+                            printf("Unknown path tile variation %d at position (%d, %d)\n", tile.variation, tile.position.x, tile.position.y);
+                            draw(path_tile_0, tile_position, scale, 0);
+                            break;
+                    }
                 break;
             // Draws the tower spot tile
             case TOWER_SPOT:
