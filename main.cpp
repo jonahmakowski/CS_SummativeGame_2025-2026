@@ -12,7 +12,7 @@
 #include <time.h>
 #include <string.h>
 
-#include "helpers/helpers.hpp"
+#include "helpers/headers/helpers.hpp"
 
 // Run every frame
 void frame_logic() {

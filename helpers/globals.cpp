@@ -1,4 +1,4 @@
-#include "helpers.hpp"
+#include "headers/helpers.hpp"
 
 int player_health = 100;
 int player_coins = 0;
