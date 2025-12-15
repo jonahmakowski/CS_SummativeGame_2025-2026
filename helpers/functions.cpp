@@ -442,6 +442,13 @@ Map load_map(const char* file_path) {
     add_path_points_to_map(map);
 
     fclose(file);
+
+    // Load cards
+    current_hand_count = 0;
+    for (int i= 0; i < 5; i++){
+        draw_card();
+    }
+    
     return map;
 }
 
@@ -632,5 +639,105 @@ void build_tower_on_click(ALLEGRO_EVENT ev) {
                 break;
             }
         }
+    }
+}
+
+// Draws a card to the screen
+void display_card(int index, int width, int upper_y) {
+    Vector2i upper_left;
+    Vector2i bottom_right;
+    int screen_width = get_display_width();
+    
+    // getting the x of Vectori of the first card (hopefully)
+    int first_card_x = ((float)screen_width/2) - (((float)current_hand_count / 2) * (width + 10));
+    
+    upper_left.x = first_card_x + index * (width + 10);
+    upper_left.y = upper_y;
+
+    bottom_right.x = width + upper_left.x;
+    bottom_right.y = get_display_height();
+
+    // Drawing the actual card
+
+    /*
+    What's included:
+        Main panel -- Background
+        Tower Name
+        Picture of the tower
+        Stats
+        Price
+        Button to purchase
+    */
+
+    // Background panel
+    Panel card_panel;
+    card_panel.top_left = upper_left;
+    card_panel.bottom_right = bottom_right;
+    card_panel.color = WHITE;
+
+    // Tower Name
+    Panel tower_name;
+    tower_name.top_left = {upper_left.x + 10, upper_left.y + 10};
+    tower_name.bottom_right = {bottom_right.x - 10, upper_left.y + 60};
+    card_panel.color = BLUE;
+    strcpy(tower_name.text, current_hand[index].name);
+
+    // Tower Image
+    current_hand[index].object.position = {(upper_left.x + bottom_right.x) / 2, upper_left.y + 140};
+    current_hand[index].object.scale = {0.5f, 0.5f};
+
+    // Stats Panel
+    Panel stats_panel;
+    stats_panel.top_left = {upper_left.x + 10, upper_left.y + 220};
+    stats_panel.bottom_right = {bottom_right.x - 10, bottom_right.y - 125};
+    stats_panel.color = LIGHT_GRAY;
+
+    Panel damage_stat;
+    damage_stat.top_left = {stats_panel.top_left.x, stats_panel.top_left.y};
+    damage_stat.bottom_right = {stats_panel.bottom_right.x, stats_panel.bottom_right.y - 100};
+    damage_stat.color = stats_panel.color;
+    snprintf(damage_stat.text, sizeof(damage_stat.text), "Damage: %.2f", current_hand[index].damage);
+
+    Panel reload_stat;
+    reload_stat.top_left = {stats_panel.top_left.x, stats_panel.top_left.y + 50};
+    reload_stat.bottom_right = {stats_panel.bottom_right.x, stats_panel.bottom_right.y - 60};
+    reload_stat.color = stats_panel.color;
+    snprintf(reload_stat.text, sizeof(reload_stat.text), "Reload Time: %.2f s", current_hand[index].reload_time);
+
+    Panel range_stat;
+    range_stat.top_left = {stats_panel.top_left.x, stats_panel.top_left.y + 100};
+    range_stat.bottom_right = {stats_panel.bottom_right.x, stats_panel.bottom_right.y - 20};
+    range_stat.color = stats_panel.color;
+    snprintf(range_stat.text, sizeof(range_stat.text), "Range: %d", current_hand[index].range);
+
+    // Price Panel
+    Panel price_panel;
+    price_panel.top_left = {upper_left.x + 10, bottom_right.y - 115};
+    price_panel.bottom_right = {bottom_right.x - 10, bottom_right.y - 60};
+    price_panel.color = YELLOW;
+    snprintf(price_panel.text, sizeof(price_panel.text), "Price: %d", current_hand[index].price);
+
+    // Buy Button
+    Panel buy_button;
+    buy_button.top_left = {upper_left.x + 10, bottom_right.y - 50};
+    buy_button.bottom_right = {bottom_right.x - 10, bottom_right.y - 10};
+    buy_button.color = GREEN;
+    snprintf(buy_button.text, sizeof(buy_button.text), "Buy");
+
+    // Draw all components
+    draw(card_panel);
+    draw(tower_name);
+    draw_scaled_image(current_hand[index].object.image, current_hand[index].object.position, current_hand[index].object.scale, current_hand[index].object.rotation_degrees);
+    draw(stats_panel);
+    draw(damage_stat);
+    draw(reload_stat);
+    draw(price_panel);
+    draw(range_stat);
+    draw(buy_button);
+}
+
+void display_hand() {
+    for (int i = 0; i < current_hand_count; i++) {
+        display_card(i, 300, get_display_height()-500);
     }
 }

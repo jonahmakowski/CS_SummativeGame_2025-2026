@@ -36,6 +36,8 @@ void frame_logic() {
         check_projectiles();
 
         do_ui();
+
+        display_hand();
     } else if (game_state == MAIN_MENU) {
         draw_main_menu();
     }

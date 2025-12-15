@@ -1,10 +1,17 @@
 #include <string.h>
+#include <stdlib.h>
 
 #include "headers/helpers.hpp"
 
+// Tower card drawing function
+void draw_card() {
+    new_tower(current_hand[current_hand_count], avalible_deck[(rand() % avalible_deck_count)]);
+    current_hand_count++;
+}
+
 // Towers
 // Return a template tower based on passed parameters
-int define_tower_template(Tower &template_tower, const char* image_path, const char* name, float reload_time, float range, int damage, int cubes, const char* projectile_image_path, Vector2 projectile_scale) {
+int define_tower_template(Tower &template_tower, const char* image_path, const char* name, float reload_time, float range, int damage, int cubes, const char* projectile_image_path, Vector2 projectile_scale, int price) {
     load_image_with_checks(image_path, template_tower.object.image);
     template_tower.object.scale = {1.0f, 1.0f};
     template_tower.object.velocity = {0, 0};
@@ -27,6 +34,8 @@ int define_tower_template(Tower &template_tower, const char* image_path, const c
     strcpy(template_tower.projectile_image_path, projectile_image_path);
 
     template_tower.projectile_scale = projectile_scale;
+
+    template_tower.price = price;
     
     return 0;
 }
@@ -36,42 +45,42 @@ void new_tower(Tower &tower, TowerType type) {
     tower.type = type;
     switch (type) {
         case SNOWMAN:
-            if (define_tower_template(tower, "images/sun.png", "Snowman", 1, 300, 10, 0, "images/sun.png", {0.2, 0.2}) != 0) {
+            if (define_tower_template(tower, "images/sun.png", "Snowman", 1, 300, 10, 0, "images/sun.png", {0.2, 0.2}, 5) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case SNOWBALL_THROWER:
-            if (define_tower_template(tower, "images/sun.png", "Snowball Thrower", 1, 500, 100, 1, "images/snowball.png", {0.1, 0.1}) != 0) {
+            if (define_tower_template(tower, "images/sun.png", "Snowball Thrower", 1, 500, 100, 1, "images/snowball.png", {0.1, 0.1}, 5) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case WATER_BALLOON:
-        if (define_tower_template(tower, "images/sun.png", "Water Balloon Thrower", 1, 400, 50, 0, "images/sun.png", {0.2, 0.2}) != 0) {
+        if (define_tower_template(tower, "images/sun.png", "Water Balloon Thrower", 1, 400, 50, 0, "images/sun.png", {0.2, 0.2}, 10) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case ICICLE_LAUNCHER:
-            if (define_tower_template(tower, "images/sun.png", "Icicle Launcher", 5, 1000, 200, 0, "images/sun.png", {0.2, 0.2}) != 0) {
+            if (define_tower_template(tower, "images/sun.png", "Icicle Launcher", 5, 1000, 200, 0, "images/sun.png", {0.2, 0.2}, 30) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case SNOWBLOWER:
-            if (define_tower_template(tower, "images/sun.png", "Snowblower", 0.1, 300, 20, 0, "images/sun.png", {0.2, 0.2}) != 0) {
+            if (define_tower_template(tower, "images/sun.png", "Snowblower", 0.1, 300, 20, 0, "images/sun.png", {0.2, 0.2}, 30) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case MAMMOTH:
-            if (define_tower_template(tower, "images/sun.png", "Mammoth", 5, 300, 500, 0, "images/sun.png", {0.2, 0.2}) != 0) {
+            if (define_tower_template(tower, "images/sun.png", "Mammoth", 5, 300, 500, 0, "images/sun.png", {0.2, 0.2}, 0) != 50) {
                 printf("Failed to create new tower");
             }
             break;
         case ICE_WIZARD:
-            if (define_tower_template(tower, "images/sun.png", "Magic Joe, The Ice Wizard of the North", 3, 500, 200, 0, "images/sun.png", {0.2, 0.2}) != 0) {
+            if (define_tower_template(tower, "images/sun.png", "Ice Wizard(Magic Joe)", 3, 500, 200, 0, "images/sun.png", {0.2, 0.2}, 80) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case HOUSE:
-            if (define_tower_template(tower, "images/sun.png", "House", 1, 0, 0, 0, "images/sun.png", {0.2, 0.2}) != 0) {
+            if (define_tower_template(tower, "images/sun.png", "House", 1, 0, 0, 0, "images/sun.png", {0.2, 0.2}, 100) != 0) {
                 printf("Failed to create new tower");
             }
             break;

@@ -132,8 +132,8 @@ struct Tower {
     char name[100];
 
     float reload_time;
-    float range;
-    int damage;
+    int range;
+    float damage;
 
     float time_since_last_shot;
 
@@ -146,6 +146,8 @@ struct Tower {
 
     char projectile_image_path[100];
     Vector2 projectile_scale;
+
+    int price;
 };
 
 // Enemy struct representing an enemy in the game

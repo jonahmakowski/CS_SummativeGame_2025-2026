@@ -48,6 +48,11 @@ int possible_maps_count = 0;
 
 GameState game_state = MAIN_MENU;
 
+TowerType avalible_deck[100] = {TowerType::SNOWMAN, TowerType::SNOWBALL_THROWER, TowerType::WATER_BALLOON, TowerType::ICICLE_LAUNCHER, TowerType::ICE_WIZARD, TowerType::HOUSE};
+int avalible_deck_count = 6;
+Tower current_hand[5];
+int current_hand_count = 0;
+
 // Keybinds
 
 Keybind move_up = { { ALLEGRO_KEY_W, ALLEGRO_KEY_UP, -1 } };

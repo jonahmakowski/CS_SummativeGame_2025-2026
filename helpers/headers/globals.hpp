@@ -68,6 +68,11 @@ extern int possible_maps_count;
 
 extern GameState game_state;
 
+extern TowerType avalible_deck[100];
+extern int avalible_deck_count;
+extern Tower current_hand[5];
+extern int current_hand_count;
+
 // Keybinds
 
 extern Keybind move_up;
