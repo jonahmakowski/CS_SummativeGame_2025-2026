@@ -5,7 +5,6 @@
 #include <allegro5/allegro_ttf.h>
 
 // enemies_and_towers.cpp
-void draw_card();
 void new_tower(Tower &tower, TowerType type);
 void new_enemy(Enemy &enemy, EnemyType type);
 
@@ -77,8 +76,6 @@ void run_enemies();
 void do_ui();
 void handle_button_clicks(ALLEGRO_EVENT ev);
 void build_tower_on_click(ALLEGRO_EVENT ev);
-void display_card(int index, int width, int upper_y);
-void display_hand();
 
 // main_menu.cpp
 bool load_map_list();
@@ -91,3 +88,9 @@ void display_map();
 void print_map();
 void add_path_points_to_map(Map &map);
 Map load_map(const char* file_path);
+
+// card_system.cpp
+void draw_card();
+void display_card(int index, int width, int upper_y);
+void display_hand();
+void handle_buy_card(ALLEGRO_EVENT ev);

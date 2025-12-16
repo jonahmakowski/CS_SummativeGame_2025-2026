@@ -1,7 +1,7 @@
 #include "headers/helpers.hpp"
 
 int player_health = 100;
-int player_coins = 0;
+int player_coins = 20;
 bool draw_range_circles = false;
 
 ALLEGRO_DISPLAY *display = nullptr;
@@ -52,6 +52,8 @@ TowerType avalible_deck[100] = {TowerType::SNOWMAN, TowerType::SNOWBALL_THROWER,
 int avalible_deck_count = 6;
 Tower current_hand[5];
 int current_hand_count = 0;
+
+Tower to_place;
 
 // Keybinds
 

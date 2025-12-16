@@ -75,7 +75,7 @@ struct Object {
     Vector2i velocity;
     Vector2i position;
     float rotation_degrees = 0;
-    bool exists;
+    bool exists = false;
 };
 
 // Keybind struct representing a set of keycodes

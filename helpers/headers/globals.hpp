@@ -73,6 +73,8 @@ extern int avalible_deck_count;
 extern Tower current_hand[5];
 extern int current_hand_count;
 
+extern Tower to_place;
+
 // Keybinds
 
 extern Keybind move_up;

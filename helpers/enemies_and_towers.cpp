@@ -3,12 +3,6 @@
 
 #include "headers/helpers.hpp"
 
-// Tower card drawing function
-void draw_card() {
-    new_tower(current_hand[current_hand_count], avalible_deck[(rand() % avalible_deck_count)]);
-    current_hand_count++;
-}
-
 // Towers
 // Return a template tower based on passed parameters
 int define_tower_template(Tower &template_tower, const char* image_path, const char* name, float reload_time, float range, int damage, int cubes, const char* projectile_image_path, Vector2 projectile_scale, int price) {

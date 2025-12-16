@@ -81,6 +81,7 @@ void handle_mouse_input(ALLEGRO_EVENT ev) {
     if (game_state == IN_GAME) {
         build_tower_on_click(ev);
         handle_button_clicks(ev);
+        handle_buy_card(ev);
     } else if (game_state == MAIN_MENU) {
         do_main_menu_buttons();
     }
