@@ -303,6 +303,17 @@ void do_ui() {
     snprintf(coin_panel.text, sizeof(coin_panel.text), "Coins: %d", player_coins);
     draw(coin_panel);
 
+    Panel discard_button;
+    discard_button.top_left = {0, get_display_height() / 2 + 50};
+    discard_button.bottom_right = {300, get_display_height() / 2 + 130};
+    discard_button.color = RED;
+    discard_button.text_color = WHITE;
+    discard_button.exists = true;
+    snprintf(discard_button.text, sizeof(discard_button.text), "DISCARD HAND - 5 coins");
+    draw(discard_button);
+
+    buttons[ButtonIndex::DISCARD_BUTTON] = discard_button;
+
     // Next Wave Button
     if ((active_map.waves[active_map.current_wave_index].wave_complete || active_map.current_wave_index == -1) && active_map.current_wave_index < active_map.wave_count - 1) {
         Panel next_wave_button;
@@ -323,15 +334,32 @@ void do_ui() {
 void handle_button_clicks(ALLEGRO_EVENT ev) {
     if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1) {
         // For each button in the enum
-        for (ButtonIndex i = (ButtonIndex)0; i < END; i = (ButtonIndex)(i + 1)) {
+        for (int i = 0; i < (int)ButtonIndex::END; i++) {
+            ButtonIndex button_index = (ButtonIndex)i;
             Panel* button = &buttons[i];
+
             // Check if it's being clicked and it exists
-            if (button != nullptr && currently_clicking(*button) && button->exists) {
+            if (button != nullptr && button->exists) {
+                if (!currently_clicking(*button)) {
+                    continue;
+                }
+                
                 // Perform action based on button index
-                switch (i) {
+                switch (button_index) {
                     case START_WAVE_BUTTON:
                         active_map.current_wave_index++;
                         buttons[i].exists = false;
+                        break;
+                    case DISCARD_BUTTON:
+                        if (player_coins < 5) {
+                            printf("Not enough coins to discard hand!\n");
+                            break;
+                        }
+                        current_hand_count = 0;
+                        for (int j = 0; j < 5; j++) {
+                            draw_card();
+                        }
+                        player_coins -= 5;
                         break;
                     default:
                         printf("Unknown button index %d\n", i);
@@ -365,6 +393,7 @@ void build_tower_on_click(ALLEGRO_EVENT ev) {
                 tower.object.position = tile_pos_to_pixel_pos(active_map.tower_spots[i].position);
                 active_map.tower_spots[i].occupied = true;
                 
+                // Set the tile to grass to get rid of the "for sale" sign
                 for (int j = 0; j < active_map.tile_count; j++) {
                     if (active_map.tiles[j].position.x == mouse_tile_pos.x && active_map.tiles[j].position.y == mouse_tile_pos.y) {
                         active_map.tiles[j].variation = 1;
@@ -378,3 +407,12 @@ void build_tower_on_click(ALLEGRO_EVENT ev) {
         }
     }
 }
+/*
+void tower_menu(ALLEGRO) {
+    for (int i = 0; i < active_map.tower_spots_count; i++) {
+        if (active_map.tower_spots[i].position.x == mouse_tile_pos.x && active_map.tower_spots[i].position.y == mouse_tile_pos.y && !active_map.tower_spots[i].occupied) {
+            
+        }
+    }
+}
+*/

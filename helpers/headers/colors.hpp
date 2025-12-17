@@ -12,3 +12,4 @@ const ALLEGRO_COLOR LIGHT_GRAY = al_map_rgb(211,211,211);
 const ALLEGRO_COLOR YELLOW = al_map_rgb(255, 255, 0);
 const ALLEGRO_COLOR TRANSPARENT = al_map_rgba(0, 0, 0, 0);
 const ALLEGRO_COLOR ORANGE = al_map_rgb(255, 165, 0);
+const ALLEGRO_COLOR BLUE_GREY = al_map_rgb(199, 208, 217);

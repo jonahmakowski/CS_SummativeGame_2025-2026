@@ -45,14 +45,14 @@ void display_card(int index, int width, int upper_y) {
     Panel card_panel;
     card_panel.top_left = upper_left;
     card_panel.bottom_right = bottom_right;
-    card_panel.color = BLUE;
+    card_panel.color = BLUE_GREY;
 
     // Tower Name
     Panel tower_name;
     tower_name.top_left = {upper_left.x + 10, upper_left.y + 10};
     tower_name.bottom_right = {bottom_right.x - 10, upper_left.y + 60};
     tower_name.color = card_panel.color;
-    tower_name.text_color = WHITE;
+    tower_name.text_color = BLACK;
     strcpy(tower_name.text, current_hand[index].name);
 
     // Tower Image
@@ -67,19 +67,19 @@ void display_card(int index, int width, int upper_y) {
     Panel damage_stat;
     damage_stat.top_left = {stats_panel.top_left.x, stats_panel.top_left.y};
     damage_stat.bottom_right = {stats_panel.bottom_right.x, stats_panel.bottom_right.y - 100};
-    damage_stat.color = stats_panel.color;
+    damage_stat.color = TRANSPARENT;
     snprintf(damage_stat.text, sizeof(damage_stat.text), "Damage: %.2f", current_hand[index].damage);
 
     Panel reload_stat;
     reload_stat.top_left = {stats_panel.top_left.x, stats_panel.top_left.y + 50};
     reload_stat.bottom_right = {stats_panel.bottom_right.x, stats_panel.bottom_right.y - 60};
-    reload_stat.color = stats_panel.color;
+    reload_stat.color = TRANSPARENT;
     snprintf(reload_stat.text, sizeof(reload_stat.text), "Reload Time: %.2f s", current_hand[index].reload_time);
 
     Panel range_stat;
     range_stat.top_left = {stats_panel.top_left.x, stats_panel.top_left.y + 100};
     range_stat.bottom_right = {stats_panel.bottom_right.x, stats_panel.bottom_right.y - 20};
-    range_stat.color = stats_panel.color;
+    range_stat.color = TRANSPARENT;
     snprintf(range_stat.text, sizeof(range_stat.text), "Range: %d", current_hand[index].range);
 
     // Price Panel
@@ -111,6 +111,10 @@ void display_card(int index, int width, int upper_y) {
 
 // Draws the entire hand of cards
 void display_hand() {
+    if (!show_ui) {
+        return;
+    }
+
     for (int i = 0; i < current_hand_count; i++) {
         display_card(i, 300, get_display_height()-500);
     }
@@ -128,6 +132,10 @@ void display_hand() {
 
 // Handles buying a card when clicked
 void handle_buy_card(ALLEGRO_EVENT ev) {
+    if (!show_ui) {
+        return;
+    }
+    
     for (int i = 0; i < current_hand_count; i++) {
         if (currently_clicking(card_buttons[i])) {
             if (player_coins >= current_hand[i].price) {

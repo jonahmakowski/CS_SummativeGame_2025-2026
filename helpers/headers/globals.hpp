@@ -14,6 +14,7 @@
 #define SCREEN_WIDTH 2160
 #define SCREEN_HEIGHT 1440
 #define FULLSCREEN false // May cause issues, not tested much
+#define CANRESIZE true
 
 #define PANEL_ROUNDING 10.0f
 
@@ -75,6 +76,8 @@ extern int current_hand_count;
 
 extern Tower to_place;
 
+extern bool show_ui;
+
 // Keybinds
 
 extern Keybind move_up;
@@ -83,3 +86,5 @@ extern Keybind move_left;
 extern Keybind move_right;
 extern Keybind range_circle_toggle;
 extern Keybind kill_keybind;
+extern Keybind next_wave;
+extern Keybind toggle_ui;

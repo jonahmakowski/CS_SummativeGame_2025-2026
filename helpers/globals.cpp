@@ -55,6 +55,8 @@ int current_hand_count = 0;
 
 Tower to_place;
 
+bool show_ui = true;
+
 // Keybinds
 
 Keybind move_up = { { ALLEGRO_KEY_W, ALLEGRO_KEY_UP, -1 } };
@@ -64,3 +66,5 @@ Keybind move_right = { { ALLEGRO_KEY_D, ALLEGRO_KEY_RIGHT, -1 } };
 Keybind kill_keybind = { { ALLEGRO_KEY_BACKQUOTE, -1 } };
 Keybind range_circle_toggle = { { ALLEGRO_KEY_R, -1 } };
 Keybind fast_forward = { { ALLEGRO_KEY_F, -1 } };
+Keybind next_wave = { { ALLEGRO_KEY_SPACE, -1} };
+Keybind toggle_ui = { { ALLEGRO_KEY_Q, -1 } };

@@ -18,6 +18,8 @@
 void frame_logic() {
     fill_screen(WHITE);
 
+    al_acknowledge_resize(display);
+
     if (game_state == IN_GAME) {
         update_camera_position(true, {0, 0}, {(active_map.size.x * TILE_SIZE - get_display_width()) * -1, (active_map.size.y * TILE_SIZE - get_display_height()) * -1});
 
@@ -60,6 +62,13 @@ void handle_keyboard_input_down(ALLEGRO_EVENT ev) {
         }
         if (pressing_keybind(range_circle_toggle, ev)) {
             draw_range_circles = !draw_range_circles;
+        }
+        if (pressing_keybind(next_wave, ev)) {
+            active_map.current_wave_index++;
+            buttons[ButtonIndex::START_WAVE_BUTTON].exists = false;
+        }
+        if (pressing_keybind(toggle_ui, ev)) {
+            show_ui = !show_ui;
         }
     }
 }

@@ -68,9 +68,11 @@ bool init_allegro() {
         printf("failed to initalize libraries\n");
         return false;
     }
-
+    
     if (FULLSCREEN) {
         al_set_new_display_flags(ALLEGRO_FULLSCREEN_WINDOW);
+    } else if (CANRESIZE) {
+        al_set_new_display_flags(ALLEGRO_RESIZABLE);
     }
 
     // Exit program if program fails to create display
@@ -78,6 +80,11 @@ bool init_allegro() {
     if(!display) {
         printf("Display failed\n");
         return false;
+    }
+
+    if (CANRESIZE) {
+        al_set_window_constraints(display, 1584, 1262, 0, 0);
+        al_apply_window_constraints(display, true);
     }
 
     // Exit program if program fails to create timer
