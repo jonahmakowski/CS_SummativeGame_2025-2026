@@ -61,7 +61,7 @@ extern ALLEGRO_BITMAP* enemy_goal_tile;
 
 extern Map active_map;
 
-extern Panel *buttons[1000];
+extern Panel buttons[1000];
 
 extern PossibleMap possible_maps[100];
 extern int possible_maps_count;

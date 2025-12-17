@@ -45,18 +45,18 @@ void display_card(int index, int width, int upper_y) {
     Panel card_panel;
     card_panel.top_left = upper_left;
     card_panel.bottom_right = bottom_right;
-    card_panel.color = WHITE;
+    card_panel.color = BLUE;
 
     // Tower Name
     Panel tower_name;
     tower_name.top_left = {upper_left.x + 10, upper_left.y + 10};
     tower_name.bottom_right = {bottom_right.x - 10, upper_left.y + 60};
-    card_panel.color = BLUE;
+    tower_name.color = card_panel.color;
+    tower_name.text_color = WHITE;
     strcpy(tower_name.text, current_hand[index].name);
 
     // Tower Image
     current_hand[index].object.position = {(upper_left.x + bottom_right.x) / 2, upper_left.y + 140};
-    current_hand[index].object.scale = {0.5f, 0.5f};
 
     // Stats Panel
     Panel stats_panel;
@@ -100,7 +100,7 @@ void display_card(int index, int width, int upper_y) {
     // Draw all components
     draw(card_panel);
     draw(tower_name);
-    draw_scaled_image(current_hand[index].object.image, current_hand[index].object.position, current_hand[index].object.scale, current_hand[index].object.rotation_degrees);
+    draw_scaled_image(current_hand[index].object.image, current_hand[index].object.position, multiply_vector(current_hand[index].object.scale, 0.75f), current_hand[index].object.rotation_degrees);
     draw(stats_panel);
     draw(damage_stat);
     draw(reload_stat);
@@ -114,6 +114,16 @@ void display_hand() {
     for (int i = 0; i < current_hand_count; i++) {
         display_card(i, 300, get_display_height()-500);
     }
+
+    // If a card has been purchased, display a message to place the tower
+    if (to_place.object.exists) {
+        Panel place_panel;
+        place_panel.top_left = {get_display_width() / 2 - 300, 0};
+        place_panel.bottom_right = {get_display_width() / 2 + 300, 80};
+        place_panel.color = ORANGE;
+        snprintf(place_panel.text, sizeof(place_panel.text), "Place your %s tower!", to_place.name);
+        draw(place_panel);
+    }
 }
 
 // Handles buying a card when clicked
@@ -121,8 +131,12 @@ void handle_buy_card(ALLEGRO_EVENT ev) {
     for (int i = 0; i < current_hand_count; i++) {
         if (currently_clicking(card_buttons[i])) {
             if (player_coins >= current_hand[i].price) {
+                if (to_place.object.exists) {
+                    printf("You are already placing a tower!\n");
+                    break;
+                }
+
                 player_coins -= current_hand[i].price;
-                printf("Purchased tower: %s\n", current_hand[i].name);
                 
                 to_place = current_hand[i];
                 to_place.object.exists = true;

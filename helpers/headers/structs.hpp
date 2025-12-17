@@ -111,6 +111,8 @@ struct Panel {
     char text[250];
     ALLEGRO_COLOR text_color = BLACK;
     Font* font = &default_font;
+
+    bool exists = false;
 };
 
 // A Upgrade for a tower
@@ -148,6 +150,8 @@ struct Tower {
     Vector2 projectile_scale;
 
     int price;
+
+    bool aimed_this_frame = false;
 };
 
 // Enemy struct representing an enemy in the game
@@ -167,6 +171,8 @@ struct Enemy {
     int expected_damage = 0;
 
     EnemyType type;
+
+    int index = 0;
 };
 
 // Projectile struct representing a projectile in the game

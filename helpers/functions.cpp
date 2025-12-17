@@ -54,8 +54,14 @@ void current_shots() {
 
     for (int i = 0; i < active_towers_count; i++) {
         active_towers[i].time_since_last_shot += 1.0f / FPS;
+        active_towers[i].aimed_this_frame = false;
         for (int j = 0; j < active_enemies_count; j++) {
             if (distance_between(active_towers[i].object.position, sorted_enemies[j]->object.position) <= active_towers[i].range) {
+                if (!active_towers[i].aimed_this_frame && sorted_enemies[j]->expected_damage < sorted_enemies[j]->health) {
+                    active_towers[i].aimed_this_frame = true;
+                    active_towers[i].object.rotation_degrees = (atan2(sorted_enemies[j]->object.position.y - active_towers[i].object.position.y, sorted_enemies[j]->object.position.x - active_towers[i].object.position.x) * (180.0 / ALLEGRO_PI)) + 90;
+                }
+
                 if (active_towers[i].time_since_last_shot >= active_towers[i].reload_time && sorted_enemies[j]->expected_damage < sorted_enemies[j]->health) {
                     shoot_projectile(active_towers[i], sorted_enemies[j]);
                     active_towers[i].time_since_last_shot = 0.0f;
@@ -138,11 +144,13 @@ void draw_all_enemies() {
 void check_projectiles() {
     for (int i = 0; i < active_projectiles_count; i++) {
         Projectile* proj = &active_projectiles[i];
-        if (proj == nullptr) {
+        if (proj == nullptr || proj->target == nullptr) {
             continue;
         }
+        
         if (is_colliding(proj->object, proj->target->object) || !proj->target->object.exists) {
             proj->target->health -= proj->damage;
+            proj->target->expected_damage -= proj->damage;
             proj->object.exists = false;
             for (int j = i; j < active_projectiles_count; j++) {
                 active_projectiles[j] = active_projectiles[j + 1]; 
@@ -186,6 +194,7 @@ void run_enemies() {
 
                 enemy.object.position = tile_pos_to_pixel_pos(active_map.path[0]);
                 enemy.path_index = 1;
+                enemy.index = active_enemies_count;
 
                 add_enemy(enemy);
 
@@ -204,6 +213,7 @@ void run_enemies() {
     // Update enemies
     
     // For every enemy
+    int enemies_killed = 0;
     for (int i = 0; i < active_enemies_count; i++) {
         Enemy* enemy = &active_enemies[i];
         if (enemy == nullptr) {
@@ -250,9 +260,17 @@ void run_enemies() {
         
         // Remove enemy if it reached the end or died
         if (enemy->path_index >= active_map.path_count || enemy->health <= 0) {
+            // Doing some pointer crap
+            for (int j = 0; j < active_projectiles_count; j++) {
+                if (active_projectiles[j].target->index > enemy->index) {
+                    active_projectiles[j].target--;
+                }
+            }
+
             enemy->object.exists = false;
             for (int j = i; j < active_enemies_count; j++) {
                 active_enemies[j] = active_enemies[j + 1]; 
+                active_enemies[j].index = j;
             }
             active_enemies_count--;
             i--;
@@ -260,6 +278,8 @@ void run_enemies() {
 
         // Rotate enemy to face movement direction
         enemy->object.rotation_degrees = (atan2(direction.y, direction.x) * (180.0 / ALLEGRO_PI)) + 90;
+
+        //printf("Enemy %d at position (%d, %d) with health %d (max health %d) and expected damage of %d\n", i, enemy->object.position.x, enemy->object.position.y, enemy->health, enemy->max_health, enemy->expected_damage);
     }
 }
 
@@ -285,13 +305,15 @@ void do_ui() {
 
     // Next Wave Button
     if ((active_map.waves[active_map.current_wave_index].wave_complete || active_map.current_wave_index == -1) && active_map.current_wave_index < active_map.wave_count - 1) {
-        Panel *next_wave_button = new Panel();
-        next_wave_button->top_left = {0, get_display_height() / 2 - 40};
-        next_wave_button->bottom_right = {300, get_display_height() / 2 + 40};
-        next_wave_button->color = BLUE;
+        Panel next_wave_button;
+        next_wave_button.top_left = {0, get_display_height() / 2 - 40};
+        next_wave_button.bottom_right = {300, get_display_height() / 2 + 40};
+        next_wave_button.color = BLUE;
+        next_wave_button.text_color = WHITE;
+        next_wave_button.exists = true;
 
-        snprintf(next_wave_button->text, sizeof(next_wave_button->text), "Start Next Wave");
-        draw(*next_wave_button);
+        snprintf(next_wave_button.text, sizeof(next_wave_button.text), "Start Next Wave");
+        draw(next_wave_button);
 
         buttons[ButtonIndex::START_WAVE_BUTTON] = next_wave_button;
     }
@@ -302,14 +324,14 @@ void handle_button_clicks(ALLEGRO_EVENT ev) {
     if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1) {
         // For each button in the enum
         for (ButtonIndex i = (ButtonIndex)0; i < END; i = (ButtonIndex)(i + 1)) {
-            Panel* button = buttons[i];
+            Panel* button = &buttons[i];
             // Check if it's being clicked and it exists
-            if (button != nullptr && currently_clicking(*button)) {
+            if (button != nullptr && currently_clicking(*button) && button->exists) {
                 // Perform action based on button index
                 switch (i) {
                     case START_WAVE_BUTTON:
                         active_map.current_wave_index++;
-                        buttons[i] = nullptr;
+                        buttons[i].exists = false;
                         break;
                     default:
                         printf("Unknown button index %d\n", i);
@@ -341,8 +363,15 @@ void build_tower_on_click(ALLEGRO_EVENT ev) {
                 to_place.object.exists = false;
                 
                 tower.object.position = tile_pos_to_pixel_pos(active_map.tower_spots[i].position);
-                tower.object.scale = {0.5f, 0.5f};
                 active_map.tower_spots[i].occupied = true;
+                
+                for (int j = 0; j < active_map.tile_count; j++) {
+                    if (active_map.tiles[j].position.x == mouse_tile_pos.x && active_map.tiles[j].position.y == mouse_tile_pos.y) {
+                        active_map.tiles[j].variation = 1;
+                        break;
+                    }
+                }
+
                 add_tower(tower);
                 break;
             }

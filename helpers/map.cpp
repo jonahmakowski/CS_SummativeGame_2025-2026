@@ -88,7 +88,11 @@ void display_map() {
                 break;
             // Draws the tower spot tile
             case TOWER_SPOT:
-                draw(tower_spot_tile, tile_position, scale, 0);
+                if (tile.variation == 0) {
+                    draw(tower_spot_tile, tile_position, scale, 0);
+                } else {
+                    draw(grass_tile_0, tile_position, scale, 0);
+                }
                 break;
             // Draws the enemy spawn tile
             case ENEMY_SPAWN:

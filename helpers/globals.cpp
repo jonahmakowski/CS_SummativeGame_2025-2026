@@ -41,7 +41,7 @@ ALLEGRO_BITMAP* enemy_goal_tile;
 
 Map active_map;
 
-Panel *buttons[1000];
+Panel buttons[1000];
 
 PossibleMap possible_maps[100];
 int possible_maps_count = 0;
