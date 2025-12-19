@@ -40,6 +40,8 @@ void frame_logic() {
         do_ui();
 
         display_hand();
+
+        do_help_popup();
     } else if (game_state == MAIN_MENU) {
         draw_main_menu();
     }

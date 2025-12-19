@@ -47,6 +47,7 @@ typedef enum TowerType {
 typedef enum ButtonIndex {
     START_WAVE_BUTTON,
     DISCARD_BUTTON,
+    SELL_TOWER,
     END
 } ButtonIndex;
 

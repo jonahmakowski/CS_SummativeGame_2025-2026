@@ -344,14 +344,16 @@ void do_ui() {
         strcpy(tower_name.text, card_menu_tower->name);
 
         Panel sell_button;
-        sell_button.top_left = {menu_panel.bottom_right.y + 60, menu_panel.top_left.x + 10};
+        sell_button.top_left = {menu_panel.top_left.x + 10, menu_panel.bottom_right.y - 60};
         sell_button.bottom_right = {menu_panel.bottom_right.x - 10, menu_panel.bottom_right.y - 10};
         sell_button.color = WHITE;
+        sell_button.exists = true;
         snprintf(sell_button.text, sizeof(sell_button.text), "Sell %s(+ %d coins)", card_menu_tower->name, (card_menu_tower->price/2));
-        //card_buttons[index] = buy_button;
+        buttons[ButtonIndex::SELL_TOWER] = sell_button;
 
         draw(menu_panel);
         draw(tower_name);
+        draw(sell_button);
     }
 }
 
@@ -385,6 +387,42 @@ void handle_button_clicks(ALLEGRO_EVENT ev) {
                             draw_card();
                         }
                         player_coins -= 5;
+                        break;
+                    case SELL_TOWER:
+                        player_coins += card_menu_tower->price / 2;
+                        for (int j = 0; j < active_map.tower_spots_count; j++) {
+                            if (active_map.tower_spots[j].placed_tower == card_menu_tower) {
+                                active_map.tower_spots[j].occupied = false;
+                                active_map.tower_spots[j].placed_tower = nullptr;
+                                break;
+                            }
+                        }
+
+                        for (int j = 0; j < active_map.tile_count; j++) {
+                            Vector2i tower_tile_pos = {
+                                card_menu_tower->object.position.x / TILE_SIZE,
+                                card_menu_tower->object.position.y / TILE_SIZE
+                            };
+                            
+                            if (active_map.tiles[j].position.x == tower_tile_pos.x && active_map.tiles[j].position.y == tower_tile_pos.y) {
+                                active_map.tiles[j].variation = 0;
+                                break;
+                            }
+                        }
+
+                        for (int j = 0; j < active_towers_count; j++) {
+                            if (&active_towers[j] == card_menu_tower) {
+                                active_towers[j].object.exists = false;
+                                for (int k = j; k < active_towers_count; k++) {
+                                    active_towers[k] = active_towers[k + 1];
+                                }
+                                active_towers_count--;
+                                break;
+                            }
+                        }
+
+                        ui_force_hidden = false;
+                        show_card_menu = false;
                         break;
                     default:
                         printf("Unknown button index %d\n", i);

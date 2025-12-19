@@ -95,3 +95,6 @@ void draw_card();
 void display_card(int index, int width, int upper_y);
 void display_hand();
 void handle_buy_card(ALLEGRO_EVENT ev);
+
+// game_assistance.cpp
+void do_help_popup();
