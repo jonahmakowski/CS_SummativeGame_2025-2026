@@ -10,7 +10,8 @@ Panel card_buttons[5];
 
 // Tower card drawing function
 void draw_card() {
-    new_tower(current_hand[current_hand_count], avalible_deck[(rand() % avalible_deck_count)]);
+    int card_type = rand() % avalible_deck_count;
+    new_tower(current_hand[current_hand_count], avalible_deck[card_type]);
     current_hand_count++;
 }
 
@@ -93,7 +94,11 @@ void display_card(int index, int width, int upper_y) {
     Panel buy_button;
     buy_button.top_left = {upper_left.x + 10, bottom_right.y - 50};
     buy_button.bottom_right = {bottom_right.x - 10, bottom_right.y - 10};
-    buy_button.color = GREEN;
+    if (player_coins < current_hand[index].price) {
+        buy_button.color = RED;
+    } else {
+        buy_button.color = GREEN;
+    }
     snprintf(buy_button.text, sizeof(buy_button.text), "Buy");
     card_buttons[index] = buy_button;
 
@@ -111,12 +116,12 @@ void display_card(int index, int width, int upper_y) {
 
 // Draws the entire hand of cards
 void display_hand() {
-    if (!show_ui) {
+    if (!show_ui || ui_force_hidden) {
         return;
     }
 
     for (int i = 0; i < current_hand_count; i++) {
-        display_card(i, 300, get_display_height()-500);
+        display_card(i, 300, UPPER_CARD_Y);
     }
 
     // If a card has been purchased, display a message to place the tower
@@ -132,7 +137,7 @@ void display_hand() {
 
 // Handles buying a card when clicked
 void handle_buy_card(ALLEGRO_EVENT ev) {
-    if (!show_ui) {
+    if (!show_ui || ui_force_hidden) {
         return;
     }
     

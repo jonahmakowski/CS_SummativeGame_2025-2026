@@ -50,15 +50,19 @@ void handle_keyboard_input_down(ALLEGRO_EVENT ev) {
     if (game_state == IN_GAME) {
         if (pressing_keybind(move_up, ev)) {
             camera.velocity.y = 10;
+            moved = true;
         }
         if (pressing_keybind(move_down, ev)) {
             camera.velocity.y = -10;
+            moved = true;
         }
         if (pressing_keybind(move_left, ev)) {
             camera.velocity.x = 10;
+            moved = true;
         }
         if (pressing_keybind(move_right, ev)) {
             camera.velocity.x = -10;
+            moved = true;
         }
         if (pressing_keybind(range_circle_toggle, ev)) {
             draw_range_circles = !draw_range_circles;
@@ -68,7 +72,12 @@ void handle_keyboard_input_down(ALLEGRO_EVENT ev) {
             buttons[ButtonIndex::START_WAVE_BUTTON].exists = false;
         }
         if (pressing_keybind(toggle_ui, ev)) {
-            show_ui = !show_ui;
+            if (!show_card_menu) {
+                show_ui = !show_ui;
+            } else {
+                show_card_menu = false;
+                ui_force_hidden = false;
+            }
         }
     }
 }
@@ -88,6 +97,7 @@ void handle_keyboard_input_up(ALLEGRO_EVENT ev) {
 // Run when mouse input is detected
 void handle_mouse_input(ALLEGRO_EVENT ev) {
     if (game_state == IN_GAME) {
+        tower_menu(ev);
         build_tower_on_click(ev);
         handle_button_clicks(ev);
         handle_buy_card(ev);

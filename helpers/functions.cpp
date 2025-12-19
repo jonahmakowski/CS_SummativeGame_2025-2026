@@ -328,6 +328,31 @@ void do_ui() {
 
         buttons[ButtonIndex::START_WAVE_BUTTON] = next_wave_button;
     }
+
+    if (show_card_menu) {
+        Panel menu_panel;
+
+        menu_panel.top_left = {get_display_width() - 600, 200};
+        menu_panel.bottom_right = {get_display_width(), get_display_height() - 200};
+        menu_panel.color = RED;
+        menu_panel.exists = true;
+
+        Panel tower_name;
+        tower_name.top_left = {menu_panel.top_left.x + 10, menu_panel.top_left.y + 10};
+        tower_name.bottom_right = {menu_panel.bottom_right.x - 10, menu_panel.top_left.y + 60};
+        tower_name.color = menu_panel.color;
+        strcpy(tower_name.text, card_menu_tower->name);
+
+        Panel sell_button;
+        sell_button.top_left = {menu_panel.bottom_right.y + 60, menu_panel.top_left.x + 10};
+        sell_button.bottom_right = {menu_panel.bottom_right.x - 10, menu_panel.bottom_right.y - 10};
+        sell_button.color = WHITE;
+        snprintf(sell_button.text, sizeof(sell_button.text), "Sell %s(+ %d coins)", card_menu_tower->name, (card_menu_tower->price/2));
+        //card_buttons[index] = buy_button;
+
+        draw(menu_panel);
+        draw(tower_name);
+    }
 }
 
 // Check all the buttons and perform their actions
@@ -373,11 +398,6 @@ void handle_button_clicks(ALLEGRO_EVENT ev) {
 // Function to build a tower on mouse click
 void build_tower_on_click(ALLEGRO_EVENT ev) {
     if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1) {
-        if (!to_place.object.exists) {
-            printf("No tower selected to place\n");
-            return;
-        }
-
         Vector2i mouse_tile_pos = get_mouse_pos();
         mouse_tile_pos.x /= TILE_SIZE;
         mouse_tile_pos.y /= TILE_SIZE;
@@ -385,6 +405,11 @@ void build_tower_on_click(ALLEGRO_EVENT ev) {
         // Find which tile the player clicked on
         for (int i = 0; i < active_map.tower_spots_count; i++) {
             if (active_map.tower_spots[i].position.x == mouse_tile_pos.x && active_map.tower_spots[i].position.y == mouse_tile_pos.y && !active_map.tower_spots[i].occupied) {
+                if (!to_place.object.exists) {
+                    printf("No tower selected to place\n");
+                    return;
+                }
+
                 // Build a tower there
                 Tower tower;
                 new_tower(tower, to_place.type);
@@ -402,17 +427,25 @@ void build_tower_on_click(ALLEGRO_EVENT ev) {
                 }
 
                 add_tower(tower);
+                active_map.tower_spots[i].placed_tower = &active_towers[active_towers_count - 1];
                 break;
             }
         }
     }
 }
-/*
-void tower_menu(ALLEGRO) {
-    for (int i = 0; i < active_map.tower_spots_count; i++) {
-        if (active_map.tower_spots[i].position.x == mouse_tile_pos.x && active_map.tower_spots[i].position.y == mouse_tile_pos.y && !active_map.tower_spots[i].occupied) {
+
+void tower_menu(ALLEGRO_EVENT ev) {
+    if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1) {
+        for (int i = 0; i < active_map.tower_spots_count; i++) {
+            Vector2i mouse_tile_pos = get_mouse_pos();
+            mouse_tile_pos.x /= TILE_SIZE;
+            mouse_tile_pos.y /= TILE_SIZE;
             
+            if (active_map.tower_spots[i].position.x == mouse_tile_pos.x && active_map.tower_spots[i].position.y == mouse_tile_pos.y && active_map.tower_spots[i].occupied) {
+                ui_force_hidden = true;
+                show_card_menu = true;
+                card_menu_tower = active_map.tower_spots[i].placed_tower;
+            }
         }
     }
 }
-*/

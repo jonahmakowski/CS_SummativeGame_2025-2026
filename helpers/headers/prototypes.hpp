@@ -76,6 +76,7 @@ void run_enemies();
 void do_ui();
 void handle_button_clicks(ALLEGRO_EVENT ev);
 void build_tower_on_click(ALLEGRO_EVENT ev);
+void tower_menu(ALLEGRO_EVENT ev);
 
 // main_menu.cpp
 bool load_map_list();

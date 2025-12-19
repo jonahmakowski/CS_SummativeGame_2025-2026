@@ -197,6 +197,7 @@ struct MapTile {
 struct TowerSpot {
     Vector2i position;
     bool occupied = false;
+    Tower* placed_tower = nullptr;
 };
 
 // A struct representing sub-waves of enemies

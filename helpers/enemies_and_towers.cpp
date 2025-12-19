@@ -59,7 +59,7 @@ void new_tower(Tower &tower, TowerType type) {
             }
             break;
         case SNOWBLOWER:
-            if (define_tower_template(tower, "images/sun.png", "Snowblower", 0.1, 300, 20, 0, "images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 30) != 0) {
+            if (define_tower_template(tower, "images/snowblower.png", "Snowblower", 0.1, 300, 2, 0, "images/snowball.png", {0.5, 0.5}, {1.0f, 1.0f}, 30) != 0) {
                 printf("Failed to create new tower");
             }
             break;
@@ -69,7 +69,7 @@ void new_tower(Tower &tower, TowerType type) {
             }
             break;
         case ICE_WIZARD:
-            if (define_tower_template(tower, "images/sun.png", "Ice Wizard(Magic Joe)", 3, 500, 200, 0, "images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 80) != 0) {
+            if (define_tower_template(tower, "images/sun.png", "Ice Wizard (Magic Joe)", 3, 500, 200, 0, "images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 80) != 0) {
                 printf("Failed to create new tower");
             }
             break;

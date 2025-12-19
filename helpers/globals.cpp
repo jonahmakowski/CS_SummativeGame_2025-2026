@@ -1,7 +1,9 @@
 #include "headers/helpers.hpp"
 
+bool moved = false;
+
 int player_health = 100;
-int player_coins = 20;
+int player_coins = 30;
 bool draw_range_circles = false;
 
 ALLEGRO_DISPLAY *display = nullptr;
@@ -48,14 +50,18 @@ int possible_maps_count = 0;
 
 GameState game_state = MAIN_MENU;
 
-TowerType avalible_deck[100] = {TowerType::SNOWMAN, TowerType::SNOWBALL_THROWER, TowerType::WATER_BALLOON, TowerType::ICICLE_LAUNCHER, TowerType::ICE_WIZARD, TowerType::HOUSE};
-int avalible_deck_count = 6;
+TowerType avalible_deck[100] = {TowerType::SNOWBALL_THROWER, TowerType::WATER_BALLOON, TowerType::ICICLE_LAUNCHER, TowerType::SNOWBLOWER};
+int avalible_deck_count = 4;
 Tower current_hand[5];
 int current_hand_count = 0;
 
 Tower to_place;
 
 bool show_ui = true;
+bool ui_force_hidden = false;
+
+bool show_card_menu = false;
+Tower *card_menu_tower = nullptr;
 
 // Keybinds
 

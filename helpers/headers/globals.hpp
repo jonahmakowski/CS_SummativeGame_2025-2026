@@ -24,6 +24,12 @@
 
 #define MAP_DIRECTORY "maps/"
 
+#define UPPER_CARD_Y get_display_height()-500
+
+#define HELP_POPUP_TIME 5.0f // seconds
+
+extern bool moved;
+
 extern int player_health;
 extern int player_coins;
 extern bool draw_range_circles;
@@ -77,6 +83,10 @@ extern int current_hand_count;
 extern Tower to_place;
 
 extern bool show_ui;
+extern bool ui_force_hidden;
+
+extern bool show_card_menu;
+extern Tower *card_menu_tower;
 
 // Keybinds
 
