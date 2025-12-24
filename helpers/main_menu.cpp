@@ -116,6 +116,8 @@ void draw_main_menu() {
         main_menu_buttons[i].panel = map_panel;
         main_menu_buttons[i].map = &possible_maps[i];
 
+        main_menu_buttons[i].panel.is_button = true;
+
         draw(main_menu_buttons[i].panel);
     }
 }

@@ -27,7 +27,7 @@ void toggle_help_menu() {
 // Shows all the keybinds to the player in a help menu
 void help_menu_draw() {
     if (help_menu_active) {
-        int keybind_count = 7;
+        int keybind_count = 8;
         Keybind *keybinds[] = {
             &help_menu,
             &move_up,

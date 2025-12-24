@@ -115,6 +115,8 @@ struct Panel {
     Font* font = &default_font;
 
     bool exists = false;
+
+    bool is_button = false;
 };
 
 // A Upgrade for a tower

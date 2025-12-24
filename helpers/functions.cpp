@@ -310,6 +310,7 @@ void do_ui() {
     discard_button.text_color = WHITE;
     discard_button.exists = true;
     snprintf(discard_button.text, sizeof(discard_button.text), "DISCARD HAND - 5 coins");
+    discard_button.is_button = true;
     draw(discard_button);
 
     buttons[ButtonIndex::DISCARD_BUTTON] = discard_button;
@@ -322,6 +323,7 @@ void do_ui() {
         next_wave_button.color = BLUE;
         next_wave_button.text_color = WHITE;
         next_wave_button.exists = true;
+        next_wave_button.is_button = true;
 
         snprintf(next_wave_button.text, sizeof(next_wave_button.text), "Start Next Wave");
         draw(next_wave_button);
@@ -349,6 +351,7 @@ void do_ui() {
         sell_button.color = WHITE;
         sell_button.exists = true;
         snprintf(sell_button.text, sizeof(sell_button.text), "Sell %s(+ %d coins)", card_menu_tower->name, (card_menu_tower->price/2));
+        sell_button.is_button = true;
         buttons[ButtonIndex::SELL_TOWER] = sell_button;
 
         draw(menu_panel);

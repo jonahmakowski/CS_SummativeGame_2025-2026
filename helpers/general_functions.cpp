@@ -47,6 +47,9 @@ void draw(Panel panel) {
     if (panel.has_border) {
         draw_rectangle_rounded_outline(panel.top_left, panel.bottom_right, PANEL_ROUNDING, panel.border_color, panel.border_thickness);
     }
+    if (currently_clicking(panel) && panel.is_button) {
+        draw_rectangle_rounded(panel.top_left, panel.bottom_right, PANEL_ROUNDING, BUTTON_HOVER_COLOR);
+    }
     draw_text(*panel.font, panel.text_color, 
         {panel.top_left.x + (panel.bottom_right.x - panel.top_left.x) / 2, panel.top_left.y + (panel.bottom_right.y - panel.top_left.y) / 2}, 
         panel.text);

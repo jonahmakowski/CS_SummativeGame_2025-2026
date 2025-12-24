@@ -98,6 +98,7 @@ void display_card(int index, int width, int upper_y) {
         buy_button.color = RED;
     } else {
         buy_button.color = GREEN;
+        buy_button.is_button = true;
     }
     snprintf(buy_button.text, sizeof(buy_button.text), "Buy");
     card_buttons[index] = buy_button;
