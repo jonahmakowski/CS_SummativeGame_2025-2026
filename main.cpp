@@ -42,6 +42,8 @@ void frame_logic() {
         display_hand();
 
         do_help_popup();
+
+        help_menu_draw();
     } else if (game_state == MAIN_MENU) {
         draw_main_menu();
     }
@@ -69,7 +71,7 @@ void handle_keyboard_input_down(ALLEGRO_EVENT ev) {
         if (pressing_keybind(range_circle_toggle, ev)) {
             draw_range_circles = !draw_range_circles;
         }
-        if (pressing_keybind(next_wave, ev)) {
+        if (pressing_keybind(next_wave, ev) && ((active_map.waves[active_map.current_wave_index].wave_complete || active_map.current_wave_index == -1) && active_map.current_wave_index < active_map.wave_count - 1)) {
             active_map.current_wave_index++;
             buttons[ButtonIndex::START_WAVE_BUTTON].exists = false;
         }
@@ -80,6 +82,9 @@ void handle_keyboard_input_down(ALLEGRO_EVENT ev) {
                 show_card_menu = false;
                 ui_force_hidden = false;
             }
+        }
+        if (pressing_keybind(help_menu, ev)) {
+            toggle_help_menu();
         }
     }
 }

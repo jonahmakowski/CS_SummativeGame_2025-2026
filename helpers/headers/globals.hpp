@@ -98,3 +98,4 @@ extern Keybind range_circle_toggle;
 extern Keybind kill_keybind;
 extern Keybind next_wave;
 extern Keybind toggle_ui;
+extern Keybind help_menu;

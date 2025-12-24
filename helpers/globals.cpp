@@ -74,3 +74,4 @@ Keybind range_circle_toggle = { { ALLEGRO_KEY_R, -1 } };
 Keybind fast_forward = { { ALLEGRO_KEY_F, -1 } };
 Keybind next_wave = { { ALLEGRO_KEY_SPACE, -1} };
 Keybind toggle_ui = { { ALLEGRO_KEY_Q, -1 } };
+Keybind help_menu = { { ALLEGRO_KEY_H, -1 } };

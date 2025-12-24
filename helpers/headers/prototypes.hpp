@@ -57,6 +57,7 @@ int index_of_in_array(MapTile tile, MapTile arr[], int count);
 int index_of_in_array(Vector2i point, MapTile arr[], int count);
 int index_of_in_array(Vector2i point, Vector2i arr[], int count);
 Vector2i subtract_vector(Vector2i a, Vector2i b);
+void keybind_text(char buffer[], Keybind keybind);
 
 // functions.cpp
 Vector2i tile_pos_to_pixel_pos(Vector2i tile_pos);
@@ -98,3 +99,5 @@ void handle_buy_card(ALLEGRO_EVENT ev);
 
 // game_assistance.cpp
 void do_help_popup();
+void toggle_help_menu();
+void help_menu_draw();

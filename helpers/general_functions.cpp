@@ -295,3 +295,18 @@ Vector2i subtract_vector(Vector2i a, Vector2i b) {
     result.y = a.y - b.y;
     return result;
 }
+
+// Gets a text representation of a Keybind (What keys will trigger the keybind)
+void keybind_text(char buffer[], Keybind keybind) {
+    buffer[0] = '\0';
+    for (int i = 0; i < 20; i++) {
+        if (keybind.keycodes[i] == -1) {
+            break;
+        }
+        const char* key_name = al_keycode_to_name(keybind.keycodes[i]);
+        strcat(buffer, key_name);
+        if (keybind.keycodes[i + 1] != -1) {
+            strcat(buffer, "/");
+        }
+    }
+}
