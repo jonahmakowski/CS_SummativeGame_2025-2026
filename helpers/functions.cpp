@@ -182,7 +182,6 @@ void proj_hit_enemy(Projectile *proj) {
         proj->target->expected_damage -= proj->damage;
         printf("Dealt normal damage\n");
     } else if (proj->type == EXPLOSIVE) {
-        draw_circle(proj->object.position, proj->radius_of_effect, RED);
         for (int i = 0; i < active_enemies_count; i++) {
             if (distance_between(proj->object.position, active_enemies[i].object.position) <= proj->radius_of_effect) {
                 active_enemies[i].health -= proj->damage;
