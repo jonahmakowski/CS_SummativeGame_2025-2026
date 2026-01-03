@@ -4,6 +4,8 @@ float time_since_launch = 0; // for the help popup
 
 bool help_menu_active = false;
 
+// If the player hasn't moved the camera for a certain amount of time, show a help popup
+// The popup tells the player how to move the camera, and how to open the help menu
 void do_help_popup() {
     if (!moved) {
         time_since_launch += 1.0/FPS;

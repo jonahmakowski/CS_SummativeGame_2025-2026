@@ -13,7 +13,7 @@
 
 #define SCREEN_WIDTH 2160
 #define SCREEN_HEIGHT 1440
-#define FULLSCREEN true 
+#define FULLSCREEN false 
 #define CANRESIZE false // May cause issues, not tested much
 
 #define PANEL_ROUNDING 10.0f

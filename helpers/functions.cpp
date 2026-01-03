@@ -57,11 +57,13 @@ void current_shots() {
         active_towers[i].aimed_this_frame = false;
         for (int j = 0; j < active_enemies_count; j++) {
             if (distance_between(active_towers[i].object.position, sorted_enemies[j]->object.position) <= active_towers[i].range) {
+                // Aim the tower at the enemy
                 if (!active_towers[i].aimed_this_frame && sorted_enemies[j]->expected_damage < sorted_enemies[j]->health) {
                     active_towers[i].aimed_this_frame = true;
                     active_towers[i].object.rotation_degrees = (atan2(sorted_enemies[j]->object.position.y - active_towers[i].object.position.y, sorted_enemies[j]->object.position.x - active_towers[i].object.position.x) * (180.0 / ALLEGRO_PI)) + 90;
                 }
 
+                // If possible, shoot a projectile at the enemy
                 if (active_towers[i].time_since_last_shot >= active_towers[i].reload_time && sorted_enemies[j]->expected_damage < sorted_enemies[j]->health) {
                     shoot_projectile(active_towers[i], sorted_enemies[j]);
                     active_towers[i].time_since_last_shot = 0.0f;
@@ -81,6 +83,19 @@ void shoot_projectile(Tower tower, Enemy* target_enemy) {
     new_projectile.object.exists = true;
     new_projectile.speed = PROJECTILE_SPEED;
     new_projectile.damage = tower.damage;
+
+    new_projectile.radius_of_effect = tower.projectile_area_of_effect;
+    new_projectile.slowing_amount = tower.slowing_amount;
+    new_projectile.slowing_duration = tower.slowing_duration;
+
+    // Set the projectile type based on tower type
+    if (tower.type == TowerType::SNOWMAN) {
+        new_projectile.type = ProjectileType::SLOWING;
+    } else if (tower.type == TowerType::WATER_BALLOON) {
+        new_projectile.type = ProjectileType::EXPLOSIVE;
+    } else {
+        new_projectile.type = ProjectileType::NORMAL;
+    }
 
     new_projectile.target = target_enemy;
     target_enemy->expected_damage += new_projectile.damage;
@@ -145,13 +160,12 @@ void check_projectiles() {
     for (int i = 0; i < active_projectiles_count; i++) {
         Projectile* proj = &active_projectiles[i];
         if (proj == nullptr || proj->target == nullptr) {
+            printf("Projectile or target pointer is null, skipping\n");
             continue;
         }
         
         if (is_colliding(proj->object, proj->target->object) || !proj->target->object.exists) {
-            proj->target->health -= proj->damage;
-            proj->target->expected_damage -= proj->damage;
-            proj->object.exists = false;
+            proj_hit_enemy(proj);
             for (int j = i; j < active_projectiles_count; j++) {
                 active_projectiles[j] = active_projectiles[j + 1]; 
             }
@@ -159,6 +173,41 @@ void check_projectiles() {
             i--;
         }
     }
+}
+
+void proj_hit_enemy(Projectile *proj) {
+    printf("Projectile hit enemy\n");
+    if (proj->type == NORMAL) {
+        proj->target->health -= proj->damage;
+        proj->target->expected_damage -= proj->damage;
+        printf("Dealt normal damage\n");
+    } else if (proj->type == EXPLOSIVE) {
+        draw_circle(proj->object.position, proj->radius_of_effect, RED);
+        for (int i = 0; i < active_enemies_count; i++) {
+            if (distance_between(proj->object.position, active_enemies[i].object.position) <= proj->radius_of_effect) {
+                active_enemies[i].health -= proj->damage;
+                active_enemies[i].expected_damage -= proj->damage;
+                printf("Dealt explosive damage to enemy %d\n", i);
+            }
+            printf("Projectile at (%d, %d) with radius %d enemy at (%d, %d), distance is %f\n", proj->object.position.x, proj->object.position.y, proj->radius_of_effect, active_enemies[i].object.position.x, active_enemies[i].object.position.y,
+               distance_between(proj->object.position, active_enemies[i].object.position));
+        }
+        printf("Dealt explosive damage\n");
+    } else if (proj->type == SLOWING) {
+        for (int i = 0; i < active_enemies_count; i++) {
+            if (distance_between(proj->object.position, active_enemies[i].object.position) <= proj->radius_of_effect) {
+                active_enemies[i].health -= proj->damage;
+                active_enemies[i].expected_damage -= proj->damage;
+                active_enemies[i].slowing_amount = proj->slowing_amount;
+                active_enemies[i].slowing_time_remaining += proj->slowing_duration;
+            }
+        }
+        printf("Dealt slowing damage\n");
+    } else {
+        printf("Unknown projectile type!\n");
+    }
+    
+    proj->object.exists = false;
 }
 
 // Function that recaclulates enemies and spawns new ones based on the spawn rate
@@ -213,12 +262,13 @@ void run_enemies() {
     // Update enemies
     
     // For every enemy
-    int enemies_killed = 0;
     for (int i = 0; i < active_enemies_count; i++) {
         Enemy* enemy = &active_enemies[i];
         if (enemy == nullptr) {
             continue;
         }
+
+        //printf("Enemy %d at position (%d, %d) with health %d (max health %d) and expected damage of %d\n", i, enemy->object.position.x, enemy->object.position.y, enemy->health, enemy->max_health, enemy->expected_damage);
         
         // Move enemy along path
         Vector2i direction = subtract_vector(active_map.path[enemy->path_index], 
@@ -230,7 +280,7 @@ void run_enemies() {
             enemy->object.position.y = tile_pos_to_pixel_pos(active_map.path[enemy->path_index - 1]).y;
         }
         
-        Vector2i velocity = multiply_vector(direction, enemy->speed);
+        Vector2i velocity = multiply_vector(direction, enemy->speed * (1.0f - enemy->slowing_amount / 100.0));
 
         enemy->object.velocity = velocity;
 
@@ -261,6 +311,8 @@ void run_enemies() {
         // Remove enemy if it reached the end or died
         if (enemy->path_index >= active_map.path_count || enemy->health <= 0) {
             // Doing some pointer crap
+            // Making it so that the projectiles that target enemies after this one have their target pointers shifted back by one
+            // So that they still point to the correct enemy after this one is removed from the array
             for (int j = 0; j < active_projectiles_count; j++) {
                 if (active_projectiles[j].target->index > enemy->index) {
                     active_projectiles[j].target--;
@@ -276,10 +328,17 @@ void run_enemies() {
             i--;
         }
 
+        // Update slowing effect
+        if (enemy->slowing_time_remaining > 0) {
+            enemy->slowing_time_remaining -= 1.0f / FPS;
+            if (enemy->slowing_time_remaining <= 0) {
+                enemy->slowing_amount = 0;
+                enemy->slowing_time_remaining = 0;
+            }
+        }
+
         // Rotate enemy to face movement direction
         enemy->object.rotation_degrees = (atan2(direction.y, direction.x) * (180.0 / ALLEGRO_PI)) + 90;
-
-        //printf("Enemy %d at position (%d, %d) with health %d (max health %d) and expected damage of %d\n", i, enemy->object.position.x, enemy->object.position.y, enemy->health, enemy->max_health, enemy->expected_damage);
     }
 }
 

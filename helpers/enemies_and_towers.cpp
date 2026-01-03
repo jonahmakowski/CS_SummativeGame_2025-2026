@@ -5,7 +5,7 @@
 
 // Towers
 // Return a template tower based on passed parameters
-int define_tower_template(Tower &template_tower, const char* image_path, const char* name, float reload_time, float range, int damage, int cubes, const char* projectile_image_path, Vector2 projectile_scale, Vector2 tower_scale, int price) {
+int define_tower_template(Tower &template_tower, const char* image_path, const char* name, float reload_time, float range, int damage, int cubes, const char* projectile_image_path, Vector2 projectile_scale, Vector2 tower_scale, int price, int projectile_area_of_effect, float slowing_amount, float slowing_duration) {
     load_image_with_checks(image_path, template_tower.object.image);
     template_tower.object.scale = tower_scale;
     template_tower.object.velocity = {0, 0};
@@ -30,6 +30,10 @@ int define_tower_template(Tower &template_tower, const char* image_path, const c
     template_tower.projectile_scale = projectile_scale;
 
     template_tower.price = price;
+
+    template_tower.projectile_area_of_effect = projectile_area_of_effect;
+    template_tower.slowing_amount = slowing_amount;
+    template_tower.slowing_duration = slowing_duration;
     
     return 0;
 }
@@ -39,42 +43,42 @@ void new_tower(Tower &tower, TowerType type) {
     tower.type = type;
     switch (type) {
         case SNOWMAN:
-            if (define_tower_template(tower, "images/sun.png", "Snowman", 1, 300, 10, 0, "images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 5) != 0) {
+            if (define_tower_template(tower, "images/snowman.png", "Snowman", 1, 300, 0, 0, "images/snowball.png", {0.1, 0.1}, {1.0f, 1.0f}, 5, 100, 10, 10) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case SNOWBALL_THROWER:
-            if (define_tower_template(tower, "images/child.png", "Snowball Thrower", 1, 500, 100, 1, "images/snowball.png", {0.1, 0.1}, {1.0f, 1.0f}, 5) != 0) {
+            if (define_tower_template(tower, "images/child.png", "Snowball Thrower", 1, 500, 100, 1, "images/snowball.png", {0.1, 0.1}, {1.0f, 1.0f}, 5, 0, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case WATER_BALLOON:
-        if (define_tower_template(tower, "images/WaterBalloonTower.png", "Water Balloon Thrower", 1, 400, 50, 0, "images/waterBalloon.png", {1, 1}, {1.0f, 1.0f}, 10) != 0) {
+        if (define_tower_template(tower, "images/WaterBalloonTower.png", "Water Balloon Thrower", 1, 400, 20, 0, "images/waterBalloon.png", {1, 1}, {1.0f, 1.0f}, 10, 100, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case ICICLE_LAUNCHER:
-            if (define_tower_template(tower, "images/IcicleBallista.png", "Icicle Ballista", 5, 1000, 200, 0, "images/IcicleProj.png", {0.5, 0.5}, {1.0f, 1.0f}, 30) != 0) {
+            if (define_tower_template(tower, "images/IcicleBallista.png", "Icicle Ballista", 5, 1000, 200, 0, "images/IcicleProj.png", {0.5, 0.5}, {1.0f, 1.0f}, 30, 0, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case SNOWBLOWER:
-            if (define_tower_template(tower, "images/snowblower.png", "Snowblower", 0.1, 300, 2, 0, "images/snowball.png", {0.5, 0.5}, {1.0f, 1.0f}, 30) != 0) {
+            if (define_tower_template(tower, "images/snowblower.png", "Snowblower", 0.1, 300, 2, 0, "images/snowball.png", {0.5, 0.5}, {1.0f, 1.0f}, 30, 0, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case MAMMOTH:
-            if (define_tower_template(tower, "images/sun.png", "Mammoth", 5, 300, 500, 0, "images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 50) != 0) {
+            if (define_tower_template(tower, "images/sun.png", "Mammoth", 5, 300, 500, 0, "images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 50, 0, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case ICE_WIZARD:
-            if (define_tower_template(tower, "images/sun.png", "Ice Wizard (Magic Joe)", 3, 500, 200, 0, "images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 80) != 0) {
+            if (define_tower_template(tower, "images/sun.png", "Ice Wizard (Magic Joe)", 3, 500, 200, 0, "images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 80, 0, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case HOUSE:
-            if (define_tower_template(tower, "images/sun.png", "House", 1, 0, 0, 0, "images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 100) != 0) {
+            if (define_tower_template(tower, "images/sun.png", "House", 1, 0, 0, 0, "images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 100, 0, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;

@@ -56,6 +56,12 @@ typedef enum GameState {
     IN_GAME,
 } GameState;
 
+typedef enum ProjectileType {
+    NORMAL,
+    EXPLOSIVE,
+    SLOWING,
+} ProjectileType;
+
 // Structs
 
 // Vector with x,y positions as floats
@@ -125,9 +131,9 @@ struct Upgrade {
     char description[250];
     int price;
 
-    float fire_rate_multiplier;
-    float range_multiplier;
-    float damage_multiplier;
+    float fire_rate_multiplier = 1.0;
+    float range_multiplier = 1.0;
+    float damage_multiplier = 1.0;
 };
 
 // Tower struct representing a tower in the game
@@ -156,6 +162,10 @@ struct Tower {
     int price;
 
     bool aimed_this_frame = false;
+
+    float slowing_duration = 0; // for slowing projectiles in seconds
+    float slowing_amount = 0; // for slowing projectiles in percentage
+    int projectile_area_of_effect = 0; // For exposive and slowing projectiles
 };
 
 // Enemy struct representing an enemy in the game
@@ -177,6 +187,9 @@ struct Enemy {
     EnemyType type;
 
     int index = 0;
+
+    float slowing_time_remaining = 0;
+    float slowing_amount = 0;
 };
 
 // Projectile struct representing a projectile in the game
@@ -187,6 +200,12 @@ struct Projectile {
 
     float speed;
     int damage;
+
+    int radius_of_effect = 0; // For exposive and slowing projectiles
+    ProjectileType type; // Type of projectile (Explosive, slowing, normal)
+
+    float slowing_duration = 0; // for slowing projectiles in seconds
+    float slowing_amount = 0; // for slowing projectiles in percentage
 };
 
 // Struct representing a tile on the map

@@ -72,6 +72,7 @@ void draw_all_projectiles();
 void draw_all_towers();
 void draw_all_enemies();
 void check_projectiles();
+void proj_hit_enemy(Projectile *proj);
 bool is_in_array(Vector2i point, Vector2i arr[], int count);
 void run_enemies();
 void do_ui();
