@@ -3,7 +3,7 @@
 bool moved = false;
 
 int player_health = 100;
-int player_coins = 20;
+int player_coins = 1000;
 bool draw_range_circles = false;
 
 ALLEGRO_DISPLAY *display = nullptr;
@@ -17,10 +17,12 @@ Camera camera = {{0, 0}, {0, 0}};
 Tower active_towers[1000];
 Enemy active_enemies[1000];
 Projectile active_projectiles[1000];
+HouseSpawn active_housespawn[1000];
 
 int active_towers_count = 0;
 int active_enemies_count = 0;
 int active_projectiles_count = 0;
+int active_housespawn_count = 0;
 
 ALLEGRO_BITMAP* grass_tile_0;
 ALLEGRO_BITMAP* grass_tile_1;
@@ -41,6 +43,8 @@ ALLEGRO_BITMAP* tower_spot_tile;
 ALLEGRO_BITMAP* enemy_spawn_tile;
 ALLEGRO_BITMAP* enemy_goal_tile;
 
+ALLEGRO_BITMAP* housespawn_image;
+
 Map active_map;
 
 Panel buttons[1000];
@@ -50,8 +54,8 @@ int possible_maps_count = 0;
 
 GameState game_state = MAIN_MENU;
 
-TowerType avalible_deck[100] = {TowerType::SNOWBALL_THROWER, TowerType::WATER_BALLOON, TowerType::ICICLE_LAUNCHER, TowerType::SNOWBLOWER, TowerType::SNOWMAN};
-int avalible_deck_count = 5;
+TowerType avalible_deck[100] = {TowerType::SNOWBALL_THROWER, TowerType::WATER_BALLOON, TowerType::ICICLE_LAUNCHER, TowerType::SNOWBLOWER, TowerType::SNOWMAN, TowerType::HOUSE};
+int avalible_deck_count = 6;
 Tower current_hand[5];
 int current_hand_count = 0;
 

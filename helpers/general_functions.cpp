@@ -70,6 +70,11 @@ void draw(Projectile projectile) {
     draw(projectile.object);
 }
 
+// Draws a housespawn using its object
+void draw(HouseSpawn housespawn) {
+    draw(housespawn.object);
+}
+
 // Gets the mouse position adjusted for the camera
 Vector2i get_mouse_pos() {
     Vector2i cam_mouse_pos = {mouse_pos.x - camera.position.x, mouse_pos.y - camera.position.y};

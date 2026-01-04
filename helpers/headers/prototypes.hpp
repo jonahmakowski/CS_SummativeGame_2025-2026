@@ -32,6 +32,7 @@ void draw(Panel panel);
 void draw(Tower tower);
 void draw(Enemy enemy);
 void draw(Projectile projectile);
+void draw(HouseSpawn housespawn);
 Vector2i get_mouse_pos();
 void update_position(Object &obj);
 void update_position(Projectile &projectile);
@@ -67,6 +68,10 @@ void current_shots();
 Vector2i multiply_vector(Vector2i vec, float multiplier);
 Vector2 multiply_vector(Vector2 vec, float multiplier);
 void shoot_projectile(Tower tower, Enemy* target_enemy);
+int load_housespawn_image();
+void do_house(Tower* tower);
+void run_housespawns();
+void draw_all_housespawns();
 void recalculate_projectiles();
 void draw_all_projectiles();
 void draw_all_towers();
@@ -79,6 +84,7 @@ void do_ui();
 void handle_button_clicks(ALLEGRO_EVENT ev);
 void build_tower_on_click(ALLEGRO_EVENT ev);
 void tower_menu(ALLEGRO_EVENT ev);
+void move_along_path(Object &obj, int &cur_index, int path_dir, int speed);
 
 // main_menu.cpp
 bool load_map_list();

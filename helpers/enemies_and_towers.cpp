@@ -78,7 +78,7 @@ void new_tower(Tower &tower, TowerType type) {
             }
             break;
         case HOUSE:
-            if (define_tower_template(tower, "images/sun.png", "House", 1, 0, 0, 0, "images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 100, 0, 0, 0) != 0) {
+            if (define_tower_template(tower, "images/sun.png", "House", 10.0, 0, 20, 0, "images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 100, 0, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;

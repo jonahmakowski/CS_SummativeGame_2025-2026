@@ -26,6 +26,7 @@ void frame_logic() {
         display_map();
 
         run_enemies();
+        run_housespawns();
 
         current_shots();
 
@@ -34,6 +35,7 @@ void frame_logic() {
         draw_all_towers();
         draw_all_enemies();
         draw_all_projectiles();
+        draw_all_housespawns();
 
         check_projectiles();
 
@@ -125,6 +127,10 @@ bool setup_game() {
     }
 
     if (!load_map_list()) {
+        return false;
+    }
+
+    if (load_housespawn_image() != 0) {
         return false;
     }
     

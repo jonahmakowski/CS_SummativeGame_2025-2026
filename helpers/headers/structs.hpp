@@ -192,6 +192,21 @@ struct Enemy {
     float slowing_amount = 0;
 };
 
+// HouseSpawn struct represents what a house spawns
+// in this case, a house spawns a friendly unit that
+// attacks enemies and walks down the path in the
+// other direction towards the enemy spawn point
+// from the enemy goal
+struct HouseSpawn {
+    Object object;
+    int health;
+
+    int path_index;
+    int damage;
+
+    int index = 0;
+};
+
 // Projectile struct representing a projectile in the game
 struct Projectile {
     Object object;

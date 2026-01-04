@@ -44,14 +44,17 @@ extern Camera camera;
 extern Tower active_towers[1000];
 extern Enemy active_enemies[1000];
 extern Projectile active_projectiles[1000];
+extern HouseSpawn active_housespawn[1000];
 
 extern int active_towers_count;
 extern int active_enemies_count;
 extern int active_projectiles_count;
+extern int active_housespawn_count;
 
 extern ALLEGRO_BITMAP* grass_tile_0;
 extern ALLEGRO_BITMAP* grass_tile_1;
 extern ALLEGRO_BITMAP* grass_tile_2;
+
 extern ALLEGRO_BITMAP* path_tile_0;
 extern ALLEGRO_BITMAP* path_tile_1;
 extern ALLEGRO_BITMAP* path_tile_2;
@@ -62,9 +65,12 @@ extern ALLEGRO_BITMAP* path_tile_6;
 extern ALLEGRO_BITMAP* path_tile_7;
 extern ALLEGRO_BITMAP* path_tile_8;
 extern ALLEGRO_BITMAP* path_tile_9;
+
 extern ALLEGRO_BITMAP* tower_spot_tile;
 extern ALLEGRO_BITMAP* enemy_spawn_tile;
 extern ALLEGRO_BITMAP* enemy_goal_tile;
+
+extern ALLEGRO_BITMAP* housespawn_image;
 
 extern Map active_map;
 

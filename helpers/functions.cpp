@@ -54,6 +54,13 @@ void current_shots() {
 
     for (int i = 0; i < active_towers_count; i++) {
         active_towers[i].time_since_last_shot += 1.0f / FPS;
+        
+        // If the house can shoot, do the house action and continue
+        if (active_towers[i].type == TowerType::HOUSE && active_towers[i].time_since_last_shot >= active_towers[i].reload_time) {
+            do_house(&active_towers[i]);
+            continue;
+        }
+        
         active_towers[i].aimed_this_frame = false;
         for (int j = 0; j < active_enemies_count; j++) {
             if (distance_between(active_towers[i].object.position, sorted_enemies[j]->object.position) <= active_towers[i].range) {
@@ -105,6 +112,64 @@ void shoot_projectile(Tower tower, Enemy* target_enemy) {
     new_projectile.object.velocity = velocity;
 
     add_projectile(new_projectile);
+}
+
+int load_housespawn_image() {
+   load_image_with_checks("images/child.png", housespawn_image);
+   return 0;
+}
+
+void do_house(Tower* tower) {
+    tower->time_since_last_shot = 0.0;
+
+    HouseSpawn new_housespawn;
+
+    new_housespawn.object.image = housespawn_image;
+    new_housespawn.object.scale = {0.75f, 0.75f};
+    new_housespawn.object.position = tile_pos_to_pixel_pos(active_map.path[active_map.path_count - 1]);
+    new_housespawn.object.exists = true;
+    new_housespawn.health = 100;
+    new_housespawn.path_index = active_map.path_count - 1;
+    new_housespawn.damage = tower->damage;
+
+    active_housespawn[active_housespawn_count] = new_housespawn;
+    active_housespawn_count++;
+}
+
+void run_housespawns() {
+    for (int i = 0; i < active_housespawn_count; i++) {
+        HouseSpawn* cur = &active_housespawn[i];
+        if (cur == nullptr) {
+            printf("Housespawn pointer is null, skipping\n");
+            continue;
+        }
+
+        move_along_path(cur->object, cur->path_index, -1, 5);
+
+        for (int j = 0; j < active_enemies_count; j++) {
+            if (is_colliding(cur->object, active_enemies[j].object)) {
+                active_enemies[j].health -= cur->damage;
+                cur->health -= active_enemies[j].reward * 10;
+            }
+        }
+
+        if (cur->path_index <= 0 || cur->health <= 0) {
+            // Reached the enemy spawn point, remove the housespawn
+            for (int j = i; j < active_housespawn_count; j++) {
+                active_housespawn[j] = active_housespawn[j + 1]; 
+            }
+            active_housespawn_count--;
+            i--;
+        }
+    }
+}
+
+void draw_all_housespawns() {
+    for (int i = 0; i < active_housespawn_count; i++) {
+        if (active_housespawn[i].object.exists) {
+            draw(active_housespawn[i]);
+        }
+    }
 }
 
 // Recalculates all projectiles' velocities towards their targets
@@ -269,37 +334,8 @@ void run_enemies() {
 
         //printf("Enemy %d at position (%d, %d) with health %d (max health %d) and expected damage of %d\n", i, enemy->object.position.x, enemy->object.position.y, enemy->health, enemy->max_health, enemy->expected_damage);
         
-        // Move enemy along path
-        Vector2i direction = subtract_vector(active_map.path[enemy->path_index], 
-                                active_map.path[enemy->path_index - 1]);
+        move_along_path(enemy->object, enemy->path_index, 1, enemy->speed * (1.0f - enemy->slowing_amount / 100.0f));
 
-        if (direction.x == 0) {
-            enemy->object.position.x = tile_pos_to_pixel_pos(active_map.path[enemy->path_index - 1]).x;
-        } else if (direction.y == 0) {
-            enemy->object.position.y = tile_pos_to_pixel_pos(active_map.path[enemy->path_index - 1]).y;
-        }
-        
-        Vector2i velocity = multiply_vector(direction, enemy->speed * (1.0f - enemy->slowing_amount / 100.0));
-
-        enemy->object.velocity = velocity;
-
-        update_position(enemy->object);
-        
-        // Update path index if reached next tile
-        if (direction.x != 0) {
-            if (enemy->object.position.x >= tile_pos_to_pixel_pos(active_map.path[enemy->path_index]).x && direction.x > 0) {
-                enemy->path_index++;
-            } else if (enemy->object.position.x <= tile_pos_to_pixel_pos(active_map.path[enemy->path_index]).x && direction.x < 0) {
-                enemy->path_index++;
-            }
-        } else if (direction.y != 0) {
-            if (enemy->object.position.y >= tile_pos_to_pixel_pos(active_map.path[enemy->path_index]).y && direction.y > 0) {
-                enemy->path_index++;
-            } else if (enemy->object.position.y <= tile_pos_to_pixel_pos(active_map.path[enemy->path_index]).y && direction.y < 0) {
-                enemy->path_index++;
-            }
-        }
-        
         // damages or rewards the player based on if the enemy reached the endgoal
         if (enemy->path_index >= active_map.path_count) {
             player_health -= enemy->reward;
@@ -335,9 +371,6 @@ void run_enemies() {
                 enemy->slowing_time_remaining = 0;
             }
         }
-
-        // Rotate enemy to face movement direction
-        enemy->object.rotation_degrees = (atan2(direction.y, direction.x) * (180.0 / ALLEGRO_PI)) + 90;
     }
 }
 
@@ -547,4 +580,40 @@ void tower_menu(ALLEGRO_EVENT ev) {
             }
         }
     }
+}
+
+/// @brief Moves an object along the path
+/// @param obj The object to move 
+/// @param cur_index Current index in the path
+/// @param path_dir The direction to move it (1 is from the enemy spawn to the goal, -1 is from the goal to the spawn)
+/// @param speed The speed to move the object at
+void move_along_path(Object &obj, int &cur_index, int path_dir, int speed) {
+    Vector2i direction = subtract_vector(active_map.path[cur_index], active_map.path[cur_index - path_dir]);
+    
+    if (direction.x == 0) {
+        obj.position.x = tile_pos_to_pixel_pos(active_map.path[cur_index - path_dir]).x;
+    } else if (direction.y == 0) {
+       obj.position.y = tile_pos_to_pixel_pos(active_map.path[cur_index - path_dir]).y;
+    }
+
+    obj.velocity = multiply_vector(direction, speed);
+
+    update_position(obj);
+
+    if (direction.x != 0) {
+        if (obj.position.x >= tile_pos_to_pixel_pos(active_map.path[cur_index]).x && direction.x > 0) {
+            cur_index += path_dir;
+        } else if (obj.position.x <= tile_pos_to_pixel_pos(active_map.path[cur_index]).x && direction.x < 0) {
+            cur_index += path_dir;
+        }
+    } else if (direction.y != 0) {
+        if (obj.position.y >= tile_pos_to_pixel_pos(active_map.path[cur_index]).y && direction.y > 0) {
+            cur_index += path_dir;
+        } else if (obj.position.y <= tile_pos_to_pixel_pos(active_map.path[cur_index]).y && direction.y < 0) {
+            cur_index += path_dir;
+        }
+    }
+
+    // Rotate object to face movement direction
+    obj.rotation_degrees = (atan2(direction.y, direction.x) * (180.0 / ALLEGRO_PI)) + 90;
 }
