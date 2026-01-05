@@ -123,6 +123,10 @@ struct Panel {
     bool exists = false;
 
     bool is_button = false;
+
+    bool has_tooltip = false;
+    int tooltip_lines = 0;
+    char tooltip_text[10][250];
 };
 
 // A Upgrade for a tower

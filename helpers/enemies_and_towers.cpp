@@ -73,7 +73,7 @@ void new_tower(Tower &tower, TowerType type) {
             }
             break;
         case ICE_WIZARD:
-            if (define_tower_template(tower, "./images/sun.png", "Ice Wizard (Magic Joe)", 3, 500, 200, 0, "./images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 80, 0, 0, 0) != 0) {
+            if (define_tower_template(tower, "./images/MagicJoe.png", "Ice Wizard (Magic Joe)", 3, 500, 200, 0, "./images/MagicJoe_projectile.png", {0.7, 0.7}, {1.0f, 1.0f}, 80, 0, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;

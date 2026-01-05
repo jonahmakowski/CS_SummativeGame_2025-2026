@@ -53,6 +53,48 @@ void draw(Panel panel) {
     draw_text(*panel.font, panel.text_color, 
         {panel.top_left.x + (panel.bottom_right.x - panel.top_left.x) / 2, panel.top_left.y + (panel.bottom_right.y - panel.top_left.y) / 2}, 
         panel.text);
+    
+    if (panel.has_tooltip && currently_clicking(panel)) {
+        Panel tooltip_panel;
+        tooltip_panel.top_left = {mouse_pos.x + 15, mouse_pos.y + 15};
+
+        int longest_index = 0;
+        for (int i = 1; i < panel.tooltip_lines; i++) {
+            if (strlen(panel.tooltip_text[i]) > strlen(panel.tooltip_text[longest_index])) {
+                longest_index = i;
+            }
+        }
+
+        int text_width = al_get_text_width(panel.font->font, panel.tooltip_text[longest_index]);
+        int text_height = panel.font->size;
+        int padding = 10;
+
+        tooltip_panel.bottom_right.x = mouse_pos.x + 15 + text_width + 2 * padding;
+        tooltip_panel.bottom_right.y = mouse_pos.y + 15 + (text_height * panel.tooltip_lines) + 2 * padding;
+        
+        tooltip_panel.color = LIGHT_GRAY;
+        tooltip_panel.exists = true;
+
+        tooltip_panel.has_border = true;
+        tooltip_panel.border_color = BLACK;
+        tooltip_panel.border_thickness = 2.0f;
+
+        draw(tooltip_panel);
+
+        for (int i = 0; i < panel.tooltip_lines; i++) {
+            Panel text_panel;
+            text_panel.top_left = {tooltip_panel.top_left.x + padding, tooltip_panel.top_left.y + padding + (i * text_height) - text_height};
+            text_panel.bottom_right = {tooltip_panel.bottom_right.x - padding, tooltip_panel.top_left.y + padding + ((i + 1) * text_height) - text_height};
+            text_panel.color = TRANSPARENT;
+            text_panel.exists = true;
+
+            snprintf(text_panel.text, sizeof(text_panel.text), "%s", panel.tooltip_text[i]);
+            text_panel.top_left.y += text_height;
+            text_panel.bottom_right.y += text_height;
+
+            draw(text_panel);
+        }
+    }
 }
 
 // Draws a tower using its object

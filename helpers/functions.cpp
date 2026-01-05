@@ -437,9 +437,13 @@ void do_ui() {
         sell_button.is_button = true;
         buttons[ButtonIndex::SELL_TOWER] = sell_button;
 
+        draw_range_circle(*card_menu_tower);
+
         draw(menu_panel);
         draw(tower_name);
         draw(sell_button);
+
+        draw_upgrades({menu_panel.top_left.x + 10, tower_name.bottom_right.y + 10}, {menu_panel.bottom_right.x - 10, sell_button.top_left.y - 10});
     }
 }
 

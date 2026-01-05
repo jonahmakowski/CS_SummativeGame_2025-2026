@@ -112,3 +112,5 @@ void help_menu_draw();
 bool parse_upgrades();
 bool can_apply_upgrade(Tower tower, Upgrade upgrade);
 void apply_upgrade(Tower &tower, Upgrade upgrade);
+void draw_upgrades(Vector2i top_left, Vector2i bottom_right);
+void do_upgrade_buttons(ALLEGRO_EVENT ev);

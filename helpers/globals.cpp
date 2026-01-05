@@ -54,8 +54,8 @@ int possible_maps_count = 0;
 
 GameState game_state = MAIN_MENU;
 
-TowerType avalible_deck[100] = {TowerType::SNOWBALL_THROWER, TowerType::WATER_BALLOON, TowerType::ICICLE_LAUNCHER, TowerType::SNOWBLOWER, TowerType::SNOWMAN, TowerType::HOUSE};
-int avalible_deck_count = 6;
+TowerType avalible_deck[100] = {TowerType::SNOWBALL_THROWER, TowerType::WATER_BALLOON, TowerType::ICICLE_LAUNCHER, TowerType::SNOWBLOWER, TowerType::SNOWMAN, TowerType::HOUSE, TowerType::ICE_WIZARD};
+int avalible_deck_count = 7;
 Tower current_hand[5];
 int current_hand_count = 0;
 
