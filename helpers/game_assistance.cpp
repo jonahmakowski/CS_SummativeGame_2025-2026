@@ -16,7 +16,7 @@ void do_help_popup() {
         help_popup.top_left = {get_display_width()/2 - 500, get_display_height()/2 - 50};
         help_popup.bottom_right = {get_display_width()/2 + 500, get_display_height()/2 + 50};
         help_popup.color = LIGHT_GRAY;
-        strcpy(help_popup.text, "Use WASD or Arrow Keys to Move the Camera (Press h to show the help menu)");
+        strcpy(help_popup.text, "Use WASD or arrow keys to move the camera (Press H to show the help menu)");
         draw(help_popup);
     }
 }
