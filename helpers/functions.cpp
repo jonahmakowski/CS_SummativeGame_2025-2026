@@ -50,6 +50,9 @@ void current_shots() {
         if (active_towers[i].type == TowerType::HOUSE && active_towers[i].time_since_last_shot >= active_towers[i].reload_time && active_enemies_count > 0) {
             do_house(&active_towers[i]);
             continue;
+        } else if (active_enemies_count == 0) {
+            active_housespawn_count = 0;
+            continue;
         }
         
         active_towers[i].aimed_this_frame = false;
