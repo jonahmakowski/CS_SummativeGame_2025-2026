@@ -70,6 +70,12 @@ extern ALLEGRO_BITMAP* tower_spot_tile;
 extern ALLEGRO_BITMAP* enemy_spawn_tile;
 extern ALLEGRO_BITMAP* enemy_goal_tile;
 
+extern ALLEGRO_BITMAP* wall_tile;
+extern ALLEGRO_BITMAP* cornerl1_wall_tile;
+extern ALLEGRO_BITMAP* cornerl2_wall_tile;
+extern ALLEGRO_BITMAP* cornerr1_wall_tile;
+extern ALLEGRO_BITMAP* cornerr2_wall_tile;
+
 extern ALLEGRO_BITMAP* housespawn_image;
 
 extern Map active_map;

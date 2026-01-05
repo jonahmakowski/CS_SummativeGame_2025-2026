@@ -47,6 +47,7 @@ void display_card(int index, int width, int upper_y) {
     card_panel.top_left = upper_left;
     card_panel.bottom_right = bottom_right;
     card_panel.color = BLUE_GREY;
+    strcpy(card_panel.text, "");
 
     // Tower Name
     Panel tower_name;
@@ -64,6 +65,7 @@ void display_card(int index, int width, int upper_y) {
     stats_panel.top_left = {upper_left.x + 10, upper_left.y + 220};
     stats_panel.bottom_right = {bottom_right.x - 10, bottom_right.y - 125};
     stats_panel.color = LIGHT_GRAY;
+    strcpy(stats_panel.text, "");
 
     Panel damage_stat;
     damage_stat.top_left = {stats_panel.top_left.x, stats_panel.top_left.y};
@@ -121,8 +123,31 @@ void display_hand() {
         return;
     }
 
+    int card_width = 300;
+
     for (int i = 0; i < current_hand_count; i++) {
-        display_card(i, 300, UPPER_CARD_Y);
+        display_card(i, card_width, UPPER_CARD_Y);
+    }
+
+    for (int i = 0; i < current_hand_count; i++) {
+        Panel tooltip_card_panel;
+        int first_card_x = ((float)get_display_width() / 2) - (((float)current_hand_count / 2) * (card_width + 10));
+    
+        tooltip_card_panel.top_left.x = first_card_x + i * (card_width + 10);
+        tooltip_card_panel.top_left.y = UPPER_CARD_Y;
+
+        tooltip_card_panel.bottom_right.x = card_width + tooltip_card_panel.top_left.x;
+        tooltip_card_panel.bottom_right.y = get_display_height();
+
+        strcpy(tooltip_card_panel.text, "");
+
+        tooltip_card_panel.color = TRANSPARENT;
+        tooltip_card_panel.exists = true;
+        tooltip_card_panel.has_tooltip = true;
+        tooltip_card_panel.tooltip_lines = 1;
+        snprintf(tooltip_card_panel.tooltip_text[0], sizeof(tooltip_card_panel.tooltip_text[0]), "%s", current_hand[i].description);
+
+        draw(tooltip_card_panel);
     }
 
     // If a card has been purchased, display a message to place the tower

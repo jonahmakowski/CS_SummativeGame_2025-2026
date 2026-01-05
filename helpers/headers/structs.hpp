@@ -11,10 +11,14 @@
 typedef enum TileType {
     GRASS,
     PATH,
-    WATER,
     TOWER_SPOT,
     ENEMY_SPAWN,
-    ENEMY_GOAL
+    ENEMY_GOAL,
+    WALL,
+    CORNERL1_WALL,
+    CORNERL2_WALL,
+    CORNERR1_WALL,
+    CORNERR2_WALL
 } TileType;
 
 typedef enum EnemyType {
@@ -154,6 +158,7 @@ struct Tower {
     int level;
 
     char name[100];
+    char description[250];
 
     float reload_time;
     int range;

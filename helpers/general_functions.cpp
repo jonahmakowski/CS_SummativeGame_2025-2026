@@ -79,6 +79,8 @@ void draw(Panel panel) {
         tooltip_panel.border_color = BLACK;
         tooltip_panel.border_thickness = 2.0f;
 
+        strcpy(tooltip_panel.text, "");
+
         draw(tooltip_panel);
 
         for (int i = 0; i < panel.tooltip_lines; i++) {

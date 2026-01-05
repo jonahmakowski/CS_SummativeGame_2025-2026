@@ -43,6 +43,12 @@ ALLEGRO_BITMAP* tower_spot_tile;
 ALLEGRO_BITMAP* enemy_spawn_tile;
 ALLEGRO_BITMAP* enemy_goal_tile;
 
+ALLEGRO_BITMAP* wall_tile;
+ALLEGRO_BITMAP* cornerl1_wall_tile;
+ALLEGRO_BITMAP* cornerl2_wall_tile;
+ALLEGRO_BITMAP* cornerr1_wall_tile;
+ALLEGRO_BITMAP* cornerr2_wall_tile;
+
 ALLEGRO_BITMAP* housespawn_image;
 
 Map active_map;

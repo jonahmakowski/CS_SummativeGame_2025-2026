@@ -25,7 +25,13 @@ int load_tile_images() {
 
     load_image_with_checks("tiles/tower_spot.png", tower_spot_tile);
     load_image_with_checks("tiles/enemy_spawn.png", enemy_spawn_tile);
-    load_image_with_checks("tiles/enemy_goal.png", enemy_goal_tile);
+    load_image_with_checks("tiles/castleOpening.png", enemy_goal_tile);
+
+    load_image_with_checks("tiles/castleWall.png", wall_tile);
+    load_image_with_checks("tiles/castleCornerL1.png", cornerl1_wall_tile);
+    load_image_with_checks("tiles/castleCornerL2.png", cornerl2_wall_tile);
+    load_image_with_checks("tiles/castleCornerR1.png", cornerr1_wall_tile);
+    load_image_with_checks("tiles/castleCornerR2.png", cornerr2_wall_tile);
     return 0;
 }
 
@@ -101,6 +107,21 @@ void display_map() {
             // Draws the enemy goal tile
             case ENEMY_GOAL:
                 draw(enemy_goal_tile, tile_position, scale, 0);
+                break;
+            case WALL:
+                draw(wall_tile, tile_position, scale, 0);
+                break;
+            case CORNERL1_WALL:
+                draw(cornerl1_wall_tile, tile_position, scale, 0);
+                break;
+            case CORNERL2_WALL:
+                draw(cornerl2_wall_tile, tile_position, scale, 0);
+                break;
+            case CORNERR1_WALL:
+                draw(cornerr1_wall_tile, tile_position, scale, 0);
+                break;
+            case CORNERR2_WALL:
+                draw(cornerr2_wall_tile, tile_position, scale, 0);
                 break;
             // Incase of an unknown tile type, it defaults to a grass tile and prints an error
             default:
