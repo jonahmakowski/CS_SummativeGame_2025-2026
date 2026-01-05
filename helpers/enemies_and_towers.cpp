@@ -43,42 +43,42 @@ void new_tower(Tower &tower, TowerType type) {
     tower.type = type;
     switch (type) {
         case SNOWMAN:
-            if (define_tower_template(tower, "images/snowman.png", "Snowman", 1, 300, 0, 0, "images/snowball.png", {0.1, 0.1}, {1.0f, 1.0f}, 5, 100, 10, 10) != 0) {
+            if (define_tower_template(tower, "./images/snowman.png", "Snowman", 1, 300, 0, 0, "./images/snowball.png", {0.1, 0.1}, {1.0f, 1.0f}, 5, 100, 10, 10) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case SNOWBALL_THROWER:
-            if (define_tower_template(tower, "images/child.png", "Snowball Thrower", 1, 500, 100, 1, "images/snowball.png", {0.1, 0.1}, {1.0f, 1.0f}, 5, 0, 0, 0) != 0) {
+            if (define_tower_template(tower, "./images/child.png", "Snowball Thrower", 1, 500, 100, 1, "./images/snowball.png", {0.1, 0.1}, {1.0f, 1.0f}, 5, 0, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case WATER_BALLOON:
-        if (define_tower_template(tower, "images/WaterBalloonTower.png", "Water Balloon Thrower", 1, 400, 20, 0, "images/waterBalloon.png", {1, 1}, {1.0f, 1.0f}, 10, 100, 0, 0) != 0) {
+        if (define_tower_template(tower, "./images/WaterBalloonTower.png", "Water Balloon Thrower", 1, 400, 20, 0, "./images/waterBalloon.png", {1, 1}, {1.0f, 1.0f}, 10, 100, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case ICICLE_LAUNCHER:
-            if (define_tower_template(tower, "images/IcicleBallista.png", "Icicle Ballista", 5, 1000, 200, 0, "images/IcicleProj.png", {0.5, 0.5}, {1.0f, 1.0f}, 30, 0, 0, 0) != 0) {
+            if (define_tower_template(tower, "./images/IcicleBallista.png", "Icicle Ballista", 5, 1000, 200, 0, "./images/IcicleProj.png", {0.5, 0.5}, {1.0f, 1.0f}, 30, 0, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case SNOWBLOWER:
-            if (define_tower_template(tower, "images/snowblower.png", "Snowblower", 0.1, 300, 2, 0, "images/snowball.png", {0.5, 0.5}, {1.0f, 1.0f}, 30, 0, 0, 0) != 0) {
+            if (define_tower_template(tower, "./images/snowblower.png", "Snowblower", 0.1, 300, 2, 0, "./images/snowball.png", {0.5, 0.5}, {1.0f, 1.0f}, 30, 0, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case MAMMOTH:
-            if (define_tower_template(tower, "images/sun.png", "Mammoth", 5, 300, 500, 0, "images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 50, 0, 0, 0) != 0) {
+            if (define_tower_template(tower, "./images/sun.png", "Mammoth", 5, 300, 500, 0, "./images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 50, 0, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case ICE_WIZARD:
-            if (define_tower_template(tower, "images/sun.png", "Ice Wizard (Magic Joe)", 3, 500, 200, 0, "images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 80, 0, 0, 0) != 0) {
+            if (define_tower_template(tower, "./images/sun.png", "Ice Wizard (Magic Joe)", 3, 500, 200, 0, "./images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 80, 0, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case HOUSE:
-            if (define_tower_template(tower, "images/sun.png", "House", 10.0, 0, 20, 0, "images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 100, 0, 0, 0) != 0) {
+            if (define_tower_template(tower, "./images/sun.png", "House", 10.0, 0, 20, 0, "./images/sun.png", {0.2, 0.2}, {1.0f, 1.0f}, 100, 0, 0, 0) != 0) {
                 printf("Failed to create new tower");
             }
             break;
@@ -117,67 +117,67 @@ void new_enemy(Enemy &enemy, EnemyType type) {
     enemy.type = type;
     switch (type) {
         case PENGUIN:
-            if (define_enemy_template(enemy, "images/penguin.gif", 10, 1, 5, false, {0.75f, 0.75f}) != 0) {
+            if (define_enemy_template(enemy, "./images/penguin.png", 10, 1, 5, false, {0.75f, 0.75f}) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case YETI:
-            if (define_enemy_template(enemy, "images/Yeti.png", 50, 10, 2, false, {1.0f, 1.0f}) != 0) {
+            if (define_enemy_template(enemy, "./images/Yeti.png", 50, 10, 2, false, {1.0f, 1.0f}) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case ICE_SPRITE:
-            if (define_enemy_template(enemy, "images/IceSprite.png", 5, 5, 30, false, {0.25f, 0.25f}) != 0) {
+            if (define_enemy_template(enemy, "./images/IceSprite.png", 5, 5, 30, false, {0.25f, 0.25f}) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case ICE_GIANT:
-            if (define_enemy_template(enemy, "images/sun.png", 50, 10, 10, false, {0.25f, 0.25f}) != 0) {
+            if (define_enemy_template(enemy, "./images/sun.png", 50, 10, 10, false, {0.25f, 0.25f}) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case YAK:
-            if (define_enemy_template(enemy, "images/sun.png", 200, 50, 5, false, {0.25f, 0.25f}) != 0) {
+            if (define_enemy_template(enemy, "./images/sun.png", 200, 50, 5, false, {0.25f, 0.25f}) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case RABBIT:
-            if (define_enemy_template(enemy, "images/sun.png", 20, 10, 45, false, {0.25f, 0.25f}) != 0) {
+            if (define_enemy_template(enemy, "./images/sun.png", 20, 10, 45, false, {0.25f, 0.25f}) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case FIRE_WIZARD:
-            if (define_enemy_template(enemy, "images/sun.png", 75, 15, 20, false, {0.25f, 0.25f}) != 0) {
+            if (define_enemy_template(enemy, "./images/sun.png", 75, 15, 20, false, {0.25f, 0.25f}) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case CAMPFIRE:
-            if (define_enemy_template(enemy, "images/sun.png", 300, 75, 8, false, {0.25f, 0.25f}) != 0) {
+            if (define_enemy_template(enemy, "./images/sun.png", 300, 75, 8, false, {0.25f, 0.25f}) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case FIRE_SPRITE:
-            if (define_enemy_template(enemy, "images/sun.png", 30, 10, 60, false, {0.25f, 0.25f}) != 0) {
+            if (define_enemy_template(enemy, "./images/sun.png", 30, 10, 60, false, {0.25f, 0.25f}) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case EMBER:
-            if (define_enemy_template(enemy, "images/sun.png", 10, 1, 20, false, {0.25f, 0.25f}) != 0) {
+            if (define_enemy_template(enemy, "./images/sun.png", 10, 1, 20, false, {0.25f, 0.25f}) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case NEIGHBOR_BOSS:
-            if (define_enemy_template(enemy, "images/sun.png", 1000, 100, 20, true, {0.25f, 0.25f}) != 0) {
+            if (define_enemy_template(enemy, "./images/sun.png", 1000, 100, 20, true, {0.25f, 0.25f}) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case TODDLER_BOSS:
-            if (define_enemy_template(enemy, "images/sun.png", 2000, 200, 20, true, {0.25f, 0.25f}) != 0) {
+            if (define_enemy_template(enemy, "./images/sun.png", 2000, 200, 20, true, {0.25f, 0.25f}) != 0) {
                 printf("Failed to create new tower");
             }
             break;
         case SUN_BOSS:
-            if (define_enemy_template(enemy, "images/sun.png", 3000, 300, 20, true, {0.25f, 0.25f}) != 0) {
+            if (define_enemy_template(enemy, "./images/sun.png", 3000, 300, 20, true, {0.25f, 0.25f}) != 0) {
                 printf("Failed to create new tower");
             }
             break;

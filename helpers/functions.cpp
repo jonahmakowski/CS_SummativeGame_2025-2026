@@ -56,7 +56,7 @@ void current_shots() {
         active_towers[i].time_since_last_shot += 1.0f / FPS;
         
         // If the house can shoot, do the house action and continue
-        if (active_towers[i].type == TowerType::HOUSE && active_towers[i].time_since_last_shot >= active_towers[i].reload_time) {
+        if (active_towers[i].type == TowerType::HOUSE && active_towers[i].time_since_last_shot >= active_towers[i].reload_time && active_enemies_count > 0) {
             do_house(&active_towers[i]);
             continue;
         }
