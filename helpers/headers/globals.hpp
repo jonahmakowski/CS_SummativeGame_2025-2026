@@ -11,8 +11,8 @@
 #define MAX_HEIGHT 800
 #define FPS 30
 
-#define SCREEN_WIDTH 2160
-#define SCREEN_HEIGHT 1440
+#define SCREEN_WIDTH 1800
+#define SCREEN_HEIGHT 1000
 #define FULLSCREEN false 
 #define CANRESIZE false // May cause issues, not tested much
 
@@ -93,6 +93,9 @@ extern bool ui_force_hidden;
 
 extern bool show_card_menu;
 extern Tower *card_menu_tower;
+
+extern Upgrade upgrades[1000];
+extern int upgrades_count;
 
 // Keybinds
 

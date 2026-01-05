@@ -14,15 +14,6 @@ Vector2i tile_pos_to_pixel_pos(Vector2i tile_pos) {
     return pixel_pos;
 }
 
-// Applies an upgrade to a tower and removes it from the possible upgrades
-void apply_upgrade(Tower &tower, int upgrade_index) {
-    tower.damage = (int)(tower.damage * tower.possible_upgrades[upgrade_index].damage_multiplier);
-    tower.reload_time = (int)(tower.reload_time * tower.possible_upgrades[upgrade_index].fire_rate_multiplier);
-    tower.range = (int)(tower.range * tower.possible_upgrades[upgrade_index].range_multiplier);
-
-    remove_object_from_array(tower.possible_upgrades, tower.possible_upgrades_count, upgrade_index);
-}
-
 // Draws the range circle of a tower
 void draw_range_circle(Tower tower) {
     Vector2i tower_pos = camera_fixed_position(tower.object.position);
@@ -120,7 +111,7 @@ int load_housespawn_image() {
 }
 
 void do_house(Tower* tower) {
-    tower->time_since_last_shot = 0.0;
+    tower->time_since_last_shot = (random() % 10) / 10.0f; // So the house doesn't shoot at the same time as every other house
 
     HouseSpawn new_housespawn;
 
@@ -128,9 +119,8 @@ void do_house(Tower* tower) {
     new_housespawn.object.scale = {0.75f, 0.75f};
     new_housespawn.object.position = tile_pos_to_pixel_pos(active_map.path[active_map.path_count - 1]);
     new_housespawn.object.exists = true;
-    new_housespawn.health = 100;
+    new_housespawn.health = tower->damage;
     new_housespawn.path_index = active_map.path_count - 1;
-    new_housespawn.damage = tower->damage;
 
     active_housespawn[active_housespawn_count] = new_housespawn;
     active_housespawn_count++;
@@ -148,8 +138,10 @@ void run_housespawns() {
 
         for (int j = 0; j < active_enemies_count; j++) {
             if (is_colliding(cur->object, active_enemies[j].object)) {
-                active_enemies[j].health -= cur->damage;
-                cur->health -= active_enemies[j].reward * 10;
+                while (cur->health > 0 && active_enemies[j].health > 0) {
+                    active_enemies[j].health -= 1;
+                    cur->health -= 1;
+                }
             }
         }
 
@@ -395,8 +387,8 @@ void do_ui() {
     draw(coin_panel);
 
     Panel discard_button;
-    discard_button.top_left = {0, get_display_height() / 2 + 50};
-    discard_button.bottom_right = {300, get_display_height() / 2 + 130};
+    discard_button.top_left = {0, get_display_height() / 3 + 50};
+    discard_button.bottom_right = {300, get_display_height() / 3 + 130};
     discard_button.color = RED;
     discard_button.text_color = WHITE;
     discard_button.exists = true;
@@ -409,8 +401,8 @@ void do_ui() {
     // Next Wave Button
     if ((active_map.waves[active_map.current_wave_index].wave_complete || active_map.current_wave_index == -1) && active_map.current_wave_index < active_map.wave_count - 1) {
         Panel next_wave_button;
-        next_wave_button.top_left = {0, get_display_height() / 2 - 40};
-        next_wave_button.bottom_right = {300, get_display_height() / 2 + 40};
+        next_wave_button.top_left = {0, get_display_height() / 3 - 40};
+        next_wave_button.bottom_right = {300, get_display_height() / 3 + 40};
         next_wave_button.color = BLUE;
         next_wave_button.text_color = WHITE;
         next_wave_button.exists = true;

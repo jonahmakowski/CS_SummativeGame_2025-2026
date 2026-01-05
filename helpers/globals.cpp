@@ -67,6 +67,9 @@ bool ui_force_hidden = false;
 bool show_card_menu = false;
 Tower *card_menu_tower = nullptr;
 
+Upgrade upgrades[1000];
+int upgrades_count = 0;
+
 // Keybinds
 
 Keybind move_up = { { ALLEGRO_KEY_W, ALLEGRO_KEY_UP, -1 } };

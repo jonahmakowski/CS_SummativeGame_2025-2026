@@ -1,0 +1,1 @@
+tower-id(from TowerType enum) upgrade-id(unique per tower) required_upgrade_id \t name \t description \t upgrade_price reload_time(decrease) range(increase) damage(increase) projectile_area_of_effect(increase)(explosion/slowing effect size) slowing_amount(increase)(how much it slows, percentage), slowing_duration(increase)(how long in seconds it slows)

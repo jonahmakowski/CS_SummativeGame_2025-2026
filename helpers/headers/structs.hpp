@@ -131,9 +131,17 @@ struct Upgrade {
     char description[250];
     int price;
 
-    float fire_rate_multiplier = 1.0;
-    float range_multiplier = 1.0;
-    float damage_multiplier = 1.0;
+    TowerType for_tower;
+    int upgrade_id;
+    Upgrade* required_upgrade;
+    bool requires_upgrade;
+
+    float reload_time;
+    int range;
+    int damage;
+    int projectile_area_of_effect;
+    float slowing_amount;
+    float slowing_duration;
 };
 
 // Tower struct representing a tower in the game
@@ -166,6 +174,8 @@ struct Tower {
     float slowing_duration = 0; // for slowing projectiles in seconds
     float slowing_amount = 0; // for slowing projectiles in percentage
     int projectile_area_of_effect = 0; // For exposive and slowing projectiles
+
+    int best_upgrade_id = -1;
 };
 
 // Enemy struct representing an enemy in the game
@@ -202,7 +212,6 @@ struct HouseSpawn {
     int health;
 
     int path_index;
-    int damage;
 
     int index = 0;
 };

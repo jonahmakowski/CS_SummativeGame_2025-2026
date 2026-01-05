@@ -133,6 +133,10 @@ bool setup_game() {
     if (load_housespawn_image() != 0) {
         return false;
     }
+
+    if (!parse_upgrades()) {
+        return false;
+    }
     
     return true;
 }

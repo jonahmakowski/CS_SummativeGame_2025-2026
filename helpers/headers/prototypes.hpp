@@ -62,7 +62,6 @@ void keybind_text(char buffer[], Keybind keybind);
 
 // functions.cpp
 Vector2i tile_pos_to_pixel_pos(Vector2i tile_pos);
-void apply_upgrade(Tower &tower, int upgrade_index);
 void draw_range_circle(Tower tower);
 void current_shots();
 Vector2i multiply_vector(Vector2i vec, float multiplier);
@@ -108,3 +107,8 @@ void handle_buy_card(ALLEGRO_EVENT ev);
 void do_help_popup();
 void toggle_help_menu();
 void help_menu_draw();
+
+// upgrades.cpp
+bool parse_upgrades();
+bool can_apply_upgrade(Tower tower, Upgrade upgrade);
+void apply_upgrade(Tower &tower, Upgrade upgrade);
