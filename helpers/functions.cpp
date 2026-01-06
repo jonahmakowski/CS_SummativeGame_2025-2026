@@ -90,9 +90,9 @@ void shoot_projectile(Tower tower, Enemy* target_enemy) {
     new_projectile.slowing_duration = tower.slowing_duration;
 
     // Set the projectile type based on tower type
-    if (tower.type == TowerType::SNOWMAN) {
+    if (tower.slowing_amount != 0) {
         new_projectile.type = ProjectileType::SLOWING;
-    } else if (tower.type == TowerType::WATER_BALLOON) {
+    } else if (tower.projectile_area_of_effect != 0) {
         new_projectile.type = ProjectileType::EXPLOSIVE;
     } else {
         new_projectile.type = ProjectileType::NORMAL;
@@ -326,7 +326,7 @@ void run_enemies() {
 
         // damages or rewards the player based on if the enemy reached the endgoal
         if (enemy->path_index >= active_map.path_count) {
-            player_health -= enemy->reward;
+            player_health -= enemy->health;
         } else if (enemy->health <= 0) {
             player_coins += enemy->reward;
         }
