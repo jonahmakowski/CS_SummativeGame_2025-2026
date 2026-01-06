@@ -3,7 +3,7 @@
 bool moved = false;
 
 int player_health = 100;
-int player_coins = 1000;
+int player_coins = 20;
 bool draw_range_circles = false;
 
 ALLEGRO_DISPLAY *display = nullptr;
@@ -75,6 +75,10 @@ Tower *card_menu_tower = nullptr;
 
 Upgrade upgrades[1000];
 int upgrades_count = 0;
+
+Panel tooltip_panel;
+Panel tooltip_text_panels[20];
+int tooltip_text_panels_count = 0;
 
 // Keybinds
 

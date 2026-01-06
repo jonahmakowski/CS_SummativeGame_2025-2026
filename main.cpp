@@ -21,6 +21,8 @@ void frame_logic() {
     al_acknowledge_resize(display);
 
     if (game_state == IN_GAME) {
+        tooltip_panel.exists = false;
+
         update_camera_position(true, {0, 0}, {(active_map.size.x * TILE_SIZE - get_display_width()) * -1, (active_map.size.y * TILE_SIZE - get_display_height()) * -1});
 
         display_map();
@@ -46,6 +48,13 @@ void frame_logic() {
         do_help_popup();
 
         help_menu_draw();
+        
+        draw_tooltip();
+
+        if (is_game_over()) {
+            reset_game_globals();
+            game_state = MAIN_MENU;
+        }
     } else if (game_state == MAIN_MENU) {
         draw_main_menu();
     }

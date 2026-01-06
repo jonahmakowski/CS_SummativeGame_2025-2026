@@ -55,7 +55,6 @@ void draw(Panel panel) {
         panel.text);
     
     if (panel.has_tooltip && currently_clicking(panel)) {
-        Panel tooltip_panel;
         tooltip_panel.top_left = {mouse_pos.x + 15, mouse_pos.y + 15};
 
         int longest_index = 0;
@@ -81,20 +80,39 @@ void draw(Panel panel) {
 
         strcpy(tooltip_panel.text, "");
 
-        draw(tooltip_panel);
+        tooltip_text_panels_count = panel.tooltip_lines;
 
         for (int i = 0; i < panel.tooltip_lines; i++) {
-            Panel text_panel;
-            text_panel.top_left = {tooltip_panel.top_left.x + padding, tooltip_panel.top_left.y + padding + (i * text_height) - text_height};
-            text_panel.bottom_right = {tooltip_panel.bottom_right.x - padding, tooltip_panel.top_left.y + padding + ((i + 1) * text_height) - text_height};
-            text_panel.color = TRANSPARENT;
-            text_panel.exists = true;
+            Panel* text_panel = &tooltip_text_panels[i];
+            text_panel->top_left = {tooltip_panel.top_left.x + padding, tooltip_panel.top_left.y + padding + (i * text_height) - text_height};
+            text_panel->bottom_right = {tooltip_panel.bottom_right.x - padding, tooltip_panel.top_left.y + padding + ((i + 1) * text_height) - text_height};
+            text_panel->color = TRANSPARENT;
+            text_panel->exists = true;
+            snprintf(text_panel->text, sizeof(text_panel->text), "%s", panel.tooltip_text[i]);
+            text_panel->top_left.y += text_height;
+            text_panel->bottom_right.y += text_height;
+        }
+    }
+}
 
-            snprintf(text_panel.text, sizeof(text_panel.text), "%s", panel.tooltip_text[i]);
-            text_panel.top_left.y += text_height;
-            text_panel.bottom_right.y += text_height;
+// Draws the tooltip if it exists
+void draw_tooltip() {
+    if (tooltip_panel.exists) {
 
-            draw(text_panel);
+        if (tooltip_panel.bottom_right.x > get_display_width()) {
+            int overflow = tooltip_panel.bottom_right.x - get_display_width();
+            tooltip_panel.top_left.x -= overflow;
+            tooltip_panel.bottom_right.x -= overflow;
+
+            for (int i = 0; i < tooltip_text_panels_count; i++) {
+                tooltip_text_panels[i].top_left.x -= overflow;
+                tooltip_text_panels[i].bottom_right.x -= overflow;
+            }
+        }
+
+        draw(tooltip_panel);
+        for (int i = 0; i < tooltip_text_panels_count; i++) {
+            draw(tooltip_text_panels[i]);
         }
     }
 }
@@ -361,4 +379,16 @@ void keybind_text(char buffer[], Keybind keybind) {
             strcat(buffer, "/");
         }
     }
+}
+
+// Resets the globals related to the game state
+void reset_game_globals() {
+    player_coins = 20;
+    player_health = 100;
+    active_enemies_count = 0;
+    active_projectiles_count = 0;
+    active_towers_count = 0;
+    active_housespawn_count = 0;
+    camera.position = {0, 0};
+    camera.velocity = {0, 0};
 }

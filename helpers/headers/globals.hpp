@@ -103,6 +103,10 @@ extern Tower *card_menu_tower;
 extern Upgrade upgrades[1000];
 extern int upgrades_count;
 
+extern Panel tooltip_panel;
+extern Panel tooltip_text_panels[20];
+extern int tooltip_text_panels_count;
+
 // Keybinds
 
 extern Keybind move_up;

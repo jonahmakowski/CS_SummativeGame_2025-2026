@@ -39,7 +39,7 @@ void enemies_by_path_distance(Enemy *sorted_enemies[]) {
 
 // Gets the enemies that towers can shoot at
 void current_shots() {
-    Enemy *sorted_enemies[100];
+    Enemy *sorted_enemies[1000];
 
     enemies_by_path_distance(sorted_enemies);
 
@@ -410,6 +410,9 @@ void do_ui() {
         next_wave_button.text_color = WHITE;
         next_wave_button.exists = true;
         next_wave_button.is_button = true;
+        next_wave_button.has_tooltip = true;
+        next_wave_button.tooltip_lines = 1;
+        snprintf(next_wave_button.tooltip_text[0], sizeof(next_wave_button.tooltip_text[0]), "Start wave %d of %d", active_map.current_wave_index + 2, active_map.wave_count);
 
         snprintf(next_wave_button.text, sizeof(next_wave_button.text), "Start Next Wave");
         draw(next_wave_button);
@@ -615,4 +618,21 @@ void move_along_path(Object &obj, int &cur_index, int path_dir, int speed) {
 
     // Rotate object to face movement direction
     obj.rotation_degrees = (atan2(direction.y, direction.x) * (180.0 / ALLEGRO_PI)) + 90;
+}
+
+// Checks if the game is over (player health <= 0 or all waves complete)
+bool is_game_over() {
+    if (player_health <= 0) {
+        return true;
+    }
+
+    bool all_waves_complete = true;
+
+    for (int i = 0; i < active_map.wave_count; i++) {
+        if (!active_map.waves[i].wave_complete) {
+            all_waves_complete = false;
+        }
+    }
+
+    return all_waves_complete && active_enemies_count == 0;
 }

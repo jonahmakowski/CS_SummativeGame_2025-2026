@@ -29,6 +29,7 @@ Vector2i camera_fixed_position(Vector2i position);
 void draw(ALLEGRO_BITMAP *image, Vector2i position, Vector2 scale, int rotation);
 void draw(Object obj);
 void draw(Panel panel);
+void draw_tooltip();
 void draw(Tower tower);
 void draw(Enemy enemy);
 void draw(Projectile projectile);
@@ -59,6 +60,7 @@ int index_of_in_array(Vector2i point, MapTile arr[], int count);
 int index_of_in_array(Vector2i point, Vector2i arr[], int count);
 Vector2i subtract_vector(Vector2i a, Vector2i b);
 void keybind_text(char buffer[], Keybind keybind);
+void reset_game_globals();
 
 // functions.cpp
 Vector2i tile_pos_to_pixel_pos(Vector2i tile_pos);
@@ -84,6 +86,7 @@ void handle_button_clicks(ALLEGRO_EVENT ev);
 void build_tower_on_click(ALLEGRO_EVENT ev);
 void tower_menu(ALLEGRO_EVENT ev);
 void move_along_path(Object &obj, int &cur_index, int path_dir, int speed);
+bool is_game_over();
 
 // main_menu.cpp
 bool load_map_list();
@@ -110,7 +113,7 @@ void help_menu_draw();
 
 // upgrades.cpp
 bool parse_upgrades();
-bool can_apply_upgrade(Tower tower, Upgrade upgrade);
+bool can_apply_upgrade(Tower* tower, Upgrade* upgrade);
 void apply_upgrade(Tower &tower, Upgrade upgrade);
 void draw_upgrades(Vector2i top_left, Vector2i bottom_right);
 void do_upgrade_buttons(ALLEGRO_EVENT ev);

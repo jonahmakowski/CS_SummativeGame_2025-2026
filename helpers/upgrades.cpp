@@ -19,27 +19,41 @@ bool parse_upgrades() {
         return false;
     }
 
-    char line[300];
+    char line[500];
     int required_upgrade_id;
+    char garbage[20];
     upgrades_count = 0;
 
-    fgets(line, sizeof(line), file); // Skip comment line
-
     while (fgets(line, sizeof(line), file)) {
+        if (line[0] == '/' && line[1] == '/') {
+            continue; // Skip comment lines
+        }
+
         Upgrade* upgrade = &upgrades[upgrades_count];
 
-        sscanf(line, "%d %d %d %[^\t]\t%[^\t]\t%d %f %d %d %d %f %f",
+        sscanf(line, "%d%[ ]%d%[ ]%d%[ ]%[^\t]%[\t]%[^\t]%[\t]%d%[ ]%f%[ ]%d%[ ]%d%[ ]%d%[ ]%f%[ ]%f",
                (int*)&upgrade->for_tower,
+               garbage,
                &upgrade->upgrade_id,
+               garbage,
                &required_upgrade_id,
+               garbage,
                upgrade->name,
+               garbage,
                upgrade->description,
+               garbage,
                &upgrade->price,
+               garbage,
                &upgrade->reload_time,
+               garbage,
                &upgrade->range,
+               garbage,
                &upgrade->damage,
+               garbage,
                &upgrade->projectile_area_of_effect,
+               garbage,
                &upgrade->slowing_amount,
+               garbage,
                &upgrade->slowing_duration
         );
 
@@ -60,24 +74,36 @@ bool parse_upgrades() {
         upgrades_count++;
     }
 
+    fclose(file);
     return true;
 }
 
 // Checks if a tower can apply a given upgrade
-bool can_apply_upgrade(Tower tower, Upgrade upgrade) {
-    if (upgrade.for_tower != tower.type) {
+bool can_apply_upgrade(Tower* tower, Upgrade* upgrade) {
+    if (tower == nullptr || upgrade == nullptr) {
+        printf("Tower or upgrade pointer is null in can_apply_upgrade\n");
         return false;
     }
 
-    if (upgrade.requires_upgrade) {
-        if (upgrade.required_upgrade->upgrade_id != tower.best_upgrade_id) {
+    if (upgrade->for_tower != tower->type) {
+        return false;
+    }
+
+    if (upgrade->requires_upgrade) {
+        if (upgrade->required_upgrade == nullptr) {
+            printf("WARN: required_upgrade is nullptr in can_apply_upgrade\n");
+            return false;
+        }
+
+        if (upgrade->required_upgrade->upgrade_id != tower->best_upgrade_id) {
             return false;
         }
     } else {
-        if (tower.best_upgrade_id != -1) {
+        if (tower->best_upgrade_id != -1) {
             return false;
         }
     }
+
     return true;
 }
 
@@ -103,7 +129,7 @@ void draw_upgrades(Vector2i top_left, Vector2i bottom_right) {
 
     for (int i = 0; i < upgrades_count; i++) {
         Upgrade* upgrade = &upgrades[i];
-        if (!can_apply_upgrade(*card_menu_tower, *upgrade)) {
+        if (!can_apply_upgrade(card_menu_tower, upgrade)) {
             continue;
         }
 
@@ -120,10 +146,12 @@ void draw_upgrades(Vector2i top_left, Vector2i bottom_right) {
         snprintf(upgrade_panel.text, sizeof(upgrade_panel.text), "%s - %d coins", upgrade->name, upgrade->price);
 
         upgrade_panel.has_tooltip = true;
-        upgrade_panel.tooltip_lines = 3;
+        upgrade_panel.tooltip_lines = 5;
         snprintf(upgrade_panel.tooltip_text[0], sizeof(upgrade_panel.tooltip_text[0]), "%s", upgrade->description);
         snprintf(upgrade_panel.tooltip_text[1], sizeof(upgrade_panel.tooltip_text[1]), "Damage: +%d, Range: +%d", upgrade->damage, upgrade->range);
         snprintf(upgrade_panel.tooltip_text[2], sizeof(upgrade_panel.tooltip_text[2]), "Reload Time: -%.2f s", upgrade->reload_time);
+        snprintf(upgrade_panel.tooltip_text[3], sizeof(upgrade_panel.tooltip_text[3]), "Explosion Radius: +%d", upgrade->projectile_area_of_effect);
+        snprintf(upgrade_panel.tooltip_text[4], sizeof(upgrade_panel.tooltip_text[4]), "Slowing: +%.2f%% for +%.2f s", upgrade->slowing_amount, upgrade->slowing_duration);
 
         draw(upgrade_panel);
 
@@ -131,7 +159,7 @@ void draw_upgrades(Vector2i top_left, Vector2i bottom_right) {
         upgrade_buttons[upgrade_buttons_count].upgrade = upgrade;
         upgrade_buttons_count++;
 
-        current_y += upgrade_height + upgrade_spacing;  
+        current_y += upgrade_height + upgrade_spacing;
     }
 }
 
