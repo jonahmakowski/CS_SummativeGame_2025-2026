@@ -18,7 +18,7 @@
 
 #define PANEL_ROUNDING 10.0f
 
-#define PROJECTILE_SPEED 20.0f
+#define PROJECTILE_SPEED 30.0f
 
 #define TILE_SIZE 128
 

@@ -195,4 +195,3 @@ int main(int argc, char *argv[]) {
     al_destroy_display(display);
     return 0;
 }
-

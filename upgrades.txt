@@ -7,8 +7,8 @@
 00 03 02 Increased slow effect duration			This upgrade increases the time enemies spent slowed down.			006 0.00 000 000 050 000 003
 //
 // SNOWBALL_THROWER
-01 00 -1 Increased range						This upgrade increases the range.									004 0.00 200 000 000 000 000
-01 01 00 Increased range (Mk2)					This upgrade dramatically increases the range.						005 0.00 400 000 000 000 000
+01 00 -1 Increased range						This upgrade increases the range.									004 0.00 150 000 000 000 000
+01 01 00 Increased range (Mk2)					This upgrade dramatically increases the range.						005 0.00 350 000 000 000 000
 01 02 -1 Increased damage						This upgrade increases the damage.									004 0.00 000 005 000 000 000
 01 03 02 Increased damage (Mk2)					This upgrade dramatically increases the damage.						006 0.00 000 010 000 000 000
 01 04 -1 Increased firerate						This upgrade increases the firerate.								010 0.05 000 000 000 000 000

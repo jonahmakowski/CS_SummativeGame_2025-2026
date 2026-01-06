@@ -236,22 +236,16 @@ void check_projectiles() {
 }
 
 void proj_hit_enemy(Projectile *proj) {
-    printf("Projectile hit enemy\n");
     if (proj->type == NORMAL) {
         proj->target->health -= proj->damage;
         proj->target->expected_damage -= proj->damage;
-        printf("Dealt normal damage\n");
     } else if (proj->type == EXPLOSIVE) {
         for (int i = 0; i < active_enemies_count; i++) {
             if (distance_between(proj->object.position, active_enemies[i].object.position) <= proj->radius_of_effect) {
                 active_enemies[i].health -= proj->damage;
                 active_enemies[i].expected_damage -= proj->damage;
-                printf("Dealt explosive damage to enemy %d\n", i);
             }
-            printf("Projectile at (%d, %d) with radius %d enemy at (%d, %d), distance is %f\n", proj->object.position.x, proj->object.position.y, proj->radius_of_effect, active_enemies[i].object.position.x, active_enemies[i].object.position.y,
-               distance_between(proj->object.position, active_enemies[i].object.position));
         }
-        printf("Dealt explosive damage\n");
     } else if (proj->type == SLOWING) {
         for (int i = 0; i < active_enemies_count; i++) {
             if (distance_between(proj->object.position, active_enemies[i].object.position) <= proj->radius_of_effect) {
@@ -261,7 +255,6 @@ void proj_hit_enemy(Projectile *proj) {
                 active_enemies[i].slowing_time_remaining += proj->slowing_duration;
             }
         }
-        printf("Dealt slowing damage\n");
     } else {
         printf("Unknown projectile type!\n");
     }

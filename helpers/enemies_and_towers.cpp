@@ -129,7 +129,7 @@ void new_enemy(Enemy &enemy, EnemyType type) {
             }
             break;
         case ICE_SPRITE:
-            if (define_enemy_template(enemy, "./images/IceSprite.png", 5, 5, 30, false, {0.25f, 0.25f}) != 0) {
+            if (define_enemy_template(enemy, "./images/IceSprite.png", 5, 5, 30, false, {1.0f, 1.0f}) != 0) {
                 printf("Failed to create new tower");
             }
             break;
