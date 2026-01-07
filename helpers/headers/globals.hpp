@@ -14,7 +14,9 @@
 #define SCREEN_MIN_WIDTH 1800
 #define SCREEN_MIN_HEIGHT 1000
 
-#define INITIAL_MONEY 50000 // Default 500
+#define INITIAL_MONEY 500 // Default 500
+
+#define DISCARD_COST 5
 
 #define FULLSCREEN false 
 #define CANRESIZE true // May cause issues, not tested much

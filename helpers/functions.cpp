@@ -396,7 +396,7 @@ void do_ui() {
     discard_button.color = RED;
     discard_button.text_color = WHITE;
     discard_button.exists = true;
-    snprintf(discard_button.text, sizeof(discard_button.text), "DISCARD HAND - 5 coins");
+    snprintf(discard_button.text, sizeof(discard_button.text), "DISCARD HAND - %d coins", DISCARD_COST);
     discard_button.is_button = true;
 
     buttons[ButtonIndex::DISCARD_BUTTON] = discard_button;
@@ -480,7 +480,7 @@ void handle_button_clicks(ALLEGRO_EVENT ev) {
                         buttons[i].exists = false;
                         break;
                     case DISCARD_BUTTON:
-                        if (player_coins < 5) {
+                        if (player_coins < DISCARD_COST) {
                             printf("Not enough coins to discard hand!\n");
                             break;
                         }
@@ -488,7 +488,7 @@ void handle_button_clicks(ALLEGRO_EVENT ev) {
                         for (int j = 0; j < 5; j++) {
                             draw_card();
                         }
-                        player_coins -= 5;
+                        player_coins -= DISCARD_COST;
                         break;
                     case SELL_TOWER:
                         player_coins += card_menu_tower->price / 2;
