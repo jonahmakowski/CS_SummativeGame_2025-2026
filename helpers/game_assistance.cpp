@@ -24,6 +24,7 @@ void do_help_popup() {
 // Function to toggle the help menu on and off (required because we can't modify the help_menu_active variable directly in main.cpp)
 void toggle_help_menu() {
     help_menu_active = !help_menu_active;
+    ui_force_hidden = !ui_force_hidden;
 }
 
 // Shows all the keybinds to the player in a help menu
@@ -48,12 +49,14 @@ void help_menu_draw() {
             "Move Right",
             "Toggle Range Circles",
             "Start Next Wave",
-            "Toggle UI"
+            "Toggle UI (and close upgrade menu)"
         };
 
+        int extra_size = 300;
+
         Panel help_menu_panel;
-        help_menu_panel.top_left = {get_display_width()/2 - 500, get_display_height()/2 - (keybind_count * 30)/2 - 40};
-        help_menu_panel.bottom_right = {get_display_width()/2 + 500, get_display_height()/2 + (keybind_count * 30)/2 + 40};
+        help_menu_panel.top_left = {get_display_width()/2 - 500, get_display_height()/2 - (keybind_count * 30)/2 - 40 - extra_size/2};
+        help_menu_panel.bottom_right = {get_display_width()/2 + 500, get_display_height()/2 + (keybind_count * 30)/2 + 40 + extra_size/2};
         help_menu_panel.color = LIGHT_GRAY;
 
         draw(help_menu_panel);
@@ -77,5 +80,12 @@ void help_menu_draw() {
             strcat(panel.text, keybind_text_buffer);
             draw(panel);
         }
+
+        Panel instructions;
+        instructions.top_left = {help_menu_panel.top_left.x + 10, help_menu_panel.top_left.y + 70 + keybind_count * 30};
+        instructions.bottom_right = {help_menu_panel.bottom_right.x - 10, help_menu_panel.top_left.y + 120 + keybind_count * 30};
+        instructions.color = YELLOW;
+        strcpy(instructions.text, "Game Instructions");
+        draw(instructions);
     }
 }

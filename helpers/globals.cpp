@@ -3,7 +3,7 @@
 bool moved = false;
 
 int player_health = 100;
-int player_coins = 500;
+int player_coins = INITIAL_MONEY;
 bool draw_range_circles = false;
 
 ALLEGRO_DISPLAY *display = nullptr;

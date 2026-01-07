@@ -1,4 +1,12 @@
-// to run:
+/*
+Known issues:
+- Resizing the window will sometimes cause the game to crash
+
+Other comments:
+- Although the window can be resized, the UI does not actually scale with the window size, however it will move around to fit the window
+*/
+
+// to run (for mac):
 // clang++ ./helpers/*.cpp main.cpp -o ./target/main $(pkg-config allegro-5 allegro_main-5 allegro_font-5 allegro_primitives-5 allegro_image-5 allegro_ttf-5 --libs --cflags); ./target/main
 
 #include <allegro5/allegro.h>

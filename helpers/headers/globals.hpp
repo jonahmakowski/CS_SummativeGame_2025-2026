@@ -6,13 +6,16 @@
 #include <allegro5/allegro_ttf.h>
 
 // Globals
-
-#define MAX_WIDTH 800
-#define MAX_HEIGHT 800
 #define FPS 30
 
 #define SCREEN_WIDTH 1800
 #define SCREEN_HEIGHT 1000
+
+#define SCREEN_MIN_WIDTH 1800
+#define SCREEN_MIN_HEIGHT 1000
+
+#define INITIAL_MONEY 50000 // Default 500
+
 #define FULLSCREEN false 
 #define CANRESIZE true // May cause issues, not tested much
 

@@ -108,11 +108,13 @@ void shoot_projectile(Tower tower, Enemy* target_enemy) {
     add_projectile(new_projectile);
 }
 
+// Loads the image that the housespawn use
 int load_housespawn_image() {
    load_image_with_checks("images/child.png", housespawn_image);
    return 0;
 }
 
+// Spawns a new housespawn
 void do_house(Tower* tower) {
     tower->time_since_last_shot = (random() % 10) / 10.0f; // So the house doesn't shoot at the same time as every other house
 
@@ -129,6 +131,7 @@ void do_house(Tower* tower) {
     active_housespawn_count++;
 }
 
+// Move the housespawn towards the enemy spawn point
 void run_housespawns() {
     for (int i = 0; i < active_housespawn_count; i++) {
         HouseSpawn* cur = &active_housespawn[i];
@@ -159,6 +162,7 @@ void run_housespawns() {
     }
 }
 
+// Draws all the housespawn
 void draw_all_housespawns() {
     for (int i = 0; i < active_housespawn_count; i++) {
         if (active_housespawn[i].object.exists) {
@@ -224,8 +228,11 @@ void check_projectiles() {
             continue;
         }
         
-        if (is_colliding(proj->object, proj->target->object) || !proj->target->object.exists) {
-            proj_hit_enemy(proj);
+        if (is_colliding(proj->object, proj->target->object) || !proj->target->object.exists || !proj->object.exists) {
+            if (proj->object.exists) {
+                proj_hit_enemy(proj);
+            }
+            
             for (int j = i; j < active_projectiles_count; j++) {
                 active_projectiles[j] = active_projectiles[j + 1]; 
             }
@@ -235,7 +242,10 @@ void check_projectiles() {
     }
 }
 
+// Run every time a projectile hits an enemy
 void proj_hit_enemy(Projectile *proj) {
+    proj->target->expected_damage -= proj->damage;
+
     if (proj->type == NORMAL) {
         proj->target->health -= proj->damage;
         proj->target->expected_damage -= proj->damage;
@@ -243,14 +253,14 @@ void proj_hit_enemy(Projectile *proj) {
         for (int i = 0; i < active_enemies_count; i++) {
             if (distance_between(proj->object.position, active_enemies[i].object.position) <= proj->radius_of_effect) {
                 active_enemies[i].health -= proj->damage;
-                active_enemies[i].expected_damage -= proj->damage;
+                //active_enemies[i].expected_damage -= proj->damage;
             }
         }
     } else if (proj->type == SLOWING) {
         for (int i = 0; i < active_enemies_count; i++) {
             if (distance_between(proj->object.position, active_enemies[i].object.position) <= proj->radius_of_effect) {
                 active_enemies[i].health -= proj->damage;
-                active_enemies[i].expected_damage -= proj->damage;
+                //active_enemies[i].expected_damage -= proj->damage;
                 active_enemies[i].slowing_amount = proj->slowing_amount;
                 active_enemies[i].slowing_time_remaining += proj->slowing_duration;
             }
@@ -371,7 +381,6 @@ void do_ui() {
     health_panel.color = GREEN;
 
     snprintf(health_panel.text, sizeof(health_panel.text), "Health: %d", player_health);
-    draw(health_panel);
 
     // Coins
     Panel coin_panel;
@@ -380,7 +389,6 @@ void do_ui() {
     coin_panel.color = GREEN;
 
     snprintf(coin_panel.text, sizeof(coin_panel.text), "Coins: %d", player_coins);
-    draw(coin_panel);
 
     Panel discard_button;
     discard_button.top_left = {0, get_display_height() / 3 + 50};
@@ -390,7 +398,6 @@ void do_ui() {
     discard_button.exists = true;
     snprintf(discard_button.text, sizeof(discard_button.text), "DISCARD HAND - 5 coins");
     discard_button.is_button = true;
-    draw(discard_button);
 
     buttons[ButtonIndex::DISCARD_BUTTON] = discard_button;
 
@@ -444,10 +451,16 @@ void do_ui() {
 
         draw_upgrades({menu_panel.top_left.x + 10, tower_name.bottom_right.y + 10}, {menu_panel.bottom_right.x - 10, sell_button.top_left.y - 10});
     }
+
+    draw(health_panel);
+    draw(coin_panel);
+    draw(discard_button);
 }
 
 // Check all the buttons and perform their actions
 void handle_button_clicks(ALLEGRO_EVENT ev) {
+    bool found;
+
     if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1) {
         // For each button in the enum
         for (int i = 0; i < (int)ButtonIndex::END; i++) {
@@ -479,13 +492,6 @@ void handle_button_clicks(ALLEGRO_EVENT ev) {
                         break;
                     case SELL_TOWER:
                         player_coins += card_menu_tower->price / 2;
-                        for (int j = 0; j < active_map.tower_spots_count; j++) {
-                            if (active_map.tower_spots[j].placed_tower == card_menu_tower) {
-                                active_map.tower_spots[j].occupied = false;
-                                active_map.tower_spots[j].placed_tower = nullptr;
-                                break;
-                            }
-                        }
 
                         for (int j = 0; j < active_map.tile_count; j++) {
                             Vector2i tower_tile_pos = {
@@ -507,6 +513,18 @@ void handle_button_clicks(ALLEGRO_EVENT ev) {
                                 }
                                 active_towers_count--;
                                 break;
+                            }
+                        }
+
+                        found = false;
+                        for (int j = 0; j < active_map.tower_spots_count; j++) {
+                            if (active_map.tower_spots[j].placed_tower == card_menu_tower) {
+                                active_map.tower_spots[j].occupied = false;
+                                active_map.tower_spots[j].placed_tower = nullptr;
+                                found = true;
+                            }
+                            if (found) {
+                                active_map.tower_spots[j].placed_tower--;
                             }
                         }
 

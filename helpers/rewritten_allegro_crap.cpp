@@ -83,7 +83,7 @@ bool init_allegro() {
     }
 
     if (CANRESIZE) {
-        al_set_window_constraints(display, 1584, 1262, 0, 0);
+        al_set_window_constraints(display, SCREEN_MIN_WIDTH, SCREEN_MIN_HEIGHT, 0, 0);
         al_apply_window_constraints(display, true);
     }
 

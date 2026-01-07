@@ -383,7 +383,7 @@ void keybind_text(char buffer[], Keybind keybind) {
 
 // Resets the globals related to the game state
 void reset_game_globals() {
-    player_coins = 20;
+    player_coins = INITIAL_MONEY;
     player_health = 100;
     active_enemies_count = 0;
     active_projectiles_count = 0;
