@@ -26,8 +26,8 @@
 03 03 02 Increased damage (Mk2)					This upgrade dramatically increases the damage.						0060 0.00 000 010 000 000 000
 //
 // SNOWBLOWER
-04 00 -1 Increased damage						This upgrade increases the damage.									0040 0.00 000 005 000 000 000
-04 01 00 Increased damage (Mk2)					This upgrade dramatically increases the damage.						0060 0.00 000 010 000 000 000
+04 00 -1 Increased damage						This upgrade increases the damage.									0100 0.00 000 001 000 000 000
+04 01 00 Increased damage (Mk2)					This upgrade dramatically increases the damage.						0300 0.00 000 003 000 000 000
 //
 // MAMMOTH
 // Isn't implemented in the game, so no point making upgrades

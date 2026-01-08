@@ -20,7 +20,7 @@ Other comments:
 #include <time.h>
 #include <string.h>
 
-#include "helpers/headers/helpers.hpp"
+#include "helpers.hpp"
 
 // Run every frame
 void frame_logic() {

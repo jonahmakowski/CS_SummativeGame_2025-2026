@@ -5,7 +5,7 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 
-#include "headers/helpers.hpp"
+#include "helpers.hpp"
 
 // Renaming drawing functions to use Vector2 and Vector2i and make more sense to me
 void draw_rectangle(Vector2i top_left, Vector2i bottom_right, ALLEGRO_COLOR color) {

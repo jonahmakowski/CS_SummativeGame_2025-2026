@@ -5,6 +5,8 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 
+#include <stdio.h>
+
 // Defines
 
 #define add_enemy(enemy) { \

@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "headers/helpers.hpp"
+#include "helpers.hpp"
 
 struct UpgradeButton {
     Panel panel;

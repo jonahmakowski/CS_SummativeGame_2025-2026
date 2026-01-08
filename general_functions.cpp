@@ -3,8 +3,9 @@
 #include <allegro5/allegro_ttf.h>
 
 #include <math.h>
+#include <stdio.h>
 
-#include "headers/helpers.hpp"
+#include "helpers.hpp"
 
 // Removes newline characters from a string
 void remove_newline_from_string(char str[]) {

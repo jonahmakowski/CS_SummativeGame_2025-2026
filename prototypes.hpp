@@ -4,6 +4,8 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 
+#include <stdio.h>
+
 // enemies_and_towers.cpp
 void new_tower(Tower &tower, TowerType type);
 void new_enemy(Enemy &enemy, EnemyType type);

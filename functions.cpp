@@ -3,8 +3,9 @@
 #include <allegro5/allegro_ttf.h>
 
 #include <math.h>
+#include <stdio.h>
 
-#include "headers/helpers.hpp"
+#include "helpers.hpp"
 
 // Converts tile position to pixel position (center of tile)
 Vector2i tile_pos_to_pixel_pos(Vector2i tile_pos) {

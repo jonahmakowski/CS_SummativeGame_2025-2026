@@ -3,8 +3,9 @@
 #include <allegro5/allegro_ttf.h>
 
 #include <math.h>
+#include <stdio.h>
 
-#include "headers/helpers.hpp"
+#include "helpers.hpp"
 
 // Load the tile images
 int load_tile_images() {
@@ -41,7 +42,7 @@ void display_map() {
         MapTile tile = active_map.tiles[i];
         Vector2i tile_position = tile_pos_to_pixel_pos(tile.position);
         Vector2 scale = {1.0f, 1.0f};
-        // decide
+        // decides which tile to draw based on the tile type and variation
         switch (tile.type) {
             // Within the grass tile, draw the correct variation
             case GRASS:
@@ -53,7 +54,7 @@ void display_map() {
                     draw(grass_tile_2, tile_position, scale, 0);
                 }
                 break;
-            // decides the correct path tile
+            // Draws the correct path tile
             case PATH:
                 switch (tile.variation) {
                         case 0:
@@ -107,19 +108,24 @@ void display_map() {
             // Draws the enemy goal tile
             case ENEMY_GOAL:
                 draw(enemy_goal_tile, tile_position, scale, 0);
-                break;
+                break; 
+            // Draws the snow fort wall tile
             case WALL:
                 draw(wall_tile, tile_position, scale, 0);
                 break;
+            // Draws the fort left corner tile texture 1
             case CORNERL1_WALL:
                 draw(cornerl1_wall_tile, tile_position, scale, 0);
                 break;
+            // Draws the fort left corner tile texture 2
             case CORNERL2_WALL:
                 draw(cornerl2_wall_tile, tile_position, scale, 0);
                 break;
+            // Draws the fort right corner tile texture 1
             case CORNERR1_WALL:
                 draw(cornerr1_wall_tile, tile_position, scale, 0);
                 break;
+            // Draws the fort right corner tile texture 2
             case CORNERR2_WALL:
                 draw(cornerr2_wall_tile, tile_position, scale, 0);
                 break;
