@@ -459,8 +459,6 @@ void do_ui() {
 
 // Check all the buttons and perform their actions
 void handle_button_clicks(ALLEGRO_EVENT ev) {
-    bool found;
-
     if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1) {
         // For each button in the enum
         for (int i = 0; i < (int)ButtonIndex::END; i++) {
@@ -498,10 +496,19 @@ void handle_button_clicks(ALLEGRO_EVENT ev) {
                                 card_menu_tower->object.position.x / TILE_SIZE,
                                 card_menu_tower->object.position.y / TILE_SIZE
                             };
-                            
+
                             if (active_map.tiles[j].position.x == tower_tile_pos.x && active_map.tiles[j].position.y == tower_tile_pos.y) {
                                 active_map.tiles[j].variation = 0;
                                 break;
+                            }
+                        }
+
+                        for (int j = 0; j < active_map.tower_spots_count; j++) {
+                            if (active_map.tower_spots[j].placed_tower == card_menu_tower) {
+                                active_map.tower_spots[j].occupied = false;
+                                active_map.tower_spots[j].placed_tower = nullptr;
+                            } else if (active_map.tower_spots[j].placed_tower != nullptr && active_map.tower_spots[j].placed_tower->index > card_menu_tower->index) {
+                                active_map.tower_spots[j].placed_tower--;
                             }
                         }
 
@@ -513,18 +520,6 @@ void handle_button_clicks(ALLEGRO_EVENT ev) {
                                 }
                                 active_towers_count--;
                                 break;
-                            }
-                        }
-
-                        found = false;
-                        for (int j = 0; j < active_map.tower_spots_count; j++) {
-                            if (active_map.tower_spots[j].placed_tower == card_menu_tower) {
-                                active_map.tower_spots[j].occupied = false;
-                                active_map.tower_spots[j].placed_tower = nullptr;
-                                found = true;
-                            }
-                            if (found) {
-                                active_map.tower_spots[j].placed_tower--;
                             }
                         }
 

@@ -185,6 +185,8 @@ struct Tower {
     int projectile_area_of_effect = 0; // For exposive and slowing projectiles
 
     int best_upgrade_id = -1;
+
+    int index;
 };
 
 // Enemy struct representing an enemy in the game
