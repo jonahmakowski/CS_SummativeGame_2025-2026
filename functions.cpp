@@ -117,7 +117,7 @@ int load_housespawn_image() {
 
 // Spawns a new housespawn
 void do_house(Tower* tower) {
-    tower->time_since_last_shot = (random() % 10) / 10.0f; // So the house doesn't shoot at the same time as every other house
+    tower->time_since_last_shot = (rand() % 10) / 10.0f; // So the house doesn't shoot at the same time as every other house
 
     HouseSpawn new_housespawn;
 
