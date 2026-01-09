@@ -54,7 +54,7 @@ void help_menu_draw() {
             "Toggle UI (and close upgrade menu)"
         };
 
-        int extra_size = 300;
+        const int extra_size = 425;
 
         Panel help_menu_panel;
         help_menu_panel.top_left = {get_display_width()/2 - 500, get_display_height()/2 - (keybind_count * 30)/2 - 40 - extra_size/2};
@@ -89,5 +89,15 @@ void help_menu_draw() {
         instructions.color = YELLOW;
         strcpy(instructions.text, "Game Instructions");
         draw(instructions);
+
+        al_draw_multiline_text(default_font.font, BLACK, instructions.top_left.x + 10, instructions.bottom_right.y + 20, help_menu_panel.bottom_right.x - help_menu_panel.top_left.x - 20, default_font.size + 5,
+            ALLEGRO_ALIGN_LEFT,
+            "Welcome to Tower Defence Game!\n"
+            "As the title suggests, the goal of the game is to outlast the waves of enemies by attacking them as they travel down a path towards your base by using towers that attack them. If you run out of health, game over. You gain coins gained by defeating enemies, which you can use to buy towers and upgrades.\n"
+            "A typical game goes like this: \n"
+            "Wave prep: Use your starting coins to buy towers on the tiles with “Sale” signs. You have the choice of upgrading them, or saving up your money for the next round.\n"
+            "Wave: Sit back and watch the chaos unfold. If your towers need some assistance, use your coins that you earned by defeating enemies to buy upgrades, which you can open the menu by clicking on the tower you want to upgrade. \n"
+            "Repeat these two steps until you have run out of waves.\n"
+        );
     }
 }
