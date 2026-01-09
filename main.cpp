@@ -7,7 +7,7 @@ Other comments:
 */
 
 // to run (for mac):
-// clang++ *.cpp -o ./target/main $(pkg-config allegro-5 allegro_main-5 allegro_font-5 allegro_primitives-5 allegro_image-5 allegro_ttf-5 --libs --cflags); ./target/main
+// clang++ ./helpers/*.cpp main.cpp -o ./target/main $(pkg-config allegro-5 allegro_main-5 allegro_font-5 allegro_primitives-5 allegro_image-5 allegro_ttf-5 --libs --cflags); ./target/main
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
@@ -20,7 +20,7 @@ Other comments:
 #include <time.h>
 #include <string.h>
 
-#include "helpers.hpp"
+#include "helpers/headers/helpers.hpp"
 
 // Run every frame
 void frame_logic() {

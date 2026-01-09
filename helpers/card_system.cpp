@@ -5,7 +5,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "helpers.hpp"
+#include "headers/helpers.hpp"
 
 Panel card_buttons[5];
 

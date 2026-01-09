@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "helpers.hpp"
+#include "headers/helpers.hpp"
 
 // Towers
 // Return a template tower based on passed parameters

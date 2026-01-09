@@ -5,7 +5,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "helpers.hpp"
+#include "headers/helpers.hpp"
 
 // Load the tile images
 int load_tile_images() {

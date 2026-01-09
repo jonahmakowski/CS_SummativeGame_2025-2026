@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "helpers.hpp"
+#include "headers/helpers.hpp"
 
 struct MainMenuButton {
     Panel panel;

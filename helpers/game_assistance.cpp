@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "helpers.hpp"
+#include "headers/helpers.hpp"
 
 float time_since_launch = 0; // for the help popup
 

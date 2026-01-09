@@ -5,7 +5,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "helpers.hpp"
+#include "headers/helpers.hpp"
 
 // Removes newline characters from a string
 void remove_newline_from_string(char str[]) {

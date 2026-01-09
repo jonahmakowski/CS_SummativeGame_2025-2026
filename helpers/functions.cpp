@@ -5,7 +5,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "helpers.hpp"
+#include "headers/helpers.hpp"
 
 // Converts tile position to pixel position (center of tile)
 Vector2i tile_pos_to_pixel_pos(Vector2i tile_pos) {
