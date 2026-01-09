@@ -444,13 +444,20 @@ void do_ui() {
         sell_button.is_button = true;
         buttons[ButtonIndex::SELL_TOWER] = sell_button;
 
+        Panel close_menu_text;
+        close_menu_text.top_left = {menu_panel.top_left.x + 10, tower_name.bottom_right.y + 10};
+        close_menu_text.bottom_right = {menu_panel.bottom_right.x - 10, tower_name.bottom_right.y + 60};
+        close_menu_text.color = YELLOW;
+        strcpy(close_menu_text.text, "Press 'Q' to close this menu");
+
         draw_range_circle(*card_menu_tower);
 
         draw(menu_panel);
         draw(tower_name);
         draw(sell_button);
+        draw(close_menu_text);
 
-        draw_upgrades({menu_panel.top_left.x + 10, tower_name.bottom_right.y + 10}, {menu_panel.bottom_right.x - 10, sell_button.top_left.y - 10});
+        draw_upgrades({menu_panel.top_left.x + 10, close_menu_text.bottom_right.y + 10}, {menu_panel.bottom_right.x - 10, sell_button.top_left.y - 10});
     }
 
     draw(health_panel);
